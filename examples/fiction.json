@@ -1,9 +1,9 @@
 {
-  "id": "p_047d96419838",
+  "id": "p_66aaf1dc02cb",
   "title": "The last keeper of borrowed mornings",
   "mode": "fiction",
-  "created": "2026-10-05T15:26:54.946235+00:00",
-  "updated": "2026-10-05T15:26:54.946242+00:00",
+  "created": "2026-10-05T15:34:16.079393+00:00",
+  "updated": "2026-10-05T15:34:16.079400+00:00",
   "version": 0,
   "brief": {
     "audience": "Readers of literary speculative fiction",
@@ -31,7 +31,7 @@
       "url": "",
       "author": "",
       "published": "",
-      "added": "2026-10-05T15:26:54.946276+00:00",
+      "added": "2026-10-05T15:34:16.079447+00:00",
       "enabled": true,
       "warnings": [],
       "digest": "d58c0354b81ef2f2b0d3b043a4dd2a63a03bebb3431266c4dbd824910e5ee3b0"
@@ -123,7 +123,7 @@
     ],
     "edges": [
       {
-        "id": "e_73058db41c2b",
+        "id": "e_16395a29ae3b",
         "source": "mira",
         "target": "archive",
         "relation": "works_at",
@@ -132,7 +132,7 @@
         "status": "canon"
       },
       {
-        "id": "e_9d0b5cc05de5",
+        "id": "e_d979ac8cf6ac",
         "source": "mira",
         "target": "father",
         "relation": "desires",
@@ -141,7 +141,7 @@
         "status": "canon"
       },
       {
-        "id": "e_d047617c2433",
+        "id": "e_e66f9b8d2b4e",
         "source": "oren",
         "target": "home",
         "relation": "entrusts",
@@ -150,7 +150,7 @@
         "status": "canon"
       },
       {
-        "id": "e_d7a8864b207f",
+        "id": "e_8dd242d25e2e",
         "source": "home",
         "target": "archive",
         "relation": "stored_in",
@@ -159,7 +159,7 @@
         "status": "canon"
       },
       {
-        "id": "e_27c7820ae7c2",
+        "id": "e_1671bdd59e1b",
         "source": "archive",
         "target": "transfer",
         "relation": "obeys",
@@ -168,7 +168,7 @@
         "status": "canon"
       },
       {
-        "id": "e_9e6a881a3f11",
+        "id": "e_b2e64d39204d",
         "source": "transfer",
         "target": "cost",
         "relation": "requires",
@@ -177,7 +177,7 @@
         "status": "canon"
       },
       {
-        "id": "e_8f4584a6808e",
+        "id": "e_ca5334f9eb51",
         "source": "father",
         "target": "home",
         "relation": "would_consume",
@@ -186,7 +186,7 @@
         "status": "canon"
       },
       {
-        "id": "e_5990e659abcf",
+        "id": "e_04e6ead3a721",
         "source": "home",
         "target": "orange",
         "relation": "contains",
@@ -195,7 +195,7 @@
         "status": "canon"
       },
       {
-        "id": "e_ac2432cb622b",
+        "id": "e_a59661f2edbd",
         "source": "trust",
         "target": "mira",
         "relation": "confronts",
@@ -204,7 +204,7 @@
         "status": "canon"
       },
       {
-        "id": "e_cdeb51e7b390",
+        "id": "e_4f97ce0d68ca",
         "source": "orange",
         "target": "mira",
         "relation": "haunts",

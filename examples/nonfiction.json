@@ -1,9 +1,9 @@
 {
-  "id": "p_7424b05a1262",
+  "id": "p_2ae63d3ec781",
   "title": "The city that forgot the dark",
   "mode": "nonfiction",
-  "created": "2026-10-05T15:26:54.943497+00:00",
-  "updated": "2026-10-05T15:26:54.943510+00:00",
+  "created": "2026-10-05T15:34:16.076618+00:00",
+  "updated": "2026-10-05T15:34:16.076637+00:00",
   "version": 0,
   "brief": {
     "audience": "Curious readers of long-form cultural essays",
@@ -31,7 +31,7 @@
       "url": "",
       "author": "",
       "published": "",
-      "added": "2026-10-05T15:26:54.943618+00:00",
+      "added": "2026-10-05T15:34:16.076792+00:00",
       "enabled": true,
       "warnings": [
         "Illustrative demo text, not empirical evidence or a real-world case study."
@@ -47,7 +47,7 @@
       "url": "",
       "author": "",
       "published": "",
-      "added": "2026-10-05T15:26:54.943634+00:00",
+      "added": "2026-10-05T15:34:16.076808+00:00",
       "enabled": true,
       "warnings": [
         "Illustrative demo text, not empirical evidence or a real-world case study."
@@ -63,7 +63,7 @@
       "url": "",
       "author": "",
       "published": "",
-      "added": "2026-10-05T15:26:54.943643+00:00",
+      "added": "2026-10-05T15:34:16.076815+00:00",
       "enabled": true,
       "warnings": [
         "Illustrative demo text, not empirical evidence or a real-world case study."
@@ -596,7 +596,7 @@
       "characters": 1772
     },
     "engine": "Illustrative sample graph · not an AI run",
-    "built": "2026-10-05T15:26:54.943980+00:00",
+    "built": "2026-10-05T15:34:16.077161+00:00",
     "warnings": [
       "This workspace uses invented demo material. Its sample angles are unscored and should not be published as reported research."
     ]
@@ -693,7 +693,7 @@
   "selected_angle": "angle1",
   "outline": [
     {
-      "id": "sec_89f3c5482bd1",
+      "id": "sec_28843ce52d43",
       "title": "One lamp, two lives",
       "purpose": "Open with a clearly signposted hypothetical scene that establishes competing needs.",
       "beats": [
@@ -706,7 +706,7 @@
       "target_words": 350
     },
     {
-      "id": "sec_5d44f5cd90e4",
+      "id": "sec_5f6b5ac5ad99",
       "title": "The question brightness cannot answer",
       "purpose": "Distinguish the amount of light from the purposes it serves.",
       "beats": [
@@ -720,7 +720,7 @@
       "target_words": 700
     },
     {
-      "id": "sec_34e29b7942ed",
+      "id": "sec_76f280419825",
       "title": "Designing for both",
       "purpose": "Offer a constructive frame without claiming unverified outcomes.",
       "beats": [
