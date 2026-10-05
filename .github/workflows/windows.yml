@@ -1,0 +1,37 @@
+name: Windows desktop package
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+permissions:
+  contents: write
+jobs:
+  package:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pytest -q
+      - shell: pwsh
+        run: ./scripts/build_windows.ps1
+      - name: Verify frozen backend serves the bundled interface
+        shell: pwsh
+        run: |
+          python scripts/check_package.py dist/GraphPaper
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GraphPaper-Windows-x64
+          path: dist/GraphPaper-Windows-x64.zip
+      - name: Attach package to version release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          gh release view $env:GITHUB_REF_NAME *> $null
+          if ($LASTEXITCODE -ne 0) { gh release create $env:GITHUB_REF_NAME --title "GraphPaper $env:GITHUB_REF_NAME" --generate-notes }
+          gh release upload $env:GITHUB_REF_NAME dist/GraphPaper-Windows-x64.zip --clobber

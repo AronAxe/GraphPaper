@@ -1,0 +1,67 @@
+/* GraphPaper — local-first writing studio. No CDN, analytics or browser API keys. */
+'use strict';
+const $ = (s, root=document) => root.querySelector(s);
+const $$ = (s, root=document) => [...root.querySelectorAll(s)];
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = ()=>'ui_'+(crypto.randomUUID?crypto.randomUUID().replaceAll('-',''):Date.now().toString(16)+Math.random().toString(16).slice(2)).slice(0,12);
+const storage={getItem:k=>{try{return window.localStorage.getItem(k);}catch{return null;}},setItem:(k,v)=>{try{window.localStorage.setItem(k,v);}catch{ /* Private-browser storage may be unavailable. */ }}};
+const words = t=>(String(t||'').match(/\S+/g)||[]).length;
+const fmt = n=>Number(n||0).toLocaleString();
+const icons={
+ plus:'M12 5v14M5 12h14', arrow:'M5 12h14m-6-6 6 6-6 6', back:'M19 12H5m6-6-6 6 6 6',
+ graph:'M8 6l8 3M7 8l3 8m6-4-4 5M7 5a2 2 0 1 0 0 .1M18 9a2 2 0 1 0 0 .1M11 18a2 2 0 1 0 0 .1',
+ book:'M3 4h6a4 4 0 0 1 3 2 4 4 0 0 1 3-2h6v15h-6a4 4 0 0 0-3 2 4 4 0 0 0-3-2H3zM12 6v15',
+ file:'M14 2H5v20h14V7zM14 2v5h5M8 12h8M8 16h6', upload:'M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5',
+ download:'M12 3v13m-5-5 5 5 5-5M4 16v5h16v-5', spark:'m12 3 2.7 6.3L21 12l-6.3 2.7L12 21l-2.7-6.3L3 12l6.3-2.7z',
+ pen:'m16 3 5 5-12 12-6 1 1-6zM13 6l5 5', list:'M8 6h13M8 12h13M8 18h13M3 6h.1M3 12h.1M3 18h.1',
+ settings:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2',
+ check:'m5 12 4 4L19 6', x:'m6 6 12 12M6 18 18 6', search:'M10 3a7 7 0 1 0 0 14 7 7 0 0 0 0-14m5 12 6 6',
+ pin:'m9 3 6 0-1 6 4 4-5 0-1 8-1-8H6l4-4z', eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6',
+ clock:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M12 7v5l3 2', sun:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1 1m12 12 1 1M5 19l1-1M18 6l1-1',
+ link:'m10 13 4-4M8 16l-1 1a4 4 0 0 1-6-6l4-4a4 4 0 0 1 6 0m2 2 1-1a4 4 0 0 1 6 6l-4 4a4 4 0 0 1-6 0',
+ lock:'M5 10h14v11H5zM8 10V6a4 4 0 0 1 8 0v4', chevron:'m8 5 7 7-7 7', up:'m6 14 6-6 6 6', down:'m6 10 6 6 6-6',
+ menu:'M3 6h18M3 12h18M3 18h18', expand:'M3 9V3h6m6 0h6v6M3 15v6h6m6 0h6v-6', minus:'M5 12h14',
+ trash:'M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7', alert:'m12 3 10 18H2zM12 9v5m0 3v.1',
+ branch:'M6 3v14a3 3 0 1 0 3 3M6 9h9a3 3 0 0 0 3-3V3', help:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18M9 9a3 3 0 1 1 4 3l-1 1v1m0 3v.1',
+ folder:'M3 5h6l2 2h10v14H3z', stop:'M6 6h12v12H6z', refresh:'M20 9a8 8 0 0 0-14-4L3 8m0-5v5h5M4 15a8 8 0 0 0 14 4l3-3m0 5v-5h-5'
+};
+const icon=(name,cls='')=>`<svg class="icon ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.55" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${icons[name]||icons.file}"/></svg>`;
+const btn=(label,act,ic='',cls='',attrs='')=>`<button type="button" class="button ${cls}" data-action="${act}" ${attrs}>${ic?icon(ic):''}${esc(label)}</button>`;
+const ibtn=(title,act,ic,attrs='')=>`<button type="button" class="icon-btn" aria-label="${esc(title)}" title="${esc(title)}" data-action="${act}" ${attrs}>${icon(ic)}</button>`;
+const steps=[['sources','Sources','file'],['graph','Graph','graph'],['angles','Angles','spark'],['outline','Outline','list'],['write','Write','pen']];
+const state={p:null,projects:[],settings:{},tab:'sources',node:null,edge:null,path:[],view:'split',job:null,save:'Saved locally',layout:{},search:'',relations:false};
+let pending={},timer=null,saveChain=Promise.resolve(),pollTimer=null,focusBeforeModal=null;
+async function api(path,body,method){
+ const opt={method:method||(body===undefined?'GET':'POST'),headers:{'X-GraphPaper':'1'},credentials:'same-origin'};
+ if(body!==undefined){if(body instanceof FormData)opt.body=body;else{opt.headers['Content-Type']='application/json';opt.body=JSON.stringify(body);}}
+ const res=await fetch('/api'+path,opt); let data;
+ try{data=await res.json();}catch{data={detail:`Request failed (${res.status}).`};}
+ if(!res.ok){const detail=Array.isArray(data.detail)?data.detail.map(x=>x.msg).join('; '):data.detail;throw new Error(detail||`Request failed (${res.status})`);}
+ return data;
+}
+function toast(text,error=false){const el=document.createElement('div');el.className='toast'+(error?' error':'');el.innerHTML=icon(error?'alert':'check')+`<span>${esc(text)}</span>`;$('#toasts').append(el);setTimeout(()=>el.remove(),error?16000:5000);}
+function busy(){return state.job&&['queued','running'].includes(state.job.state);}
+function editable(){if(busy()){toast('Let this job finish, or cancel it, before editing the project.',true);return false;}return true;}
+function updateSaved(label){state.save=label;$$('.saved').forEach(e=>e.innerHTML=icon(label==='Saved locally'?'check':'clock')+esc(label));}
+function queueSave(patch){Object.assign(pending,patch);updateSaved('Unsaved changes');clearTimeout(timer);timer=setTimeout(()=>flush().catch(e=>toast(e.message,true)),650);}
+async function flush(){
+ clearTimeout(timer); const patch=pending;pending={}; if(!state.p||!Object.keys(patch).length)return saveChain;
+ const pid=state.p.id;updateSaved('Saving…');
+ saveChain=saveChain.catch(()=>{}).then(async()=>{
+  if(!state.p||state.p.id!==pid)throw new Error('Project changed before saving.');
+  try{const saved=await api('/projects/'+pid,{version:state.p.version,...patch},'PATCH');
+   const queued={...pending};state.p=saved;Object.assign(state.p,queued);syncSummary();updateSaved(Object.keys(pending).length?'Unsaved changes':'Saved locally');
+  }catch(e){pending={...patch,...pending};updateSaved('Not saved — retry');throw e;}
+ });return saveChain;
+}
+function syncSummary(){if(!state.p)return;const p=state.p;const summary={id:p.id,title:p.title,mode:p.mode,updated:p.updated,sources:p.sources.length,words:words(p.draft)};const i=state.projects.findIndex(x=>x.id===p.id);if(i<0)state.projects.unshift(summary);else state.projects[i]={...state.projects[i],...summary};}
+async function setProject(p,tab){await flush();clearTimeout(pollTimer);state.p=p;pending={};state.node=null;state.edge=null;state.path=[];state.search='';state.job=null;state.layout={};state.tab=tab||(p.graph.nodes.length?'graph':'sources');syncSummary();storage.setItem('graphpaper.last',p.id);render();}
+async function openProject(id){await flush();const p=await api('/projects/'+id);await setProject(p);const boot=await api('/bootstrap');const j=boot.jobs.find(j=>j.project_id===id);if(j){state.job=j;render();poll();}}
+function showModal(title,sub,body,foot='',wide=false){focusBeforeModal=document.activeElement;$('#modal-root').innerHTML=`<div class="modal-backdrop"><section class="modal ${wide?'wide':''}" role="dialog" aria-modal="true" aria-labelledby="modal-title"><header class="modal-head"><div><h2 id="modal-title">${esc(title)}</h2><p>${esc(sub)}</p></div>${ibtn('Close dialog','close-modal','x')}</header><div class="modal-body">${body}</div>${foot?`<footer class="modal-foot"><span class="modal-status" id="modal-status"></span>${foot}</footer>`:''}</section></div>`;setTimeout(()=>$('.modal input:not([type=hidden]),.modal textarea,.modal select,.modal button')?.focus(),0);}
+function closeModal(){ $('#modal-root').innerHTML='';focusBeforeModal?.focus?.();}
+function modalError(msg){const e=$('#modal-status');if(e){e.textContent=msg;e.classList.add('error-inline');}else toast(msg,true);}
+function selectedAngle(){return state.p?.angles.find(a=>a.id===state.p.selected_angle);}
+function progressDone(t){const p=state.p;return t==='sources'?p.sources.length>0:t==='graph'?p.graph.nodes.length>0:t==='angles'?!!selectedAngle():t==='outline'?p.outline.length>0:!!p.draft;}
+function render(){
+ const p=state.p,s=state.settings;
+ document.documentElement.dataset.theme=s.theme||'dark';
