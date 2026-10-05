@@ -1,0 +1,275 @@
+{
+  "id": "p_047d96419838",
+  "title": "The last keeper of borrowed mornings",
+  "mode": "fiction",
+  "created": "2026-10-05T15:26:54.946235+00:00",
+  "updated": "2026-10-05T15:26:54.946242+00:00",
+  "version": 0,
+  "brief": {
+    "audience": "Readers of literary speculative fiction",
+    "format": "Short story",
+    "voice": "Intimate, sensory, restrained; emotional stakes without melodrama.",
+    "direction": "A memory archivist must choose between restoring her father's final morning and preserving a stranger's only memory of home.",
+    "target_words": 2400,
+    "originality": 65,
+    "rigor": 85,
+    "genre": "Literary speculative fiction",
+    "pov": "Close third person",
+    "tense": "Past",
+    "canon": "Memories cannot be copied, only transferred. Every restoration permanently consumes another memory. Mira has never used the archive for herself. The city does not know the cost.",
+    "avoid": "Expository monologues, a convenient loophole in the memory rules, a neatly explained moral.",
+    "pinned_nodes": [],
+    "excluded_nodes": []
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Story bible · the memory archive",
+      "text": "Mira is the city's memory archivist. Memories cannot be copied, only transferred. Every restoration permanently consumes another memory. Mira has never used the archive for herself. Her father died before she returned home. She wants his final morning. A stranger named Oren has deposited his only memory of home: his mother peeling an orange beside an open window. Restoring her father's morning would consume Oren's memory. Oren believes the archive is a safe place to keep it. The city does not know the cost of restoration. Mira keeps an empty orange crate under her workbench. The story must not invent a way to duplicate memories.",
+      "kind": "text",
+      "role": "canon",
+      "url": "",
+      "author": "",
+      "published": "",
+      "added": "2026-10-05T15:26:54.946276+00:00",
+      "enabled": true,
+      "warnings": [],
+      "digest": "d58c0354b81ef2f2b0d3b043a4dd2a63a03bebb3431266c4dbd824910e5ee3b0"
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "mira",
+        "label": "Mira",
+        "kind": "character",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 2
+      },
+      {
+        "id": "archive",
+        "label": "The memory archive",
+        "kind": "place",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 1
+      },
+      {
+        "id": "father",
+        "label": "Her father's final morning",
+        "kind": "event",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 0
+      },
+      {
+        "id": "oren",
+        "label": "Oren",
+        "kind": "character",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 0
+      },
+      {
+        "id": "home",
+        "label": "A memory of home",
+        "kind": "concept",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 0
+      },
+      {
+        "id": "transfer",
+        "label": "Transfer, never copy",
+        "kind": "rule",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 1
+      },
+      {
+        "id": "cost",
+        "label": "A permanent cost",
+        "kind": "rule",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 1
+      },
+      {
+        "id": "orange",
+        "label": "The orange at the window",
+        "kind": "theme",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 2
+      },
+      {
+        "id": "trust",
+        "label": "Entrusted, not given",
+        "kind": "theme",
+        "description": "Sample canon; inspect Story bible for the full context.",
+        "evidence": [],
+        "status": "canon",
+        "community": 2
+      }
+    ],
+    "edges": [
+      {
+        "id": "e_73058db41c2b",
+        "source": "mira",
+        "target": "archive",
+        "relation": "works_at",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_9d0b5cc05de5",
+        "source": "mira",
+        "target": "father",
+        "relation": "desires",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_d047617c2433",
+        "source": "oren",
+        "target": "home",
+        "relation": "entrusts",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_d7a8864b207f",
+        "source": "home",
+        "target": "archive",
+        "relation": "stored_in",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_27c7820ae7c2",
+        "source": "archive",
+        "target": "transfer",
+        "relation": "obeys",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_9e6a881a3f11",
+        "source": "transfer",
+        "target": "cost",
+        "relation": "requires",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_8f4584a6808e",
+        "source": "father",
+        "target": "home",
+        "relation": "would_consume",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_5990e659abcf",
+        "source": "home",
+        "target": "orange",
+        "relation": "contains",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_ac2432cb622b",
+        "source": "trust",
+        "target": "mira",
+        "relation": "confronts",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      },
+      {
+        "id": "e_cdeb51e7b390",
+        "source": "orange",
+        "target": "mira",
+        "relation": "haunts",
+        "description": "",
+        "evidence": [],
+        "status": "canon"
+      }
+    ],
+    "coverage": {},
+    "engine": "Illustrative story graph · original sample canon",
+    "built": "",
+    "warnings": []
+  },
+  "angles": [
+    {
+      "id": "fiction1",
+      "title": "The last keeper of borrowed mornings",
+      "thesis": "A memory archivist must choose between restoring her father's final morning and preserving a stranger's only memory of home.",
+      "hook": "Mira knew the smell of every home in the city except the one she had left.",
+      "why": "A private desire collides with an irreversible rule and another person's trust.",
+      "motif": "character / consequence arc",
+      "node_ids": [
+        "mira",
+        "father",
+        "home",
+        "oren",
+        "cost",
+        "trust"
+      ],
+      "edge_ids": [],
+      "source_ids": [
+        "S1"
+      ],
+      "questions": [
+        "What does Mira finally do, and what does it cost her?"
+      ],
+      "counterargument": "Mira's grief makes a selfish choice emotionally intelligible without making it harmless.",
+      "scores": {},
+      "decision": "Sample premise",
+      "score_engine": "none",
+      "score": null
+    }
+  ],
+  "selected_angle": "fiction1",
+  "outline": [],
+  "draft": "",
+  "review": {
+    "summary": "",
+    "strengths": [],
+    "issues": [],
+    "suggestions": [],
+    "scores": {},
+    "citation_audit": {},
+    "verdict": "Not reviewed",
+    "draft_hash": ""
+  },
+  "story_state": {},
+  "activity": [],
+  "feedback": [],
+  "usage": {
+    "calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "reported_cost": 0.0,
+    "unpriced_calls": 0
+  },
+  "demo": true
+}

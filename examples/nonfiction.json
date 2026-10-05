@@ -1,0 +1,760 @@
+{
+  "id": "p_7424b05a1262",
+  "title": "The city that forgot the dark",
+  "mode": "nonfiction",
+  "created": "2026-10-05T15:26:54.943497+00:00",
+  "updated": "2026-10-05T15:26:54.943510+00:00",
+  "version": 0,
+  "brief": {
+    "audience": "Curious readers of long-form cultural essays",
+    "format": "Long-form essay",
+    "voice": "Observant, precise and quietly lyrical. Concrete images; fair counterarguments.",
+    "direction": "Explore the tension between visibility, safety and the right to darkness. A thoughtful essay, not a simplistic case against streetlights.",
+    "target_words": 1600,
+    "originality": 65,
+    "rigor": 85,
+    "genre": "Literary speculative fiction",
+    "pov": "Close third person",
+    "tense": "Past",
+    "canon": "",
+    "avoid": "Invented quotations, unsupported certainty, repetitive summaries, generic introductions.",
+    "pinned_nodes": [],
+    "excluded_nodes": []
+  },
+  "sources": [
+    {
+      "id": "S1",
+      "title": "Design notebook · light and attention",
+      "text": "These are original illustrative notes for a GraphPaper demo, not a published study.\n\nArtificial light changes not only what a street reveals, but what residents notice. Visibility can serve safety, while constant illumination can make darkness feel like a defect. A good lighting brief asks what must be visible, to whom, and when. The question is not simply whether to light a city, but whether every place requires the same kind of light. Light directed at the pavement and light spilling through a bedroom window are different design decisions. Darkness can be a shared resource rather than an absence waiting to be filled.",
+      "kind": "text",
+      "role": "evidence",
+      "url": "",
+      "author": "",
+      "published": "",
+      "added": "2026-10-05T15:26:54.943618+00:00",
+      "enabled": true,
+      "warnings": [
+        "Illustrative demo text, not empirical evidence or a real-world case study."
+      ],
+      "digest": "7d92541bab2abad4bd19a09318a915cd68f33179d28a92045d18d3c9e4d7ec07"
+    },
+    {
+      "id": "S2",
+      "title": "Editorial notes · the strongest objection",
+      "text": "These are original illustrative editorial notes, not testimony or collected data.\n\nA campaign for darker streets must address people who feel vulnerable walking at night. An aesthetic preference for stars does not override that concern. Safety and the experience of safety are related but distinct. Removing light without consulting residents is not participatory design. A useful alternative is selective illumination: use the right light in the right place at the right time. Debate often becomes trapped between total brightness and total darkness, overlooking choices about timing, direction and purpose.",
+      "kind": "text",
+      "role": "evidence",
+      "url": "",
+      "author": "",
+      "published": "",
+      "added": "2026-10-05T15:26:54.943634+00:00",
+      "enabled": true,
+      "warnings": [
+        "Illustrative demo text, not empirical evidence or a real-world case study."
+      ],
+      "digest": "f28ae493984cd505b4d9554b806b49eb5875e71829c4652368969cfa759db407"
+    },
+    {
+      "id": "S3",
+      "title": "Field sketch · the window and the square",
+      "text": "This invented scene is a writing exercise, not a report of an observed event.\n\nAt midnight the square was empty, but its lamps still shone into an upstairs bedroom. On the pavement, a walker paused to read a street sign. Two people occupied the same lighting design differently: one needed to see, the other needed not to see. The city could serve both by directing light rather than multiplying it. A window is a boundary between public infrastructure and private rest. Treating brightness as an unquestioned good obscures that boundary.",
+      "kind": "text",
+      "role": "evidence",
+      "url": "",
+      "author": "",
+      "published": "",
+      "added": "2026-10-05T15:26:54.943643+00:00",
+      "enabled": true,
+      "warnings": [
+        "Illustrative demo text, not empirical evidence or a real-world case study."
+      ],
+      "digest": "d8c2528cc2231eec4b87d969f650f9c8090a056a52af3af0307b6ca4eaf6555a"
+    }
+  ],
+  "graph": {
+    "nodes": [
+      {
+        "id": "light",
+        "label": "Artificial light",
+        "kind": "concept",
+        "description": "Artificial light changes not only what a street reveals, but what residents notice.",
+        "evidence": [
+          {
+            "source_id": "S1",
+            "quote": "Artificial light changes not only what a street reveals, but what residents notice.",
+            "start": 85,
+            "end": 168,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 1
+      },
+      {
+        "id": "attention",
+        "label": "Directed attention",
+        "kind": "concept",
+        "description": "Artificial light changes not only what a street reveals, but what residents notice.",
+        "evidence": [
+          {
+            "source_id": "S1",
+            "quote": "Artificial light changes not only what a street reveals, but what residents notice.",
+            "start": 85,
+            "end": 168,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 1
+      },
+      {
+        "id": "visibility",
+        "label": "Visibility",
+        "kind": "concept",
+        "description": "Visibility can serve safety, while constant illumination can make darkness feel like a defect.",
+        "evidence": [
+          {
+            "source_id": "S1",
+            "quote": "Visibility can serve safety, while constant illumination can make darkness feel like a defect.",
+            "start": 169,
+            "end": 263,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 1
+      },
+      {
+        "id": "safety",
+        "label": "Safety",
+        "kind": "concept",
+        "description": "Safety and the experience of safety are related but distinct.",
+        "evidence": [
+          {
+            "source_id": "S2",
+            "quote": "Safety and the experience of safety are related but distinct.",
+            "start": 237,
+            "end": 298,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 0
+      },
+      {
+        "id": "perception",
+        "label": "Perceived safety",
+        "kind": "claim",
+        "description": "Safety and the experience of safety are related but distinct.",
+        "evidence": [
+          {
+            "source_id": "S2",
+            "quote": "Safety and the experience of safety are related but distinct.",
+            "start": 237,
+            "end": 298,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 0
+      },
+      {
+        "id": "vulnerability",
+        "label": "The night walker",
+        "kind": "person",
+        "description": "A campaign for darker streets must address people who feel vulnerable walking at night.",
+        "evidence": [
+          {
+            "source_id": "S2",
+            "quote": "A campaign for darker streets must address people who feel vulnerable walking at night.",
+            "start": 83,
+            "end": 170,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 0
+      },
+      {
+        "id": "darkness",
+        "label": "The right to darkness",
+        "kind": "concept",
+        "description": "Darkness can be a shared resource rather than an absence waiting to be filled.",
+        "evidence": [
+          {
+            "source_id": "S1",
+            "quote": "Darkness can be a shared resource rather than an absence waiting to be filled.",
+            "start": 548,
+            "end": 626,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 2
+      },
+      {
+        "id": "commons",
+        "label": "A shared resource",
+        "kind": "concept",
+        "description": "Darkness can be a shared resource rather than an absence waiting to be filled.",
+        "evidence": [
+          {
+            "source_id": "S1",
+            "quote": "Darkness can be a shared resource rather than an absence waiting to be filled.",
+            "start": 548,
+            "end": 626,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 2
+      },
+      {
+        "id": "window",
+        "label": "The bedroom window",
+        "kind": "place",
+        "description": "A window is a boundary between public infrastructure and private rest.",
+        "evidence": [
+          {
+            "source_id": "S3",
+            "quote": "A window is a boundary between public infrastructure and private rest.",
+            "start": 400,
+            "end": 470,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 3
+      },
+      {
+        "id": "rest",
+        "label": "Private rest",
+        "kind": "concept",
+        "description": "A window is a boundary between public infrastructure and private rest.",
+        "evidence": [
+          {
+            "source_id": "S3",
+            "quote": "A window is a boundary between public infrastructure and private rest.",
+            "start": 400,
+            "end": 470,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 3
+      },
+      {
+        "id": "square",
+        "label": "The empty square",
+        "kind": "place",
+        "description": "At midnight the square was empty, but its lamps still shone into an upstairs bedroom.",
+        "evidence": [
+          {
+            "source_id": "S3",
+            "quote": "At midnight the square was empty, but its lamps still shone into an upstairs bedroom.",
+            "start": 79,
+            "end": 164,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 0
+      },
+      {
+        "id": "spill",
+        "label": "Light spill",
+        "kind": "claim",
+        "description": "Light directed at the pavement and light spilling through a bedroom window are different design decisions.",
+        "evidence": [
+          {
+            "source_id": "S1",
+            "quote": "Light directed at the pavement and light spilling through a bedroom window are different design decisions.",
+            "start": 441,
+            "end": 547,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 1
+      },
+      {
+        "id": "design",
+        "label": "Selective illumination",
+        "kind": "concept",
+        "description": "A useful alternative is selective illumination: use the right light in the right place at the right time.",
+        "evidence": [
+          {
+            "source_id": "S2",
+            "quote": "A useful alternative is selective illumination: use the right light in the right place at the right time.",
+            "start": 372,
+            "end": 477,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 2
+      },
+      {
+        "id": "time",
+        "label": "Time of night",
+        "kind": "concept",
+        "description": "Debate often becomes trapped between total brightness and total darkness, overlooking choices about timing, direction and purpose.",
+        "evidence": [
+          {
+            "source_id": "S2",
+            "quote": "Debate often becomes trapped between total brightness and total darkness, overlooking choices about timing, direction and purpose.",
+            "start": 478,
+            "end": 608,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 0
+      },
+      {
+        "id": "direction",
+        "label": "Direction, not more",
+        "kind": "claim",
+        "description": "The city could serve both by directing light rather than multiplying it.",
+        "evidence": [
+          {
+            "source_id": "S3",
+            "quote": "The city could serve both by directing light rather than multiplying it.",
+            "start": 327,
+            "end": 399,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 3
+      },
+      {
+        "id": "residents",
+        "label": "Resident agency",
+        "kind": "concept",
+        "description": "Removing light without consulting residents is not participatory design.",
+        "evidence": [
+          {
+            "source_id": "S2",
+            "quote": "Removing light without consulting residents is not participatory design.",
+            "start": 299,
+            "end": 371,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 2
+      },
+      {
+        "id": "binary",
+        "label": "A false binary",
+        "kind": "claim",
+        "description": "Debate often becomes trapped between total brightness and total darkness, overlooking choices about timing, direction and purpose.",
+        "evidence": [
+          {
+            "source_id": "S2",
+            "quote": "Debate often becomes trapped between total brightness and total darkness, overlooking choices about timing, direction and purpose.",
+            "start": 478,
+            "end": 608,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 1
+      },
+      {
+        "id": "stars",
+        "label": "An aesthetic argument",
+        "kind": "claim",
+        "description": "An aesthetic preference for stars does not override that concern.",
+        "evidence": [
+          {
+            "source_id": "S2",
+            "quote": "An aesthetic preference for stars does not override that concern.",
+            "start": 171,
+            "end": 236,
+            "verified": true
+          }
+        ],
+        "status": "sourced",
+        "community": 0
+      }
+    ],
+    "edges": [
+      {
+        "id": "ed0",
+        "source": "light",
+        "target": "attention",
+        "relation": "shapes",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed1",
+        "source": "light",
+        "target": "visibility",
+        "relation": "enables",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed2",
+        "source": "visibility",
+        "target": "safety",
+        "relation": "can_support",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed3",
+        "source": "safety",
+        "target": "perception",
+        "relation": "distinct_from",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed4",
+        "source": "vulnerability",
+        "target": "safety",
+        "relation": "motivates",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed5",
+        "source": "stars",
+        "target": "vulnerability",
+        "relation": "must_address",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed6",
+        "source": "darkness",
+        "target": "commons",
+        "relation": "can_be",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed7",
+        "source": "light",
+        "target": "spill",
+        "relation": "can_produce",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed8",
+        "source": "spill",
+        "target": "window",
+        "relation": "crosses",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed9",
+        "source": "window",
+        "target": "rest",
+        "relation": "protects",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed10",
+        "source": "square",
+        "target": "window",
+        "relation": "illuminates",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed11",
+        "source": "design",
+        "target": "direction",
+        "relation": "uses",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed12",
+        "source": "design",
+        "target": "time",
+        "relation": "adapts_to",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed13",
+        "source": "design",
+        "target": "safety",
+        "relation": "seeks_to_support",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed14",
+        "source": "design",
+        "target": "darkness",
+        "relation": "can_preserve",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed15",
+        "source": "residents",
+        "target": "design",
+        "relation": "should_inform",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed16",
+        "source": "binary",
+        "target": "design",
+        "relation": "obscures",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed17",
+        "source": "binary",
+        "target": "visibility",
+        "relation": "overemphasizes",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed18",
+        "source": "attention",
+        "target": "binary",
+        "relation": "can_question",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed19",
+        "source": "commons",
+        "target": "residents",
+        "relation": "concerns",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed20",
+        "source": "direction",
+        "target": "rest",
+        "relation": "can_protect",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed21",
+        "source": "vulnerability",
+        "target": "square",
+        "relation": "moves_through",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      },
+      {
+        "id": "ed22",
+        "source": "time",
+        "target": "square",
+        "relation": "changes_use_of",
+        "description": "Illustrative relationship inferred from the demo notes.",
+        "evidence": [],
+        "status": "inferred"
+      }
+    ],
+    "coverage": {
+      "sources": 3,
+      "chunks": 3,
+      "processed_chunks": 3,
+      "characters": 1772
+    },
+    "engine": "Illustrative sample graph · not an AI run",
+    "built": "2026-10-05T15:26:54.943980+00:00",
+    "warnings": [
+      "This workspace uses invented demo material. Its sample angles are unscored and should not be published as reported research."
+    ]
+  },
+  "angles": [
+    {
+      "id": "angle1",
+      "title": "Not more light. Better darkness.",
+      "thesis": "The most useful lighting debate is not brightness versus darkness, but who gets to decide what is illuminated, where and when.",
+      "hook": "An empty square can be perfectly lit and a bedroom perfectly ruined by the same lamp.",
+      "why": "Moves from a binary argument to design, agency and competing needs.",
+      "motif": "cross-community bridge",
+      "node_ids": [
+        "window",
+        "rest",
+        "design",
+        "darkness",
+        "safety",
+        "residents"
+      ],
+      "edge_ids": [],
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "questions": [
+        "What real evidence distinguishes perceived safety from measured safety?",
+        "Which local examples show selective illumination working?"
+      ],
+      "counterargument": "Darkness may make already vulnerable people feel less secure.",
+      "scores": {},
+      "decision": "Sample · needs real sources",
+      "score_engine": "none",
+      "score": null
+    },
+    {
+      "id": "angle2",
+      "title": "The invisible politics of being visible",
+      "thesis": "A lighting plan distributes attention and privacy as well as illumination; those competing purposes deserve an explicit public conversation.",
+      "hook": "",
+      "why": "Connects the intimate scale of a window to the public scale of infrastructure.",
+      "motif": "directed chain",
+      "node_ids": [
+        "light",
+        "attention",
+        "window",
+        "rest",
+        "residents"
+      ],
+      "edge_ids": [],
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "questions": [
+        "Who participates in actual lighting decisions?"
+      ],
+      "counterargument": "Practical lighting decisions must still meet concrete accessibility and safety needs.",
+      "scores": {},
+      "decision": "Sample · needs real sources",
+      "score_engine": "none",
+      "score": null
+    },
+    {
+      "id": "angle3",
+      "title": "When a brighter city sees less",
+      "thesis": "Treating brightness as the goal can hide the underlying design question: what actually needs to be seen?",
+      "hook": "",
+      "why": "A precise category error, rather than a reflexively contrarian headline.",
+      "motif": "contradiction",
+      "node_ids": [
+        "binary",
+        "visibility",
+        "design",
+        "direction"
+      ],
+      "edge_ids": [],
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "questions": [
+        "Find a documented lighting redesign with before-and-after outcomes."
+      ],
+      "counterargument": "Some places may genuinely require stronger illumination.",
+      "scores": {},
+      "decision": "Sample · needs real sources",
+      "score_engine": "none",
+      "score": null
+    }
+  ],
+  "selected_angle": "angle1",
+  "outline": [
+    {
+      "id": "sec_89f3c5482bd1",
+      "title": "One lamp, two lives",
+      "purpose": "Open with a clearly signposted hypothetical scene that establishes competing needs.",
+      "beats": [
+        "The empty square and the bedroom window",
+        "Why one person's helpful light is another person's intrusion"
+      ],
+      "source_ids": [
+        "S3"
+      ],
+      "target_words": 350
+    },
+    {
+      "id": "sec_5d44f5cd90e4",
+      "title": "The question brightness cannot answer",
+      "purpose": "Distinguish the amount of light from the purposes it serves.",
+      "beats": [
+        "Visibility is a means, not a complete design brief",
+        "Take vulnerable walkers' concerns seriously"
+      ],
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "target_words": 700
+    },
+    {
+      "id": "sec_34e29b7942ed",
+      "title": "Designing for both",
+      "purpose": "Offer a constructive frame without claiming unverified outcomes.",
+      "beats": [
+        "Timing, direction and participation",
+        "Darkness as something to design for, not impose"
+      ],
+      "source_ids": [
+        "S1",
+        "S2",
+        "S3"
+      ],
+      "target_words": 550
+    }
+  ],
+  "draft": "# Not more light. Better darkness.\n\n*Illustrative opening, written for the demo. The scene is hypothetical, not reported.*\n\nImagine a square at midnight. Its lamps pick out every seam in the pavement. A walker pauses beneath one to read a street sign. Above the square, behind a thin curtain, someone is trying to sleep.\n\nThe lamp has not failed. It is doing exactly what it was designed to do. The question is whether the design asked enough of it. [S3]\n\n## One lamp, two lives\n\nA conversation about public light can become an argument between two abstractions: brightness and darkness. But the walker and the sleeper are not abstractions. Each needs something the city can reasonably be asked to provide. Neither becomes less real because the other is easier to see. [S2] [S3]\n\nThe interesting question is not whether a city should be lit. It is whether lighting can be directed, timed and discussed carefully enough to serve different lives rather than treating every patch of darkness as an unfinished job. [S1] [S2]\n\n*Continue from the outline, or replace these sample notes with real sources before drafting a publishable article.*",
+  "review": {
+    "summary": "",
+    "strengths": [],
+    "issues": [],
+    "suggestions": [],
+    "scores": {},
+    "citation_audit": {},
+    "verdict": "Not reviewed",
+    "draft_hash": ""
+  },
+  "story_state": {},
+  "activity": [],
+  "feedback": [],
+  "usage": {
+    "calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "reported_cost": 0.0,
+    "unpriced_calls": 0
+  },
+  "demo": true
+}

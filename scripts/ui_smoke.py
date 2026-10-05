@@ -24,6 +24,21 @@ from tests.conftest import ScriptedClients
 from playwright.sync_api import sync_playwright
 
 
+def wait_for_completion(page, action=None):
+    """CSP-safe polling of the actual job state; do not weaken the app policy."""
+    deadline = time.monotonic() + 30
+    last = None
+    while time.monotonic() < deadline:
+        last = page.evaluate("() => state.job ? ({state: state.job.state, action: state.job.action, error: state.job.error}) : null")
+        if last and (action is None or last["action"] == action):
+            if last["state"] == "completed":
+                return
+            if last["state"] in {"failed", "cancelled"}:
+                raise AssertionError("UI job did not succeed: " + json.dumps(last))
+        page.wait_for_timeout(100)
+    raise AssertionError("UI job did not complete: " + json.dumps(last))
+
+
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument('--offline',action='store_true')
@@ -104,20 +119,20 @@ def main():
                 chooser.value.set_files({'name':'notes.md','mimeType':'text/markdown','buffer':b'# Source notes\n\nPeople make choices about shared space. A design decision can have unintended consequences.'})
                 page.wait_for_selector('.source-card');check('Browser file-input upload and source ingestion')
                 pid=page.evaluate('state.p.id')
-                page.get_by_role('button',name='Build graph',exact=True).click();page.wait_for_selector('#graph-svg');page.wait_for_function("state.job?.state === 'completed'")
-                page.get_by_role('button',name='Discover angles',exact=True).click();page.wait_for_selector('.angle-card');page.wait_for_function("state.job?.state === 'completed'")
+                page.get_by_role('button',name='Build graph',exact=True).click();page.wait_for_selector('#graph-svg');wait_for_completion(page)
+                page.get_by_role('button',name='Discover angles',exact=True).click();page.wait_for_selector('.angle-card');wait_for_completion(page)
                 assert '85 / 100' in page.locator('.angle-score').first.inner_text()
                 page.get_by_role('button',name='Take this angle',exact=True).first.click()
-                page.get_by_role('button',name='Develop outline',exact=True).click();page.wait_for_selector('.outline-section');page.wait_for_function("state.job?.state === 'completed'")
-                page.get_by_role('button',name='Write draft',exact=True).first.click();page.wait_for_function("state.job?.action === 'draft' && state.job?.state === 'completed'");page.wait_for_selector('#manuscript')
+                page.get_by_role('button',name='Develop outline',exact=True).click();page.wait_for_selector('.outline-section');wait_for_completion(page)
+                page.get_by_role('button',name='Write draft',exact=True).first.click();wait_for_completion(page, 'draft');page.wait_for_selector('#manuscript')
                 assert client.get('/api/projects/'+pid).json()['review']['summary']
                 check('Complete graph → JEV → angle → outline → draft → review path with deterministic AI')
-                page.get_by_role('button',name='Revise with a direction',exact=True).click();page.locator('#revision-instruction').fill('Improve the ending.');page.get_by_role('button',name='Revise draft',exact=True).click();page.wait_for_function("state.job?.action === 'revise' && state.job?.state === 'completed'");check('Explicit revision job and versioning')
+                page.get_by_role('button',name='Revise with a direction',exact=True).click();page.locator('#revision-instruction').fill('Improve the ending.');page.get_by_role('button',name='Revise draft',exact=True).click();wait_for_completion(page, 'revise');check('Explicit revision job and versioning')
                 page.get_by_role('button',name='New project',exact=True).click();page.locator('#project-title').fill('UI integration fiction');page.locator('#project-mode').select_option('fiction');page.locator('#project-premise').fill('Mira must choose who gets to keep a memory.');page.get_by_role('button',name='Create project',exact=True).click();page.wait_for_selector('#dropzone')
-                page.get_by_role('button',name='Build graph',exact=True).click();page.wait_for_selector('#graph-svg');page.wait_for_function("state.job?.state === 'completed'")
-                page.get_by_role('button',name='Discover angles',exact=True).click();page.wait_for_selector('.angle-card');page.wait_for_function("state.job?.state === 'completed'")
-                page.get_by_role('button',name='Take this angle',exact=True).click();page.get_by_role('button',name='Develop outline',exact=True).click();page.wait_for_selector('.outline-section');page.wait_for_function("state.job?.state === 'completed'")
-                page.get_by_role('button',name='Write draft',exact=True).first.click();page.wait_for_function("state.job?.action === 'draft' && state.job?.state === 'completed'")
+                page.get_by_role('button',name='Build graph',exact=True).click();page.wait_for_selector('#graph-svg');wait_for_completion(page)
+                page.get_by_role('button',name='Discover angles',exact=True).click();page.wait_for_selector('.angle-card');wait_for_completion(page)
+                page.get_by_role('button',name='Take this angle',exact=True).click();page.get_by_role('button',name='Develop outline',exact=True).click();page.wait_for_selector('.outline-section');wait_for_completion(page)
+                page.get_by_role('button',name='Write draft',exact=True).first.click();wait_for_completion(page, 'draft')
                 page.get_by_role('button',name='Story ledger',exact=True).click();page.wait_for_selector('.source-text');assert 'Mira' in page.locator('.source-text').inner_text();page.get_by_role('button',name='Close dialog',exact=True).click();check('Fiction from premise, scene generation and continuity ledger')
                 page.locator(f'[data-action="open-project"][data-id="{sample_id}"]').click();page.wait_for_selector('#graph-svg')
                 page.get_by_role('button',name='Switch theme',exact=True).click();page.wait_for_timeout(500);page.screenshot(path=str(out/'light.png'),full_page=True);check('Light theme')

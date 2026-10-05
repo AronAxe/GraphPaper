@@ -1,0 +1,1 @@
+{"ok": true, "checks": {"/health": {"status": 200, "bytes": 29}, "/": {"status": 200, "bytes": 608}, "/static/app.js": {"status": 200, "bytes": 70688}, "/static/styles.css": {"status": 200, "bytes": 25023}}}
