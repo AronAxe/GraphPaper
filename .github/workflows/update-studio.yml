@@ -1,0 +1,105 @@
+name: Validate GraphPaper 0.2 update
+on:
+  push:
+    branches: ['release/graphpaper-v0.2.0']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: graphpaper-02-update
+  cancel-in-progress: false
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      commit: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: release/graphpaper-v0.2.0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify uploaded source and integrate without overwriting upstream changes
+        run: |
+          python - <<'PY'
+          import hashlib,json,pathlib,subprocess,shutil
+          root=pathlib.Path('.')
+          if (root/'_update/checksums.json').exists():
+              checks=json.loads((root/'_update/checksums.json').read_text())
+              mismatches=[]
+              for name,expected in checks.items():
+                  actual=hashlib.sha256((root/name).read_bytes()).hexdigest()
+                  if actual!=expected: mismatches.append((name,actual,expected))
+              if mismatches: raise RuntimeError('Transferred source mismatch: '+repr(mismatches))
+              subprocess.run(['python','_update/apply.py'],check=True)
+              subprocess.run(['python','_update/apply.py'],check=True)
+              shutil.rmtree('_update')
+          PY
+          node --check ui/app.js
+          node --check ui/studio.js
+      - run: python -m pip install -q -r requirements-dev.txt 'pillow>=11,<13'
+      - run: python -m pytest -q --junitxml=test-results/results.xml
+      - run: python -m playwright install --with-deps chromium
+      - run: python scripts/ui_smoke.py
+      - run: python scripts/ui_studio_smoke.py
+      - run: python -m graphpaper.desktop --self-test test-results/loopback.json
+      - name: Save verified source, screenshots and reports
+        id: commit
+        run: |
+          python - <<'PY'
+          import pathlib,shutil
+          from PIL import Image
+          p=pathlib.Path('docs/validation/v0.2');p.mkdir(parents=True,exist_ok=True)
+          for name,src in [('pytest.xml','test-results/results.xml'),('browser.json','test-results/ui/report.json'),('studio.json','test-results/studio/report.json'),('loopback.json','test-results/loopback.json')]: shutil.copyfile(src,p/name)
+          for name in ['voice','folder','humanizer','codex']:
+              with Image.open('test-results/studio/'+name+'.png') as image: image.convert('RGB').save('docs/images/'+name+'-v0.2.webp',quality=86)
+          PY
+          git add -A -- graphpaper ui scripts tests docs README.md CHANGELOG.md pyproject.toml .gitignore .github
+          if git ls-files _update/ | grep -q .; then git add -u -- _update; fi
+          python scripts/prepare_assets.py --manifest
+          git add publish-manifest.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          if ! git diff --cached --quiet; then
+            git commit -m 'Integrate tested GraphPaper 0.2 voice, folders, prose tools and Codex sign-in'
+            git push origin HEAD:release/graphpaper-v0.2.0
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Update-validation
+          path: test-results/
+  windows:
+    needs: integrate
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.integrate.outputs.commit }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q -r requirements-dev.txt
+      - run: python -m pytest -q --junitxml=test-results/windows.xml
+      - name: Build actual Windows application and verify official Codex
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./scripts/build_release.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GraphPaper-Windows-x64
+          path: |
+            dist/GraphPaper-v*-Windows-x64.zip
+            dist/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Windows-update-validation
+          path: |
+            test-results/
+            vendor/codex-release.json
