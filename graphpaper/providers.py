@@ -111,7 +111,7 @@ class Clients:
     def complete(self, system: str, user: str, *, role="writer", json_mode=False, max_tokens=None) -> str | dict:
         s = self.settings
         model = {"editor": s.editor_model, "extraction": s.extraction_model}.get(role) or s.model
-        if not model.strip():
+        if not model.strip() and s.provider != "codex":
             raise ProviderError("Choose a writing model in Connections. Model IDs are configurable; GraphPaper does not silently substitute one.")
         if len(system) + len(user) > s.context_chars:
             raise ProviderError("This request exceeds your configured context character budget. Raise it for a suitable model, narrow the selected graph or split the project. Nothing was silently truncated.")
@@ -119,6 +119,11 @@ class Clients:
         base = endpoint(s.base_url)
         if json_mode:
             system += "\nReturn only a valid JSON object. No fences, commentary, NaN or Infinity."
+        if s.provider == "codex":
+            from .codex import get_codex
+            self.check('https://chatgpt.com')
+            text = get_codex(self.vault.path.parent, s.codex_executable).complete(system, user, model, self.job, s.max_calls)
+            return parse_json(text) if json_mode else text
         if s.provider == "anthropic":
             data = self.post((base if base.endswith("/v1") else base + "/v1") + "/messages", {"model": model, "system": system, "messages": [{"role": "user", "content": user}], "max_tokens": cap}, self.llm_key(), role, True)
             if data.get("stop_reason") == "max_tokens":
@@ -178,6 +183,9 @@ class Clients:
         return answers
 
     def discover_models(self):
+        if self.settings.provider == 'codex':
+            from .codex import get_codex
+            return get_codex(self.vault.path.parent, self.settings.codex_executable).models()
         if self.settings.provider == "anthropic":
             headers = {"x-api-key": self.llm_key(), "anthropic-version": "2023-06-01"}
         else:

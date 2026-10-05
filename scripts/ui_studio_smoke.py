@@ -16,7 +16,7 @@ from fastapi.testclient import TestClient
 from graphpaper.server import create_app
 from graphpaper.models import Settings
 from tests.conftest import ScriptedClients
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 
 
 class StudioClients(ScriptedClients):
@@ -122,11 +122,11 @@ def main():
                 page.get_by_role('button',name='Humanize',exact=True).click();page.get_by_role('button',name='Create proposed edit',exact=True).click();wait(page,'humanize')
                 assert client.get(base).json()['draft'].startswith('It is important')
                 page.get_by_role('button',name='Compare proposed edit',exact=True).click();page.wait_for_selector('.studio-compare');page.screenshot(path=str(out/'humanizer.png'),full_page=True)
-                page.get_by_role('button',name='Accept this edit',exact=True).click();page.wait_for_selector('#manuscript');assert page.locator('#manuscript').input_value()=='the measured value was 12.5% [S2].'
+                page.get_by_role('button',name='Accept this edit',exact=True).click();expect(page.locator('.modal')).to_have_count(0);expect(page.locator('#manuscript')).to_have_value('the measured value was 12.5% [S2].')
                 report['checks'].append('Humanizer proposal, side-by-side comparison and explicit acceptance')
                 page.locator('#manuscript').fill('It is important to note that another point remains unchanged.');page.wait_for_timeout(800)
                 page.get_by_role('button',name='Deslop',exact=True).click();page.get_by_role('button',name='Create proposed edit',exact=True).click();wait(page,'deslop')
-                page.get_by_role('button',name='Compare proposed edit',exact=True).click();page.get_by_role('button',name='Discard proposal',exact=True).click()
+                page.get_by_role('button',name='Compare proposed edit',exact=True).click();page.get_by_role('button',name='Discard proposal',exact=True).click();expect(page.locator('.modal')).to_have_count(0)
                 assert client.get(base).json()['draft'].startswith('It is important')
                 report['checks'].append('Separate deslopping pass and non-destructive rejection')
                 page.locator('[data-action="settings"]').click();page.locator('#s-provider').select_option('codex')

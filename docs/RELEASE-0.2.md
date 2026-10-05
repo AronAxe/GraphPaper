@@ -18,3 +18,9 @@ The SHA256SUMS file records the package checksum. The bundled Codex runtime has 
 The build process runs automated tests, browser workflows and actual Windows package checks. Model responses in tests use controlled fixtures. The official runtime is checked while signed out; a real user's OAuth ceremony and live prose generation cannot be completed by CI. Inspect claims, citations and proposed edits before publishing.
 
 Existing projects load with defaults for the new features. User data stays in the existing local GraphPaper data directory; extracting the new executable does not replace your project database.
+
+### Verified on Windows
+
+120 automated tests passed; one symlink-permission test was skipped. All 26 browser workflow checks passed over real local HTTP with no JavaScript page errors. Official Codex CLI 0.160.1 passed its signed-out app-server handshake. Hosted Actions were queued, so these results come from the isolated native Windows build, not a claimed successful CI run.
+
+The compiled Windows executable passed its startup, local backend and bundled-interface self-test. The versioned Windows ZIP includes the official Codex runtime and its verified provenance. This check does not complete a real account OAuth login or make a live model request.

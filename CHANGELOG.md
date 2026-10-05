@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.2.0 — 2026-10-05
+
+- Learn and edit an author voice from uploaded writing or selected article URLs.
+- Separate project folders, stable-file automatic Inbox imports, role subfolders and original uploads.
+- Local prose inspection, humanizer/deslopping proposals, protected factual spans and explicit accept/reject with version history.
+- Official Codex browser OAuth and subscription-based writing, with an isolated account directory and bundled Windows runtime.
+- Dedicated new workflow, API, subprocess and browser tests; versioned Windows release packaging with SHA-256 provenance.
+
+
 ## 0.1.0 — 2026-10-05
 
 Initial GraphPaper writing studio:

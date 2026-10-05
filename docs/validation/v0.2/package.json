@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "checks": {
+    "/health": {
+      "status": 200,
+      "bytes": 29
+    },
+    "/": {
+      "status": 200,
+      "bytes": 718
+    },
+    "/static/app.js": {
+      "status": 200,
+      "bytes": 71000
+    },
+    "/static/styles.css": {
+      "status": 200,
+      "bytes": 25023
+    }
+  }
+}

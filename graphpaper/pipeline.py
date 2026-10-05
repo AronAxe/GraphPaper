@@ -253,7 +253,8 @@ def source_pack(p: Project, query: str, limit=38000, ids=None):
 
 
 def voice_notes(p: Project):
-    return [{"title": s.title, "sample": s.text[:3500], "note": "Style reference only. Do not copy wording or treat as factual evidence."} for s in p.sources if s.enabled and s.role == "voice"][:3]
+    from .voice import voice_context
+    return voice_context(p)
 
 
 def make_outline(p: Project, clients: Clients, job: Job):
@@ -330,7 +331,7 @@ def revise(p: Project, clients: Clients, job: Job, store: Store, instruction="",
     review = review_draft(p, clients, job) if not p.review.summary or p.review.draft_hash != digest(p.draft) else p.review
     pack = source_pack(p, (instruction or review.summary) + original[:4000], min(28000, clients.settings.context_chars // 3))
     job.note("Revising the draft without changing its intended thesis or fictional canon.", 87)
-    revised = clients.complete(BOUNDARY, dumps({"task": "Revise this complete piece. Preserve its best lines, nuance, voice, factual limits and intentional ending. Fix material issues rather than flattening style. Do not add unsupported claims. Return the complete revised Markdown only, not a critique or preface. Source citations remain [S1] format. Fiction has no inline scholarly citations.", "mode": p.mode, "brief": p.brief.model_dump(), "author_instruction": instruction, "review": review.model_dump(), "draft": original, "sources": pack}), role="editor")
+    revised = clients.complete(BOUNDARY, dumps({"task": "Revise this complete piece. Preserve its best lines, nuance, voice, factual limits and intentional ending. Fix material issues rather than flattening style. Do not add unsupported claims. Return the complete revised Markdown only, not a critique or preface. Source citations remain [S1] format. Fiction has no inline scholarly citations.", "mode": p.mode, "brief": p.brief.model_dump(), "author_instruction": instruction, "review": review.model_dump(), "draft": original, "sources": pack, "author_voice": voice_notes(p)}), role="editor")
     # Invalid references cannot be accepted through an automated revision gate.
     audit = citation_audit(p, revised)
     candidate_project = p.model_copy(deep=True)
@@ -391,7 +392,7 @@ class Runner:
         return next((j for j in self.jobs.values() if j.project_id == project_id and j.state in {"queued", "running"}), None)
 
     def start(self, project_id, action, instruction=""):
-        if action not in {"graph", "angles", "outline", "draft", "review", "revise"}:
+        if action not in {"graph", "angles", "outline", "draft", "review", "revise", "voice", "humanize", "deslop", "both"}:
             raise ValueError("Unknown action")
         with self.lock:
             if self.active(project_id):
@@ -413,7 +414,13 @@ class Runner:
         clients = self.clients_factory(settings, self.vault, job)
         try:
             self.store.snapshot(p, "Before " + job.action)
-            if job.action == "graph":
+            if job.action == "voice":
+                from .voice import learn_voice
+                learn_voice(p, clients, job)
+            elif job.action in {"humanize", "deslop", "both"}:
+                from .polish import polish_draft
+                polish_draft(p, clients, job, job.action, instruction)
+            elif job.action == "graph":
                 build_graph(p, clients, self.store, job)
             elif job.action == "angles":
                 make_angles(p, clients, job)

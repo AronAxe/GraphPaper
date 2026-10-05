@@ -126,6 +126,30 @@ class Review(Model):
     draft_hash: str = ""
 
 
+class VoiceProfile(Model):
+    enabled: bool = True
+    strength: int = Field(75, ge=0, le=100)
+    name: str = Field('My writing voice', max_length=160)
+    instructions: str = Field('', max_length=12000)
+    sample_ids: list[str] = Field(default_factory=list)
+    sample_hash: str = ''
+    learned_at: str = ''
+    metrics: dict[str, Any] = Field(default_factory=dict)
+    observations: list[str] = Field(default_factory=list)
+
+
+class PolishCandidate(Model):
+    mode: str
+    original_hash: str
+    draft: str = Field(max_length=1_000_000)
+    created: str = ''
+    review: dict[str, Any] = Field(default_factory=dict)
+    before: dict[str, Any] = Field(default_factory=dict)
+    after: dict[str, Any] = Field(default_factory=dict)
+    protected_spans: int = 0
+    diff: list[str] = Field(default_factory=list)
+
+
 class Project(Model):
     id: str = Field(default_factory=lambda: uid("p_"))
     title: str = Field(default="Untitled project", min_length=1, max_length=200)
@@ -146,12 +170,16 @@ class Project(Model):
     feedback: list[dict[str, Any]] = Field(default_factory=list)
     usage: dict[str, Any] = Field(default_factory=lambda: {"calls": 0, "input_tokens": 0, "output_tokens": 0, "reported_cost": 0.0, "unpriced_calls": 0})
     demo: bool = False
+    voice_profile: VoiceProfile = Field(default_factory=VoiceProfile)
+    polish: PolishCandidate | None = None
+    auto_import: bool = True
 
 
 class Settings(Model):
-    provider: Literal["openrouter", "openai-compatible", "anthropic"] = "openrouter"
+    provider: Literal["openrouter", "openai-compatible", "anthropic", "codex"] = "openrouter"
     base_url: str = "https://openrouter.ai/api/v1"
     model: str = ""
+    codex_executable: str = ""
     editor_model: str = ""
     extraction_model: str = ""
     max_output_tokens: int = Field(7000, ge=1000, le=64000)

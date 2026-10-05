@@ -14,6 +14,8 @@ from .providers import Clients, ProviderError
 
 
 def run_graphify(project: Project, clients: Clients, job):
+    if clients.settings.provider == "codex":
+        raise ValueError("Use Native extraction or import a Graphify JSON graph with Codex sign-in. The optional external Graphify process requires its own API credentials.")
     executable = clients.settings.graphify_executable or shutil.which("graphify")
     if not executable or not Path(executable).is_file():
         raise ValueError("Graphify is not installed or its executable was not found. Select Native in Connections, import graph.json, or install graphifyy and choose its executable.")

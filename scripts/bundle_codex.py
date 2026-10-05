@@ -23,7 +23,7 @@ def get(url):
 
 
 def main():
-    version=os.getenv('CODEX_RELEASE_TAG','latest')
+    version=os.getenv('CODEX_RELEASE_TAG','rust-v0.160.1')
     api='https://api.github.com/repos/openai/codex/releases/'+('latest' if version=='latest' else 'tags/'+version)
     with get(api) as r:release=json.load(r)
     if release.get('prerelease') or release.get('draft'):

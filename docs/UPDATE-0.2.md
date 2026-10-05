@@ -51,3 +51,13 @@ Primary official documentation:
 The release process runs the existing suite plus new voice, inbox, provenance, protected-edit and Codex subprocess tests. Browser workflows exercise uploads, voice learning/editing, folder ownership and automatic import, humanizing/deslopping comparisons, acceptance/rejection and the Codex settings option. Controlled model and authentication doubles do not establish real prose quality or complete a real user OAuth ceremony.
 
 A separate Windows check runs the actual bundled Codex executable, verifies the supported CLI flags, and performs a signed-out app-server handshake. No live model request or user sign-in is performed in CI. The compiled GraphPaper application also runs its backend/assets self-test. Interactive Windows dialog behavior and completion of your own browser sign-in remain user-environment checks. The executable is unsigned.
+
+## Interface previews
+
+![Author voice settings](images/voice-v0.2.webp)
+
+![Reversible humanizer comparison](images/humanizer-v0.2.webp)
+
+![Codex sign-in settings](images/codex-v0.2.webp)
+
+These are actual UI renders using controlled test material, not live-model quality demonstrations.
