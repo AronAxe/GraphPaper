@@ -1,4 +1,6 @@
 # GraphPaper
+
+![GraphPaper — Graph-first AI writing studio](docs/images/graphpaper-header.svg)
 ### A studio for connected thought.
 
 **Source material → knowledge graph → a distinctive angle → an editable outline → writing worth reading.**
