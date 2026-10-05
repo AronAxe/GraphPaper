@@ -24,7 +24,7 @@ jobs:
         run: |
           if [ -f _transfer/assemble.py ]; then python _transfer/assemble.py; fi
           node --check ui/app.js
-      - run: python -m pip install -r requirements-dev.txt 'pillow>=11,<13'
+      - run: python -m pip install -q -r requirements-dev.txt 'pillow>=11,<13'
       - run: python scripts/prepare_assets.py
       - run: python -m pytest -q --junitxml=test-results/results.xml
       - run: python -m playwright install --with-deps chromium
@@ -33,7 +33,7 @@ jobs:
       - name: Publish complete verified source and actual previews
         run: |
           python scripts/prepare_assets.py --reports
-          git add -A -- _transfer ui docs examples
+          git add -A -- _transfer ui docs examples scripts/ui_smoke.py
           python scripts/prepare_assets.py --manifest
           git add publish-manifest.json
           git config user.name 'github-actions[bot]'
@@ -58,7 +58,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q --junitxml=test-results/windows.xml
       - shell: pwsh
         run: ./scripts/build_windows.ps1
