@@ -15,6 +15,12 @@ from .server import create_app
 from .storage import data_directory
 
 
+def server_config(app, **options):
+    """Windowed Python has no stdout/stderr. Never configure console formatters."""
+    import uvicorn
+    return uvicorn.Config(app, log_config=None, **options)
+
+
 class DesktopBridge:
     """Small explicit bridge: export only through an OS save dialog."""
     def __init__(self, store, runner=None):
@@ -74,7 +80,7 @@ def run(browser: bool = False):
     # Keep the ephemeral listener open until handed to uvicorn (no port-selection race).
     sock.bind(("127.0.0.1", 0))
     port = sock.getsockname()[1]
-    config = uvicorn.Config(app, host="127.0.0.1", port=port, log_level="warning", access_log=False)
+    config = server_config(app, host="127.0.0.1", port=port, log_level="warning", access_log=False)
     server = uvicorn.Server(config)
     thread = threading.Thread(target=lambda: server.run(sockets=[sock]), daemon=True)
     thread.start()
@@ -149,7 +155,7 @@ def self_test(output):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
-        server = uvicorn.Server(uvicorn.Config(app, log_level="error"))
+        server = uvicorn.Server(server_config(app, log_level="error"))
         t = threading.Thread(target=lambda: server.run(sockets=[sock]), daemon=True)
         t.start()
         try:
