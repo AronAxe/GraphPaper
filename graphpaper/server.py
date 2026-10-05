@@ -147,6 +147,7 @@ def create_app(root=None):
         if p.mode == "fiction":
             p.brief.format = "Short story"
             p.brief.avoid = "Expository monologues, generic imagery, unearned resolutions, continuity breaks."
+        app.state.folders.path(p)
         return store.create(p)
 
     @app.post("/api/demo")
@@ -168,7 +169,7 @@ def create_app(root=None):
         version = raw.pop("version", None)
         if version != p.version:
             raise Conflict("A newer project version exists. Refresh; your unsaved editor text has been kept in this window.")
-        allowed = {"title", "brief", "draft", "outline", "angles", "selected_angle", "feedback"}
+        allowed = {"title", "brief", "draft", "outline", "angles", "selected_angle", "feedback", "voice_profile", "auto_import"}
         if set(raw) - allowed:
             raise ValueError("Unsupported project field")
         if "draft" in raw and p.draft != raw["draft"]:
@@ -193,13 +194,15 @@ def create_app(root=None):
             raise ValueError("Limit: 100 sources per project.")
         text = clean(text)
         fingerprint = digest(text)
-        if any(s.digest == fingerprint for s in p.sources):
+        if any(s.digest == fingerprint and s.role == role for s in p.sources):
             raise ValueError("This text is already in the project.")
         n = max([int(s.id[1:]) for s in p.sources if re.fullmatch(r"S\d+", s.id)] + [0]) + 1
         p.sources.append(Source(id=f"S{n}", title=title[:300], text=text, kind=kind, role=role, url=url, warnings=warnings or [], digest=fingerprint, author=author[:300], published=published[:100]))
         if p.graph.nodes:
             p.graph.warnings = list(dict.fromkeys(p.graph.warnings + ["Sources changed after the last graph build. Rebuild before relying on coverage."]))
-        return store.save(p, p.version)
+        p = store.save(p, p.version)
+        app.state.folders.original(p, p.sources[-1])
+        return p
 
     @app.post("/api/projects/{pid}/sources/text")
     async def source_text(pid: str, request: Request):
@@ -212,7 +215,9 @@ def create_app(root=None):
         await file.close()
         title = Path(file.filename or "source.txt").name[:300]
         text, warnings = await run_in_threadpool(extract, data, title)
-        return add_source(pid, title, text, kind=Path(title).suffix.lstrip("."), role=role, warnings=warnings)
+        p = add_source(pid, title, text, kind=Path(title).suffix.lstrip("."), role=role, warnings=warnings)
+        app.state.folders.original(p, p.sources[-1], data, title)
+        return p
 
     @app.post("/api/projects/{pid}/sources/url")
     async def source_url(pid: str, request: Request):
@@ -322,5 +327,7 @@ def create_app(root=None):
         p.title = (p.title + " · imported")[:200]
         return store.create(p)
 
+    from .studio_routes import install
+    install(app, store, vault, runner, settings)
     app.mount("/static", StaticFiles(directory=asset_directory()), name="static")
     return app

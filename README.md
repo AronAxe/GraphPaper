@@ -10,7 +10,13 @@ GraphPaper is a local-first, Windows-oriented writing studio for **nonfiction an
 ![GraphPaper's interactive graph studio](docs/images/graph.webp)
 *Actual app screenshot using the explicitly illustrative project included with the application.*
 
-## Open the studio on Windows
+## GraphPaper 0.2.0
+
+[**Download the Windows release**](https://github.com/AronAxe/GraphPaper/releases/latest) · [What is new](docs/UPDATE-0.2.md)
+
+Your own writing voice from uploads or article URLs; a project Inbox with automatic local imports; reversible humanizer/deslopping passes; and **Codex / ChatGPT browser sign-in instead of a writing API key**. The Windows package includes Python and the official Codex runtime. Existing API providers and the optional JEV connection remain available.
+
+## Open the source edition on Windows
 
 1. Extract the complete source ZIP to a normal folder, not inside the ZIP viewer.
 2. Double-click **`Open GraphPaper.vbs`**. This source edition needs **Python 3.11 or newer**, including Tcl/Tk. Python 3.12 or 3.13 is the conservative choice for the desktop dependencies.
@@ -19,7 +25,7 @@ GraphPaper is a local-first, Windows-oriented writing studio for **nonfiction an
 
 There is no need to type commands. The native window uses Microsoft Edge WebView2. See [Windows setup and troubleshooting](docs/WINDOWS.md).
 
-**Executable packaging:** a Windows build script and GitHub Actions workflow are included. They generate a portable `GraphPaper.exe` folder/ZIP; this source package is not a prebuilt or signed Windows executable. Native Windows execution remains to be validated. The backend and interface have been tested on Linux; see [validation scope](docs/QUALITY.md).
+**Executable packaging:** a Windows build script and GitHub Actions workflow are included. They generate a portable `GraphPaper.exe` folder/ZIP; this source package is not a prebuilt or signed Windows executable. Version 0.2 has native Windows automated tests and real-HTTP browser validation; see [validation scope](docs/QUALITY.md). Interactive native dialogs remain a separate check.
 
 ## A connected writing workflow
 
@@ -70,6 +76,12 @@ There are no analytics, remote fonts, hidden publishing or automatic agent loops
 ## Included examples
 
 **The city that forgot the dark** demonstrates nonfiction angle discovery with clearly fictional, illustrative source notes. **The last keeper of borrowed mornings** demonstrates literary speculative fiction with original canon and character relationships. They are interface examples, not benchmark results or verified reporting.
+
+## Version 0.2 validation update
+
+The 0.2 update was tested on a native Windows 11 machine with an isolated Python 3.13 environment: **120 automated tests passed**, with one symlink-permission test skipped; **all 26 real-HTTP browser workflow checks passed** with zero JavaScript page errors. The official bundled **Codex CLI 0.160.1** passed its signed-out app-server handshake and required-command checks. These are local Windows results, not GitHub-hosted CI results; the hosted runner remained queued and that run was cancelled. Reports are in [docs/validation/v0.2](docs/validation/v0.2/) (or the corresponding directory from this documentation page).
+
+A real user OAuth completion, paid model calls, output-quality comparisons and hands-on native-window dialog interaction are not claimed as tested. Historical 0.1 results below remain a record of that earlier build.
 
 ## Development and validation
 

@@ -1,5 +1,11 @@
 # Quality, tests and known limits
 
+## Version 0.2 validation update
+
+The 0.2 update was tested on a native Windows 11 machine with an isolated Python 3.13 environment: **120 automated tests passed**, with one symlink-permission test skipped; **all 26 real-HTTP browser workflow checks passed** with zero JavaScript page errors. The official bundled **Codex CLI 0.160.1** passed its signed-out app-server handshake and required-command checks. These are local Windows results, not GitHub-hosted CI results; the hosted runner remained queued and that run was cancelled. Reports are in [validation/v0.2](validation/v0.2/) (or the corresponding directory from this documentation page).
+
+A real user OAuth completion, paid model calls, output-quality comparisons and hands-on native-window dialog interaction are not claimed as tested. Historical 0.1 results below remain a record of that earlier build.
+
 ## Initial local validation
 
 Validation date: **5 October 2026**. Initial build environment: **Linux, Python 3.13**, system Chromium. Subsequent GitHub Actions results are separate and visible in the repository's Actions tab.
@@ -50,3 +56,5 @@ The practical quality goal is a better final article or story with less author c
 The source launcher and visual native shell need a real Windows interactive validation pass. No signed installer is included. Provider endpoint/model availability can change. Citation support is sampled. There is no automatic paywall bypass, OCR, live-web fact verification, trained author-preference model, cloud-sync collaboration or full WYSIWYG editor. HTML/Word typography should still be checked for a publisher's specific template.
 
 Large graphs are visually capped while the full project remains stored. Graphify IDs and native canonical IDs may leave duplicate conceptual labels after augmentation. Direction and pins influence candidate exploration but do not guarantee every requested connection is defensible.
+
+The compiled Windows executable passed its startup, local backend and bundled-interface self-test. The versioned Windows ZIP includes the official Codex runtime and its verified provenance. This check does not complete a real account OAuth login or make a live model request.
