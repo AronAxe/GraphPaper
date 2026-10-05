@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "graphpaper-studio"
+version = "0.1.0"
+description = "A local-first graph-guided writing studio for nonfiction and fiction"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Aron Bijl"}]
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["graphpaper*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra"
+
+[tool.setuptools.data-files]
+"share/graphpaper/ui" = ["ui/index.html", "ui/styles.css", "ui/app.js", "ui/icon.svg", "ui/graphpaper.ico"]
+
+[project.optional-dependencies]
+desktop = ["pywebview>=6.0,<7"]
+
+[project.gui-scripts]
+graphpaper = "graphpaper.desktop:main"
