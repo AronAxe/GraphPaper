@@ -3,6 +3,9 @@
 ![GraphPaper — Graph-first AI writing studio](docs/images/graphpaper-header.svg)
 ### A studio for connected thought.
 
+**Windows fix: [v0.2.1](https://github.com/AronAxe/GraphPaper/releases/tag/v0.2.1)** fixes the native interface freeze and the save-on-close deadlock. Existing projects remain intact. See the [patch notes](docs/RELEASE-0.2.1.md).
+
+
 **Source material → knowledge graph → a distinctive angle → an editable outline → writing worth reading.**
 
 GraphPaper is a local-first, Windows-oriented writing studio for **nonfiction and fiction**. It is a graphical application, not a command-line writing tool. Bring your sources, see how their ideas connect, guide the interpretation, and keep authorship of the result.

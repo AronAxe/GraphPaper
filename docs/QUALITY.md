@@ -1,5 +1,26 @@
 # Quality, tests and known limits
 
+## 0.2.1 native Windows correction ? 6 October 2026
+
+The reported interface freeze exposed a gap in the earlier validation: the
+Windows startup probe and Chromium tests did not initialize or interact with
+the native JavaScript/Python bridge. That bridge exposed a public native Window,
+so pywebview recursively inspected Windows/COM objects. A separate close callback
+also waited for JavaScript while holding the WinForms UI thread. Both are fixed.
+
+The corrected **compiled executable**, not just a browser substitute, passed all
+9 native interaction checks: Windows mouse input, restricted API initialization,
+promise round-trip, project creation/typing, Connections, native Save As open/cancel,
+and saving pending text before a normal Windows close. The same native test also
+passed from source. 126 automated Windows tests passed, with one symlink-permission
+skip. All 26 browser workflows passed; no JavaScript page errors occurred.
+
+Reports: [release summary](validation/v0.2.1/summary.json) and
+[native executable test](validation/v0.2.1/native-package.json). All tests used
+isolated temporary projects. No user manuscript or credentials were used, and no
+live model or OAuth request was made. The strict CSP is unchanged.
+
+
 ## Version 0.2 validation update
 
 The 0.2 update was tested on a native Windows 11 machine with an isolated Python 3.13 environment: **120 automated tests passed**, with one symlink-permission test skipped; **all 26 real-HTTP browser workflow checks passed** with zero JavaScript page errors. The official bundled **Codex CLI 0.160.1** passed its signed-out app-server handshake and required-command checks. These are local Windows results, not GitHub-hosted CI results; the hosted runner remained queued and that run was cancelled. Reports are in [validation/v0.2](validation/v0.2/) (or the corresponding directory from this documentation page).

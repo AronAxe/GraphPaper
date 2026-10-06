@@ -131,7 +131,7 @@ def main():
                 report['checks'].append('Separate deslopping pass and non-destructive rejection')
                 page.locator('[data-action="settings"]').click();page.locator('#s-provider').select_option('codex')
                 assert page.locator('#s-model').input_value()==''
-                page.screenshot(path=str(out/'codex.png'),full_page=True);page.get_by_role('button',name='Save connections',exact=True).click()
+                page.screenshot(path=str(out/'codex.png'),full_page=True);page.get_by_role('button',name='Save connections',exact=True).click();expect(page.locator('.modal')).to_have_count(0)
                 assert client.get('/api/settings').json()['provider']=='codex'
                 report['checks'].append('Codex subscription provider selectable without an API key')
                 page.set_viewport_size({'width':1000,'height':800});page.locator('.nav-link[data-tab="sources"]').click()

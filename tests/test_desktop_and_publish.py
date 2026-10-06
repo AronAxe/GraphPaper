@@ -13,20 +13,20 @@ from scripts.publish_gui import package_files
 
 def test_native_close_does_not_need_eval():
     bridge=DesktopBridge(None)
-    bridge.window=Mock()
+    bridge._window=Mock()
     assert bridge.notify_ready()
     assert bridge.request_close()=={"closed":True}
-    assert bridge.close_authorized
-    bridge.window.destroy.assert_called_once()
+    assert bridge._close_authorized
+    bridge._window.destroy.assert_called_once()
 
 
 def test_native_close_preserves_running_job_when_declined():
     bridge=DesktopBridge(None,SimpleNamespace(jobs={"j":SimpleNamespace(state="running")}))
-    bridge.window=Mock()
-    bridge.window.create_confirmation_dialog.return_value=False
+    bridge._window=Mock()
+    bridge._window.create_confirmation_dialog.return_value=False
     assert bridge.request_close()=={"closed":False}
-    bridge.window.destroy.assert_not_called()
-    assert not bridge.close_authorized
+    bridge._window.destroy.assert_not_called()
+    assert not bridge._close_authorized
 
 
 def test_graph_import_bad_edge_is_validation_error():

@@ -34,6 +34,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: ./scripts/build_release.ps1
+      - name: Exercise the actual Windows window, native dialogs and save-on-close
+        run: python scripts/native_smoke.py --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
       - uses: actions/upload-artifact@v4
         with:
           name: GraphPaper-Windows-x64
@@ -49,7 +51,7 @@ jobs:
           $version = python -c "from graphpaper import __version__; print(__version__)"
           if ($env:GITHUB_REF_NAME -ne "v$version") { throw 'Tag does not match application version.' }
           gh release view $env:GITHUB_REF_NAME *> $null
-          if ($LASTEXITCODE -ne 0) { gh release create $env:GITHUB_REF_NAME --verify-tag --title "GraphPaper $env:GITHUB_REF_NAME" --notes-file docs/RELEASE-0.2.md }
+          if ($LASTEXITCODE -ne 0) { gh release create $env:GITHUB_REF_NAME --verify-tag --title "GraphPaper $env:GITHUB_REF_NAME" --notes-file docs/RELEASE-0.2.1.md }
           gh release upload $env:GITHUB_REF_NAME "dist/GraphPaper-v$version-Windows-x64.zip" dist/SHA256SUMS.txt --clobber
       - uses: actions/upload-artifact@v4
         if: always()
