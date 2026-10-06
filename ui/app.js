@@ -209,7 +209,7 @@ boot();
 // Native close uses a save handshake, not eval (our CSP deliberately forbids it).
 window.graphpaperRequestClose=async()=>{
  try{await flush();if(window.pywebview?.api?.request_close)await window.pywebview.api.request_close();}
- catch(e){toast('Not closed: '+e.message,true);}
+ catch(e){await window.pywebview?.api?.cancel_close?.().catch(()=>{});toast('Not closed: '+e.message,true);}
 };
 function notifyDesktopReady(){window.pywebview?.api?.notify_ready?.().catch(()=>{});}
 window.addEventListener('pywebviewready',notifyDesktopReady);

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1 ? 2026-10-06
+
+- Fix recursive native-window exposure in the JavaScript bridge.
+- Fix native close/save deadlock without discarding pending edits.
+- Add real Windows mouse, bridge, dialog and save-on-close regression tests for the compiled release.
+
 ## 0.2.0 — 2026-10-05
 
 - Learn and edit an author voice from uploaded writing or selected article URLs.

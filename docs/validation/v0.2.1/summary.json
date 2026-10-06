@@ -1,0 +1,16 @@
+{
+  "version": "0.2.1",
+  "windows_unit_tests": {
+    "passed": 126,
+    "skipped": 1,
+    "failed": 0
+  },
+  "native_source_checks": 9,
+  "native_packaged_executable_checks": 9,
+  "browser_workflow_checks": 26,
+  "native_page_errors": [],
+  "live_model_calls": false,
+  "archive": "GraphPaper-v0.2.1-Windows-x64.zip",
+  "size_bytes": 157603152,
+  "sha256": "988cd93b4a1a1f7a4f849de800ea385a0dcc528c69a667f81a0c728f46e357b4"
+}

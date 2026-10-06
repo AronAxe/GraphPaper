@@ -22,38 +22,76 @@ def server_config(app, **options):
 
 
 class DesktopBridge:
-    """Small explicit bridge: export only through an OS save dialog."""
+    """Only explicit methods cross the JavaScript boundary.
+
+    pywebview recursively inspects public attributes. Never attach application
+    state or a native Window there: WinForms/COM properties are UI-thread-only
+    and their object graphs can recurse indefinitely during API injection.
+    """
+    __slots__ = ("_store", "_runner", "_window", "_ui_ready", "_close_authorized", "_close_pending")
     def __init__(self, store, runner=None):
-        self.store = store
-        self.runner = runner
-        self.window = None
-        self.ui_ready = False
-        self.close_authorized = False
+        self._store = store
+        self._runner = runner
+        self._window = None
+        self._ui_ready = False
+        self._close_authorized = False
+        self._close_pending = threading.Event()
 
     def notify_ready(self):
-        self.ui_ready = True
+        self._ui_ready = True
         return True
 
     def request_close(self):
         """Called by our UI only after its pending saves have completed."""
-        active = self.runner and any(j.state in {"queued", "running"} for j in self.runner.jobs.values())
-        if active and not self.window.create_confirmation_dialog(
+        active = self._runner and any(j.state in {"queued", "running"} for j in self._runner.jobs.values())
+        if active and not self._window.create_confirmation_dialog(
             "AI job running", "Close and cancel this job? An in-flight provider request may still finish and be billed. Saved checkpoints remain available."
         ):
+            self._close_pending.clear()
             return {"closed": False}
-        self.close_authorized = True
-        self.window.destroy()
+        self._close_authorized = True
+        self._window.destroy()
         return {"closed": True}
+
+    def cancel_close(self):
+        """Let the author retry closing after a failed save or declined prompt."""
+        self._close_pending.clear()
+        return True
+
+    def _on_closing(self):
+        """Cancel the initial close immediately; never wait for JS on the UI thread."""
+        if self._close_authorized or not self._ui_ready:
+            return True
+        if not self._close_pending.is_set():
+            self._close_pending.set()
+            threading.Thread(target=self._ask_ui_to_close, name="graphpaper-close", daemon=True).start()
+        return False
+
+    def _ask_ui_to_close(self):
+        try:
+            # WinForms must first return from FormClosing before a JS dispatch
+            # can complete. The worker lets the UI event loop keep pumping.
+            self._window.run_js("window.graphpaperRequestClose()")
+        except Exception:
+            logging.exception("The editor could not confirm its save state")
+            try:
+                if self._window.create_confirmation_dialog(
+                    "Close GraphPaper?", "The editor could not confirm its save state. Close anyway? Unsaved text may be lost."
+                ):
+                    self._close_authorized = True
+                    self._window.destroy()
+            finally:
+                self._close_pending.clear()
 
     def save_export(self, project_id: str, kind: str):
         try:
             import webview
             if kind not in {"md", "docx", "html", "json", "graph"}:
                 return {"error": "Unknown export type"}
-            p = self.store.get(project_id)
+            p = self._store.get(project_id)
             data, _, ext = export(p, kind)
             stem = re.sub(r'[^\w\s.-]', '', p.title).strip()[:80] or "GraphPaper"
-            result = self.window.create_file_dialog(
+            result = self._window.create_file_dialog(
                 webview.FileDialog.SAVE, save_filename=stem + ext,
                 file_types=(f"{kind.upper()} files (*{ext})", "All files (*.*)"),
             )
@@ -123,22 +161,9 @@ def run(browser: bool = False):
             js_api=bridge, width=1440, height=940, min_size=(940, 650),
             background_color="#101714", text_select=True,
         )
-        bridge.window = window
+        bridge._window = window
 
-        def closing():
-            if bridge.close_authorized or not bridge.ui_ready:
-                return True
-            try:
-                # The JS -> Python callback completes an async save handshake.
-                # Do not use evaluate_js: its eval wrapper conflicts with CSP.
-                window.run_js("window.graphpaperRequestClose()")
-                return False
-            except Exception:
-                return window.create_confirmation_dialog(
-                    "Close GraphPaper?", "The editor could not confirm its save state. Close anyway? Unsaved text may be lost."
-                )
-
-        window.events.closing += closing
+        window.events.closing += bridge._on_closing
         webview.start(gui="edgechromium" if sys.platform == "win32" else None, debug=False, private_mode=True)
     finally:
         cleanup()
