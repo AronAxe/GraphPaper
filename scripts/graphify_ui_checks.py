@@ -53,6 +53,7 @@ def exercise(page,check,out):
             page.wait_for_timeout(100)
         else:raise AssertionError('Native external extraction timed out')
         page.wait_for_selector('#graph-svg')
+        page.wait_for_function("() => state.p.graph.coverage?.engine==='external_graphify' && state.p.graph.nodes.length>0")
         project=page.evaluate('() => state.p')
         graph=project['graph']
         assert graph['coverage']['engine']=='external_graphify'
