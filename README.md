@@ -1,126 +1,87 @@
 # GraphPaper
 
 ![GraphPaper — Graph-first AI writing studio](docs/images/graphpaper-header.svg)
-### A studio for connected thought.
 
-**Current release: [GraphPaper 0.3.0](https://github.com/AronAxe/GraphPaper/releases/latest)** adds model-specific reasoning controls and a dedicated Science workspace. The native Windows freeze and save-on-close fixes are retained. Existing projects remain intact.
+<p align="center"><strong>Connect your sources. Find your angle. Write in your own voice.</strong></p>
 
+<p align="center">
+  <a href="https://github.com/AronAxe/GraphPaper/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/AronAxe/GraphPaper?style=flat-square&amp;color=79a87d"></a>
+  <a href="https://github.com/AronAxe/GraphPaper/actions/workflows/quality.yml"><img alt="Live quality workflow status" src="https://img.shields.io/github/actions/workflow/status/AronAxe/GraphPaper/quality.yml?branch=main&amp;style=flat-square&amp;label=checks"></a>
+  <a href="docs/WINDOWS.md"><img alt="Windows x64 desktop" src="https://img.shields.io/badge/desktop-Windows%20x64-557e98?style=flat-square"></a>
+  <a href="pyproject.toml"><img alt="Source edition Python 3.11 or newer" src="https://img.shields.io/badge/source-Python%203.11%2B-557e98?style=flat-square"></a>
+  <a href="LICENSE"><img alt="MIT license" src="https://img.shields.io/github/license/AronAxe/GraphPaper?style=flat-square&amp;color=b29561"></a>
+  <a href="https://github.com/AronAxe/GraphPaper/wiki"><img alt="Read the wiki" src="https://img.shields.io/badge/docs-Wiki-79a87d?style=flat-square"></a>
+</p>
 
-**Source material → knowledge graph → a distinctive angle → an editable outline → writing worth reading.**
+<p align="center">
+  <a href="https://github.com/AronAxe/GraphPaper/releases/latest"><strong>Download for Windows</strong></a> ·
+  <a href="docs/GETTING-STARTED.md">Quick start</a> ·
+  <a href="docs/README.md">Documentation</a> ·
+  <a href="https://github.com/AronAxe/GraphPaper/wiki">Wiki</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
+</p>
 
-GraphPaper is a local-first, Windows-oriented writing studio for **nonfiction, fiction and scientific manuscripts**. It is a graphical application, not a command-line writing tool. Bring your sources, see how their ideas connect, guide the interpretation, and keep authorship of the result.
+GraphPaper is a **local-first writing studio for nonfiction, fiction and scientific manuscripts**. Upload your material, explore its knowledge graph, choose a direction, shape the outline and refine the draft—all in a Windows desktop interface.
 
-![GraphPaper's interactive graph studio](docs/images/graph.webp)
-*Actual app screenshot using the explicitly illustrative project included with the application.*
+Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argument, the evidence and the final words.
 
-## New in 0.3.0
+## Three ways to write
 
-[**Download GraphPaper for Windows**](https://github.com/AronAxe/GraphPaper/releases/latest) ? [Science and reasoning guide](docs/UPDATE-0.3.md)
+| Mode | Start with | Build toward |
+|---|---|---|
+| **Nonfiction** | Articles, documents, notes and a question | A distinctive, source-linked essay or article |
+| **Fiction** | A premise, characters and the rules of your world | Scene-driven writing with a continuity ledger |
+| **Science** | A research question and an explicit search protocol | An evidence-led manuscript, APA references and an auditable research package |
 
-**Reasoning depth:** choose independently for the writer, editor and extractor. Codex supplies its supported levels through model discovery; other providers receive their native reasoning parameters. Defaults are preserved and unsupported levels are not silently substituted.
+**Sources → Graph → Angles → Outline → Write**
 
-**Science:** search PubMed, Semantic Scholar, arXiv, Crossref and Europe PMC; screen studies, retrieve available full text, inspect the evidence matrix, and draft a source-linked scientific manuscript. APA 7 Word export generates author-year citations and hanging references from retrieved metadata. A research package adds BibTeX, RIS, the protocol and the actual search log. Search limits and abstract-only evidence stay visible; author checks do not pretend to confer journal or ethics approval.
+Science adds a **Research** desk for scholarly search, screening and evidence appraisal. [Explore the workflows →](docs/README.md)
 
-![The Science research desk](docs/images/research-v0.3.webp)
-*Actual interface using clearly labelled synthetic workflow-test material.*
+## Open the studio
 
-## Author voice, folders and prose tools (retained from 0.2)
+1. Download the **Windows x64 ZIP** from [Releases](https://github.com/AronAxe/GraphPaper/releases/latest)—not GitHub’s “Source code” archive.
+2. Extract the entire folder and open **`GraphPaper.exe`**. Keep `_internal` beside it. **No separate Python installation is needed.**
+3. Open **Connections & settings**. Sign in with ChatGPT through Codex, or configure a supported API provider. Permit cloud processing before sending project material.
+4. Create a project, add sources and begin. The included examples can be explored without model calls.
 
-[**Download the Windows release**](https://github.com/AronAxe/GraphPaper/releases/latest) · [What is new](docs/UPDATE-0.2.md)
+The portable build needs Microsoft Edge WebView2 and is currently unsigned. Existing projects live separately from the executable. [Windows setup and upgrades →](docs/WINDOWS.md)
 
-Your own writing voice from uploads or article URLs; a project Inbox with automatic local imports; reversible humanizer/deslopping passes; and **Codex / ChatGPT browser sign-in instead of a writing API key**. The Windows package includes Python and the official Codex runtime. Existing API providers and the optional JEV connection remain available.
+## What makes it useful
 
-## Open the source edition on Windows
+- **Explore before committing.** Inspect source-linked concepts and relationships, follow paths, pin ideas and compare competing angles. Edit a suggested thesis or write your own.
+- **Keep your voice.** Learn an editable style profile from your writing samples or selected articles at an author URL. Adjust its influence rather than accepting a generic house style.
+- **Improve prose without losing the original.** Humanize and Deslop offer separate or combined passes, protected factual spans, side-by-side proposals and explicit acceptance.
+- **Work from a project folder.** Drop documents into a project’s Inbox. Role-specific subfolders distinguish evidence, canon, inspiration and voice samples; idle-time imports do not trigger paid model calls.
+- **Choose where reasoning happens.** Configure writer, editor and extraction models separately, with provider-native reasoning controls. Optional JEV evaluates graph candidates, evidence gaps and revision decisions.
+- **Do traceable literature work.** Search PubMed, Semantic Scholar, arXiv, Crossref and Europe PMC; screen papers, inspect accessible text and export the search log with the manuscript.
 
-1. Extract the complete source ZIP to a normal folder, not inside the ZIP viewer.
-2. Double-click **`Open GraphPaper.vbs`**. This source edition needs **Python 3.11 or newer**, including Tcl/Tk. Python 3.12 or 3.13 is the conservative choice for the desktop dependencies.
-3. In the setup window, choose **Install and open**. First setup downloads dependencies into a private virtual environment. Subsequent launches go straight to the studio.
-4. Open **Connections & settings**, enter your provider key, choose a model and explicitly permit cloud processing. Start with either illustrated example to explore the interface without making model calls.
+## Inside GraphPaper
 
-There is no need to type commands. The native window uses Microsoft Edge WebView2. See [Windows setup and troubleshooting](docs/WINDOWS.md).
+![Graph exploration in GraphPaper](docs/images/graph.webp)
+*The graph workspace, using the included illustrative project.*
 
-**Executable packaging:** a Windows build script and GitHub Actions workflow are included. They generate a portable `GraphPaper.exe` folder/ZIP; this source package is not a prebuilt or signed Windows executable. The release workflow includes automated, real-HTTP browser and actual native Windows interaction checks; see [validation scope](docs/QUALITY.md). The compiled executable is checked separately from the source edition.
+<details>
+<summary><strong>Science research desk and writing workspace</strong></summary>
 
-## A connected writing workflow
+![Science research desk](docs/images/research-v0.3.webp)
+*Actual interface with clearly labelled synthetic workflow-test material.*
 
-| Stage | What you control |
-|---|---|
-| **Research (Science)** | Define the protocol, search scholarly databases, screen records and inspect evidence, full-text availability and the search log. |
-| **Sources** | Drag in PDF, DOCX, text, Markdown, CSV or HTML. Paste notes, import a public article URL, or import a saved project. Label material as evidence, fiction canon, inspiration or a voice sample. |
-| **Graph** | Build an evidence-linked graph, or import Graphify/NetworkX JSON. Pan, zoom, drag nodes, inspect quote anchors, highlight a path, and pin or exclude concepts. |
-| **Angles** | Discover distinct interpretations from contradictions, branches, convergences and cross-community connections. Edit the title/thesis, inspect the evidence gaps, or write your own angle. Nothing is selected for you. |
-| **Outline** | Edit and reorder sections or scenes, change their purpose and beats, and allocate the word budget before drafting. |
-| **Write** | Work in a quiet Markdown editor with live preview. Review evidence or scene craft, revise with a direction, inspect previous versions, and export Word, Markdown or print-friendly HTML. |
+![Writing workspace](docs/images/writing.webp)
 
-![The writing desk](docs/images/writing.webp)
+</details>
 
-### Nonfiction is not fiction with citations bolted on
+## Your models, your material
 
-Nonfiction extraction distinguishes attributed claims, interpretations and source passages. Exact quotations are checked against the uploaded text. Drafts retain source references; the review checks citation integrity and samples substantive claims for source support. A missing or mismatched quote cannot be promoted to verified evidence.
+**Writing connections:** Codex / ChatGPT OAuth, OpenRouter, OpenAI-compatible APIs, local endpoints and direct Anthropic. Codex reasoning options follow its model catalog; there is no universal “ultra” setting. **JEV is a separate, optional OpenRouter/TypeSafe connection.** [Models and reasoning →](docs/CONNECTIONS.md)
 
-**An exact quotation proves that the words occurred in a source, not that the source is correct or the conclusion follows.** The app keeps that distinction visible. It does not automatically browse the web to resolve every disputed fact.
+Projects and revisions are stored locally. Cloud generation sends task-relevant material to the providers you authorize; local-first does **not** mean cloud models run offline. Windows API-key storage uses DPAPI. Codex maintains a separate account directory. [Privacy and security →](docs/SECURITY.md)
 
-### Fiction gets its own machinery
+A graph suggests connections; it does not prove them. Science keeps capped searches, preprints and abstract-only evidence visible. APA export prepares a manuscript for author review—it does not confer journal acceptance or ethics approval. [Science workflow →](docs/SCIENCE.md)
 
-Start from a premise with no research corpus, or bring chapters and a story bible. Set genre, viewpoint, tense, voice and inviolable canon. The graph explores character conflicts and consequences. The writer works scene by scene and updates a compact continuity ledger of locations, knowledge, objects and unresolved threads. Reviews focus on motivation, causality, pacing, scene craft and canon—not invented academic citations.
+## Documentation and development
 
-The ledger is a generated summary of the drafting pass, not new author-approved canon. Recheck it after manual or whole-draft revisions.
+[Getting started](docs/GETTING-STARTED.md) · [Project folders](docs/PROJECTS-AND-SOURCES.md) · [Author voice](docs/VOICE-AND-PROSE.md) · [Graph and JEV](docs/GRAPH-AND-JEV.md) · [Exports and APA](docs/EXPORTS-AND-APA.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)
 
-### JEV is part of the control system
+For implementation details, tests and builds, see the [developer guide](docs/DEVELOPMENT.md) and [architecture](docs/ARCHITECTURE.md). Recorded release validation is separate from the live CI badge: [test reports and scope](docs/QUALITY.md).
 
-JEV/TypeSafe is used for **candidate screening, angle evaluation, evidence-gap signalling, next-action recommendations and a bounded revision acceptance gate**. It is not just a decorative score beside a headline.
-
-The preferred connection is **OpenRouter**, with a **direct TypeSafe route** available. Auto uses an available OpenRouter key first, then direct TypeSafe. You can select a route explicitly or switch JEV off; the app labels unscored results honestly. Scores are model judgments, not empirically calibrated probabilities of truth or writing quality.
-
-Writing providers: Codex / ChatGPT OAuth, OpenRouter, OpenAI-compatible APIs including local endpoints, and direct Anthropic. Writer, extraction and editorial-review models can be set separately. No model name is hard-coded as a universal best choice.
-
-### Graphify without making setup painful
-
-The default native extraction backend works without installing Graphify and creates quote-linked graphs directly. You can also import a Graphify `graph.json` from the interface. An optional **real Graphify CLI bridge** is included for an existing Graphify installation; it augments native source checking rather than pretending imported relations are evidence.
-
-Graphify is not bundled, and its subprocess integration has not been exercised against a live installation in this build environment. It has its own model spend, outside GraphPaper's request counter. See [integrations](docs/INTEGRATIONS.md).
-
-## Local by default, explicit about costs
-
-Projects and revisions live in a local SQLite database. Windows API keys use DPAPI rather than plaintext; session-only storage is available. Keys are not exposed to the browser or included in exports. Cloud generation requires explicit permission. A localhost model can operate without cloud permission.
-
-Every GraphPaper AI job has a request budget, progress, cancellation, token receipts and recoverable checkpoints. Costs are shown only when the provider actually reports them. A request cap is not a monetary guarantee. Cancelling an in-flight request does not necessarily prevent its charge.
-
-There are no analytics, remote fonts, hidden publishing or automatic agent loops. [Security details](docs/SECURITY.md).
-
-## Included examples
-
-**The city that forgot the dark** demonstrates nonfiction angle discovery with clearly fictional, illustrative source notes. **The last keeper of borrowed mornings** demonstrates literary speculative fiction with original canon and character relationships. They are interface examples, not benchmark results or verified reporting.
-
-## Version 0.2 validation update
-
-The 0.2 update was tested on a native Windows 11 machine with an isolated Python 3.13 environment: **120 automated tests passed**, with one symlink-permission test skipped; **all 26 real-HTTP browser workflow checks passed** with zero JavaScript page errors. The official bundled **Codex CLI 0.160.1** passed its signed-out app-server handshake and required-command checks. These are local Windows results, not GitHub-hosted CI results; the hosted runner remained queued and that run was cancelled. Reports are in [docs/validation/v0.2](docs/validation/v0.2/) (or the corresponding directory from this documentation page).
-
-A real user OAuth completion, paid model calls, output-quality comparisons and hands-on native-window dialog interaction are not claimed as tested. Historical 0.1 results below remain a record of that earlier build.
-
-## Development and validation
-
-```bash
-python -m pip install -r requirements-dev.txt
-python -m pytest -q
-python -m playwright install chromium
-python scripts/ui_smoke.py
-```
-
-The desktop launcher remains the normal user experience. A developer-only browser fallback is available with `python -m graphpaper.desktop --browser`.
-
-**Validated in the initial build environment:** 86 automated tests passed; 17 Chromium workflow checks passed; loopback HTTP/backend/static-asset self-test passed. One Windows DPAPI test was skipped on Linux. Model calls in the test suite use controlled mocks. Live provider output quality, live Graphify and native Windows/WebView2 execution still require testing in their actual environments. Repository Actions provide subsequent platform-specific validation results.
-
-There is no claim that a graph automatically beats a strong direct prompt. GraphPaper makes a richer process possible; [the quality protocol](docs/QUALITY.md) describes how to compare it fairly.
-
-## Publishing this source package
-
-The optional **`Publish GraphPaper.vbs`** opens a separate graphical publisher for `AronAxe/GraphPaper`. It requires Git for Windows and your GitHub sign-in. It copies only a hash-checked source manifest into a fresh clone, pushes a **new branch**, and opens a pull-request comparison. It never force-pushes or overwrites `main`; publication needs an explicit click. The publisher itself was unit-tested for package validation, not exercised against a live GitHub account.
-
-After merging, the repository's **Windows desktop package** workflow can build the portable executable. [Publishing instructions](docs/PUBLISHING.md).
-
-## Documentation
-
-[Windows](docs/WINDOWS.md) · [Architecture](docs/ARCHITECTURE.md) · [Integrations](docs/INTEGRATIONS.md) · [Quality](docs/QUALITY.md) · [Security](docs/SECURITY.md) · [Changelog](CHANGELOG.md)
-
-**MIT License · Copyright © 2026 Aron Bijl.** Independent implementation; external systems retain their own licences and terms.
+**[MIT licensed](LICENSE) · Created by Aron Bijl.** External runtimes and services retain their own licenses and terms.

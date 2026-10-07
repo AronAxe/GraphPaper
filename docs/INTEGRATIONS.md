@@ -1,63 +1,67 @@
-# Provider and Graphify integrations
+# Integration reference
 
-## Writing models
+This page describes the interfaces implemented in GraphPaper 0.3.0. User-facing setup is in [Models and reasoning](CONNECTIONS.md). External endpoints, model IDs and capability vocabularies can change independently; consult the linked primary documentation and test a connection before a large job.
 
-OpenRouter is the default provider. Configure any available model ID rather than relying on stale built-in model names. The writer, extraction model and editor can be different. Their use is task-specific; a cheap extractor is only useful when it can reliably preserve negation, attribution and exact quotes.
+## Writing providers
 
-OpenAI-compatible requests use Chat Completions at the configured `/v1` base. Direct OpenAI hosts use `max_completion_tokens`; other compatible endpoints use `max_tokens`. Direct Anthropic uses `/v1/messages` and separate system text. Not every provider implements every optional convention; the connection test and error messages expose incompatibilities.
+| Route | Implemented request style |
+|---|---|
+| OpenRouter | Chat Completions at the configured API base; model discovery and optional reasoning fields |
+| OpenAI-compatible | Chat Completions; direct OpenAI hosts use `max_completion_tokens`, other compatible endpoints use `max_tokens` |
+| Anthropic | Direct `/v1/messages`, separate system prompt, model capabilities and supported effort/thinking fields |
+| Codex | Official app-server authentication/model discovery plus non-interactive runtime execution |
 
-Structured generation parses JSON and validates the relevant stage contract. Truncated output fails rather than replacing the previous document. Transport retries are bounded and counted. After a network timeout, the app does not assume an unobserved request was free.
+Structured tasks request JSON and validate the relevant contract. Truncated or invalid output does not become a complete manuscript. Retry and request budgets are bounded. A timeout is not treated as proof that a request was unbilled.
 
-## JEV: OpenRouter preferred, direct TypeSafe available
+Reasoning is selected by role. Provider default omits the override. Codex uses advertised `supportedReasoningEfforts`; extended levels are not guessed. Other routes preserve their native field names and report unsupported combinations instead of silently downgrading them.
 
-The implementation follows the published typed-decision interfaces:
+Primary references: [Codex authentication](https://developers.openai.com/codex/auth), [app-server](https://developers.openai.com/codex/app-server), [configuration](https://developers.openai.com/codex/config-reference), [OpenRouter reasoning](https://openrouter.ai/docs/guides/best-practices/reasoning-tokens), [Anthropic effort](https://platform.claude.com/docs/en/build-with-claude/effort).
+
+## JEV / TypeSafe
 
 | Route | Endpoint | Default alias |
 |---|---|---|
 | OpenRouter | `https://openrouter.ai/api/alpha/decisions` | `~typesafe/jev-latest` |
-| TypeSafe | `https://api.typesafe.ai/v1/systemone` | `jev-latest` |
+| Direct TypeSafe | `https://api.typesafe.ai/v1/systemone` | `jev-latest` |
 
-Both use bearer authorization. Requests contain `model`, `state` and `questions`. Used question types are `noul` (bounded numeric estimate) and `choice` with explicit criteria. Response parsing checks the typed answer, validates numeric range and refuses out-of-vocabulary choices. A displayed score is a model estimate, **not empirical calibration**.
+Requests include `model`, `state` and typed `questions`, with bearer authorization. The application uses bounded numeric estimates (`noul`) and `choice` responses with explicit criteria. Parsing validates answer types, numeric range and declared choices.
 
-Auto chooses an available OpenRouter credential first, including the ordinary writer key when the writing provider is OpenRouter, then a direct TypeSafe key. It does not silently switch after a failed paid request. Select the route explicitly to control it. Choosing Off keeps the workflow available and displays results as unscored rather than fabricating JEV output.
+Auto prefers available OpenRouter credentials, then direct TypeSafe; it does not silently fail over after a rejected paid request. No connection means no fabricated JEV score. The application’s combined editorial score is not a calibration result.
 
-Relevant primary documentation:
-- https://openrouter.ai/docs/guides/community/jev-tutorial
-- https://openrouter.ai/docs/guides/community/typesafe-sdk
-- https://docs.typesafe.ai/introduction/quickstart
-- https://docs.typesafe.ai/sdk/python/api/constants
+Primary references: [OpenRouter JEV guide](https://openrouter.ai/docs/guides/community/jev-tutorial), [TypeSafe quickstart](https://docs.typesafe.ai/introduction/quickstart), [TypeSafe SDK constants](https://docs.typesafe.ai/sdk/python/api/constants).
 
-Transport contracts are covered by mock-response tests. No live credentials were available in the build environment, so live calls have not been verified here. Alpha endpoints and model IDs can change independently of GraphPaper.
+## Scholarly adapters
+
+| Service | Interface |
+|---|---|
+| PubMed | E-utilities search and record retrieval, including structured XML metadata |
+| Semantic Scholar | Academic Graph paper search with metadata, abstracts and available links |
+| arXiv | Atom query API |
+| Crossref | REST works discovery, journal-article filter |
+| Europe PMC | REST search and available full-text XML |
+
+Queries, limits, timestamps and partial failures are stored. Optional NCBI/Semantic Scholar credentials do not double as writing-model keys. Full-text fetching uses accessible URLs and explicit uploaded-source attachment, not authenticated browser scraping.
+
+Primary references: [NCBI](https://www.ncbi.nlm.nih.gov/home/develop/api/), [Semantic Scholar](https://api.semanticscholar.org/api-docs/graph), [arXiv](https://info.arxiv.org/help/api/user-manual.html), [Crossref](https://www.crossref.org/documentation/retrieve-metadata/rest-api/), [Europe PMC](https://europepmc.org/RestfulWebService).
 
 ## Graphify
 
-The default **Native** mode does not require Graphify. It performs graph extraction itself, with exact source quotation anchors. This is intentional: a writer should not have to set up another agent framework before opening the studio.
+Native extraction does not require Graphify. Imported Graphify/NetworkX JSON supports `nodes` and either `edges` or `links`; relationships are not accepted as factual evidence merely because the JSON supplies a confidence value.
 
-**Import:** use Graph view to import Graphify/NetworkX node-link JSON. Both `edges` and `links` arrays are accepted. Imported edges are labelled unverified; external confidence fields do not become factual evidence.
-
-**Run an installed Graphify:** choose Graphify in advanced Connections and provide the installed executable. The bridge runs an argument array without a shell:
+The optional CLI adapter invokes a user-selected executable without a shell, prepares enabled non-voice source text in a temporary folder and selects the configured provider backend. Its command contract includes:
 
 ```text
 graphify extract <temporary-source-folder> --backend openai --mode deep --no-viz --no-cluster --token-budget 4000 --max-concurrency 2
 ```
 
-For direct Anthropic it selects `--backend claude`. It passes the documented provider environment variables and retrieves `graphify-out/graph.json` or `graph.json`. The temporary corpus contains enabled non-voice text sources, not your entire computer. Native extraction then performs separate quote-linked source checking.
+For direct Anthropic it selects the corresponding Claude backend. The adapter looks for `graphify-out/graph.json` or `graph.json` and adds native evidence extraction. Version compatibility must be checked against the installed Graphify executable. Graphify is not bundled, and the external process has not been validated by a live run in the recorded GraphPaper release tests.
 
-The relevant published package is `graphifyy`; Graphify is an independently installed, optional dependency. Choose a trusted executable. Its API usage, nested retries and any independently configured behaviour are **outside GraphPaper's request/cost accounting**. It has a 20-minute subprocess timeout; cancellation terminates the process, but cannot undo already submitted provider calls. This bridge has not been run against a live Graphify installation here.
+Graphify’s calls and retries are outside GraphPaper’s internal request/cost meter. Codex subscription sign-in is not a drop-in API credential for this external adapter; use native extraction with Codex or provide the external process with its supported API connection.
 
-Primary sources:
-- https://github.com/Graphify-Labs/graphify
-- https://docs.graphify.com
+Project references: [Graphify repository](https://github.com/Graphify-Labs/graphify), [Graphify documentation](https://docs.graphify.com).
 
-No third-party repository code is vendored in GraphPaper. The external project's licence and provider terms still apply when you install or use it.
+## Local API and desktop bridge
 
-## Desktop reference
+The local API is a session-protected implementation interface, not a public multi-tenant service. Routes cover projects, sources, graph operations, jobs, settings, prose proposals, scientific research and exports. Inspect [server.py](../graphpaper/server.py), [studio_routes.py](../graphpaper/studio_routes.py) and [science_routes.py](../graphpaper/science_routes.py) for current schemas.
 
-The native shell follows pywebview's documented API. Its save-before-close callback uses `window.run_js`, avoiding `evaluate_js`'s eval dependency so GraphPaper can retain a strict Content Security Policy.
-
-- https://pywebview.flowrl.com/api/
-- https://pywebview.flowrl.com/examples/save_file_dialog.html
-
-## Local API for future agent plugins
-
-Each desktop session binds to an ephemeral loopback port; it is not a network-facing service. The UI uses `/api/projects`, project-specific source and graph routes, `/api/jobs`, settings and export endpoints. A session cookie and `X-GraphPaper: 1` header protect the API, with Origin/Host checks. Use the Pydantic models and route definitions as the contract. There is no claimed MCP server or installed agent plugin in this release; adding one should preserve explicit project permissions and never expose provider keys.
+The native bridge is intentionally narrow; its four methods are `notify_ready`, `save_export`, `request_close` and `cancel_close`. Do not attach public native/store objects to it. [pywebview API](https://pywebview.flowrl.com/api/) provides the underlying desktop contract.

@@ -1,17 +1,47 @@
-# Publishing and Windows packages
+# Releases and Windows packaging
 
-The GraphPaper source is published to **AronAxe/GraphPaper** through the authorized GitHub connector. The earlier claim that the connector was read-only was incorrect. The optional GUI publisher remains useful for independently distributing a verified source package, but is not required for this repository upload.
+Most users should download the compiled Windows ZIP from [Releases](https://github.com/AronAxe/GraphPaper/releases/latest). This page is for maintainers producing an application release, not for everyday writing.
 
-## Build a Windows package
+## Source, artifact and release are different
 
-After merge to the default branch, open **Actions → Windows desktop package → Run workflow**. A successful run produces a GraphPaper-Windows-x64 artifact containing the executable and companion files. Run a native interactive smoke test before treating an unsigned build as a public release.
+**Source** is the repository or GitHub’s automatic source archive. It is not a compiled Windows application.
 
-The import workflow assembles checksum-verified frontend source, runs the test suite and browser checks, and regenerates illustrative assets. Its commit removes the temporary transfer chunks; ordinary users receive regular application source files.
+**Actions artifacts** are outputs of an individual workflow run. Their existence does not mean a public release has been published.
 
-## Optional no-terminal publisher
+**A release asset** is the versioned Windows ZIP attached to a release, accompanied by `SHA256SUMS.txt`. The author should be able to identify the exact file that was validated.
 
-Install Git for Windows with Git Credential Manager. Double-click **Publish GraphPaper.vbs** in a source package and choose Publish source. The helper checks the source manifest, creates a new branch of AronAxe/GraphPaper, and opens GitHub for review and merging. It never force-pushes, overwrites main directly, deletes unknown existing repository files, or includes local manuscripts and API keys.
+A documentation-only update normally does not require rebuilding or renumbering the application. Keep published binaries and their checksums untouched unless intentionally creating a new version.
 
-The helper's actual Git push has not been exercised by this build session; repository writes were performed through the connector. Path/hash controls have automated tests. For subsequent edited development, use ordinary Git or GitHub Desktop instead of relying on an old source-package manifest.
+## Build and validate
 
-The GitHub main branch and original MIT license are preserved through a normal pull-request merge. CI artifacts and releases should be judged by their actual run results, not by the existence of a workflow file.
+The [Windows workflow](../.github/workflows/windows.yml) provides the executable release path. The [build script](../scripts/build_release.ps1) installs the desktop build dependencies, verifies the official Codex runtime, packages the application with PyInstaller and checks the compiled backend/assets.
+
+The release pipeline then exercises the **actual native window**, including the Science workspace. It does not substitute a browser-only test for the desktop shell. Preserve the private bridge and asynchronous save-before-close behavior when changing desktop code.
+
+Run the unit/integration and browser workflows as well. Use isolated temporary project directories and controlled fixtures. Live scholarly connectivity is a separate opt-in check; no user credentials or private manuscripts belong in test artifacts.
+
+[Developer commands →](DEVELOPMENT.md#run-the-tests)
+
+## Package integrity
+
+The application is a one-directory build: `GraphPaper.exe` needs its companion `_internal` files. The [streaming packager](../scripts/package_windows.py) writes a ZIP without buffering the full runtime in memory, verifies CRCs and records SHA-256.
+
+The official Codex vendor bundle includes version and checksum provenance. Preserve the applicable third-party licenses. Do not label an unsigned application as signed or equate a digest with publisher certification.
+
+Before publishing, verify that the package contains the current interface, version and release documentation, not assets copied from an older build.
+
+## Publish a new version
+
+Update the application version and changelog deliberately. Review the workflow’s current release-note path; it must describe the version being built. Run validation and inspect the reports before attaching the asset.
+
+A version tag must match the application version. The workflow publishes a versioned ZIP and checksum, and avoids silently overwriting an existing verified release asset. If a fix is needed after publication, create a new corrective release with its own version and evidence.
+
+The release notes should distinguish native/local validation from hosted Actions results, and live provider checks from controlled test doubles. Do not present an unavailable or throttled database as tested successfully.
+
+## The source publishing helper
+
+`Publish GraphPaper.vbs` opens an optional GUI publisher for a verified source package. It is separate from normal app startup, targets `AronAxe/GraphPaper`, verifies a code-only manifest and pushes a new branch for review. It is not the portable executable installer.
+
+The helper requires Git for Windows and Git Credential Manager. It does not need a raw token pasted into the application, does not force-push main and does not upload the local manuscript database. Modified development code should use ordinary Git or GitHub Desktop rather than an outdated package manifest.
+
+When maintaining a source package, regenerate `publish-manifest.json` from the staged source after changes. Verify hashes against the committed bytes, including line-ending normalization; the manifest is not a digital signature.

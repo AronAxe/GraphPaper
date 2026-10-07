@@ -1,56 +1,81 @@
 # Architecture
 
-GraphPaper is an independent implementation. It does not vendor another writer or pretend a knowledge graph is proof. The native backend is deliberately usable without a large graph database or a separate frontend toolchain.
+GraphPaper is a local-first desktop application with an inspectable source/evidence model. It is an independent implementation; it does not vendor a complete writing agent and relabel it.
 
-## Process layout
+## Runtime structure
 
-`GraphPaper.pyw` provides first-run GUI setup. `graphpaper.desktop` starts FastAPI/Uvicorn on a held, randomly assigned **127.0.0.1** socket and opens a pywebview window. On Windows the selected renderer is Edge WebView2. The interface is local HTML, CSS and JavaScript; no CDN or remote fonts are required.
+```text
+Windows desktop window (pywebview / Edge WebView2)
+                |
+          local HTML/CSS/JS
+                |
+  session-protected loopback API (FastAPI / Uvicorn)
+                |
+   project store + bounded job runner + provider clients
+       |                |                    |
+   SQLite / folders   writing pipeline   Codex / APIs / JEV
+                           |
+                    Science adapters
+               PubMed / S2 / arXiv / Crossref / Europe PMC
+```
 
-SQLite/WAL stores project JSON, extraction cache and draft revisions. Pydantic rejects unknown model fields and non-finite typed numeric values. Optimistic version checks preserve concurrent edits. A small, explicit JS bridge exposes export dialogs and a save-before-close handshake, not arbitrary filesystem access or shell execution. The close handshake uses `run_js`, not CSP-incompatible `evaluate_js`.
+The desktop process holds an ephemeral loopback socket before handing it to Uvicorn. The UI is bundled; there is no frontend CDN dependency. The native bridge exposes only readiness, export and close-handshake methods, keeping native Windows objects private. A close request returns immediately to the UI thread while a worker asks the editor to finish saving.
 
-## Domain data
+## Domain model
 
-Sources have stable IDs, content digests, enabled flags and roles: evidence, canon, inspiration, voice. A source passage is stored with exact character positions. Source-role separation prevents a voice example from becoming factual support.
+**Project:** stable ID, mode, brief, sources, graph, angles, selected direction, outline, draft, reviews, history-related state, usage and optional research workspace.
 
-Nodes are claims, concepts, people, events, characters, places, themes or rules. Edges have typed relationships and source quote anchors. Their status is sourced, inferred,canon, proposed or imported. Exact quote verification is deterministic; whether the quote supports a claim remains a separate editorial judgment.
+**Source:** stable source ID, text, content digest, role, enabled state, URL/author metadata and ingestion warnings. Science can attach structured bibliographic metadata.
 
-Angles contain a thesis/hook, a discovered motif, node/edge/source IDs, evidence questions, counterargument and labelled JEV evaluations. Outlines carry section/scene purposes, beats, sources and word allocations. Drafts, reviews, continuity ledgers and earlier versions are distinct objects.
+**Graph:** typed nodes and relationships, status, evidence quotations, exact-match offsets, communities and extraction coverage. Attribution and truth are separate concepts.
 
-## Pipeline
+**Angle:** thesis/premise, hook, discovered motif, nodes/edges/sources, objections, research questions and optional JEV judgments.
 
-1. **Ingest.** Extract text with bounded file size/decompression, preserve paragraph/page ordering where supported, and warn about missing visual or revision content. URLs are fetched explicitly with public-address checks and redirect revalidation.
-2. **Extract.** Process every planned source chunk or fail without installing a partial graph. Cache unchanged extraction inputs. Extract exact evidence separately from possible conceptual links. Canonical labels merge native nodes across sources.
-3. **Discover.** Mine bounded relationship, contradiction/conflict, divergence, convergence, cross-community bridge and directed-chain motifs. Pin/exclude choices and explicit direction influence the shortlist. Diversity is preserved across motif families.
-4. **Evaluate.** Batch candidates through typed JEV questions. Use separate judgments for value, fit, support and spuriousness. Then ask the writing model for genuinely different candidate theses rather than blindly writing the structurally highest-ranked path. JEV scores and evidence-gap signals remain inspectable.
-5. **Choose.** Human approval is mandatory for an angle. An author can edit it or supply their own. Do not manufacture support for an author-preferred conclusion.
-6. **Outline.** Build an editable structure with a normalized word budget. Nonfiction requires an argument; fiction requires consequential scenes, not headings masquerading as a story.
-7. **Draft.** Use section-aware source retrieval, graph-linked passages, brief, voice references and prior prose. For fiction, carry a compact continuity ledger across scenes. Save checkpoints while a long job runs.
-8. **Review.** A separately configurable editor checks substance and craft. Nonfiction also audits reference IDs and samples up to 12 substantive claims with exact quote verification. JEV can recommend research, revision or author review.
-9. **Refine.** At most one automatic improvement pass per draft job, when enabled. Preserve both candidates; an explicit JEV preference and citation integrity gate control automatic replacement. Further revisions are user-triggered.
+**Research workspace:** protocol, provider records, search logs, screening decisions, appraisal and source hashes, abstract/keywords and manuscript-specific author confirmations.
 
-JEV's `research` recommendation is a visible workflow signal, **not a claim that autonomous web research ran**. The author can import additional sources and repeat the relevant stage.
+Pydantic validates structured state. SQLite/WAL stores project snapshots, revisions and cache; optimistic version checks prevent a stale result from quietly replacing newer edits. Project folders supplement the database rather than replacing it.
 
-## Modules
+## Writing pipeline
+
+1. Ingest source text with explicit roles and warnings.
+2. Extract/cache graph chunks and verify quoted substrings.
+3. Mine bounded graph motifs, preserving structural diversity.
+4. Optionally use JEV to judge candidates and decide where further reasoning is useful.
+5. Let the author select or replace the proposed angle.
+6. Build an editable outline, then draft sequential sections/scenes with relevant passages.
+7. Review substance and craft, with source support for nonfiction/science and a continuity ledger for fiction.
+8. Save checkpoints and keep revision proposals recoverable.
+
+The optional automatic revision is bounded, not an open-ended agent loop. JEV judgments inform control and acceptance but are not empirical truth probabilities.
+
+## Science extension
+
+`scholarly.py` calls external metadata services with bounded retrieval, rate spacing, explicit failures and provenance. Screening converts included records into project evidence sources. Full-text retrieval and uploaded-paper attachment retain content scope and source identity.
+
+`science.py` coordinates query planning, retrieval, appraisal, scientific outline, drafting and checks. A planned query is not a completed search. The actual log constrains method reporting. Empirical mode requires author-supplied completed results. Search limits remain visible, especially for systematic/scoping claims.
+
+`apa.py` resolves internal source IDs against metadata; `science_export.py` constructs the manuscript and research package. Submission confirmations are tied to the current manuscript/research state, not a permanent project-wide approval flag.
+
+## Module map
 
 | Module | Responsibility |
 |---|---|
-| `models.py` | Typed project and settings contracts |
-| `storage.py` / `secrets.py` | SQLite, revisions, cache; DPAPI or OS keyring/session keys |
-| `ingest.py` | Files, public URL retrieval, chunking and content digests |
-| `graph.py` / `graphify_adapter.py` | Extraction normalization, graphs, motifs, optional real Graphify subprocess |
-| `providers.py` | OpenRouter, OpenAI-compatible, Anthropic and JEV requests; retries and usage |
-| `support.py` | Source-reference and sampled-claim support checks |
-| `pipeline.py` | Jobs, stage contracts, source selection, writer/editor/JEV orchestration |
-| `export.py` | Markdown, DOCX, safe HTML, graph/project JSON |
-| `server.py` / `desktop.py` | Local API security and native desktop shell |
-| `ui/` | Graph, source library, angle cards, outline, editor, settings and version UI |
+| [models.py](../graphpaper/models.py), [science_models.py](../graphpaper/science_models.py) | Project/settings and research contracts |
+| [storage.py](../graphpaper/storage.py), [folders.py](../graphpaper/folders.py), [secrets.py](../graphpaper/secrets.py) | Database, file workspaces and credentials |
+| [ingest.py](../graphpaper/ingest.py), [author_web.py](../graphpaper/author_web.py) | Source import and selected author-site discovery |
+| [graph.py](../graphpaper/graph.py), [graphify_adapter.py](../graphpaper/graphify_adapter.py) | Graph extraction, normalization, motifs and optional Graphify |
+| [providers.py](../graphpaper/providers.py), [reasoning.py](../graphpaper/reasoning.py), [codex.py](../graphpaper/codex.py) | Model requests, effort capabilities and Codex authentication/runtime |
+| [pipeline.py](../graphpaper/pipeline.py), [support.py](../graphpaper/support.py) | Jobs, context selection, writing/review and source checks |
+| [voice.py](../graphpaper/voice.py), [polish.py](../graphpaper/polish.py) | Style profiles and protected prose proposals |
+| [scholarly.py](../graphpaper/scholarly.py), [science.py](../graphpaper/science.py) | Live literature adapters and scientific work |
+| [apa.py](../graphpaper/apa.py), [science_export.py](../graphpaper/science_export.py), [export.py](../graphpaper/export.py) | Citations, manuscripts and exchange formats |
+| [server.py](../graphpaper/server.py), [studio_routes.py](../graphpaper/studio_routes.py), [science_routes.py](../graphpaper/science_routes.py) | Local API and mode-specific endpoints |
+| [desktop.py](../graphpaper/desktop.py), [ui/](../ui/) | Native shell and interactive workspaces |
 
-## Deliberate constraints
+## Boundaries that matter
 
-Graph view renders at most 180 nodes at once for responsiveness; the full graph stays in the project. Imports are capped at 5,000 nodes/20,000 edges; native motif candidate expansion is bounded. Native extraction permits up to 350 planned chunks; the job request budget can stop a large corpus before completion, preserving its previous state and cached chunks.
+Graph view limits are distinct from stored-graph size. Character budgets are not exact tokenizer counts for every model. Source packs contain selected passages rather than a promise that every request sees the entire library. A voice profile is source-informed prompting, not fine-tuning.
 
-Source retrieval is relevance/anchor-based and bounded, not a promise to send the entire corpus into every model call. Coverage is available in the pipeline context. The context guard is character-based, not an exact tokenizer for every arbitrary model.
+Graphify is optional external execution with separate costs. Scholarly records, preprints and abstract-only sources are not automatically validated science. Citation matching samples support; it cannot prove every inference.
 
-Graphify imports preserve external IDs. Augmenting native extraction can leave similar labels as separate nodes; there is no unsafe automatic entity-equivalence proof. Graphify CLI work has separate costs and an explicitly bounded timeout.
-
-The application does not learn a globally calibrated model of the author's preferences. Saved choices/directions are explicit controls. Persistent learned preference calibration and blind writing-quality benchmarks remain future work, not hidden implemented features.
+The application is not currently documented as a multi-user server, an MCP service or an installed agent plugin. Future integrations should preserve explicit project permission and avoid exposing credentials. [Development](DEVELOPMENT.md) and [Security](SECURITY.md) describe the corresponding checks.

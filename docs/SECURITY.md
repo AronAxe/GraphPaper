@@ -1,37 +1,58 @@
-# Security and privacy
+# Privacy and security
 
-GraphPaper is a single-user local application, not a hardened multi-tenant hosted service. Do not expose its loopback server through a public proxy or bind it to the LAN.
+GraphPaper is a single-user local desktop application. Local-first describes where the project is stored and who controls actions; it does not mean a selected cloud model runs offline.
 
-## Data at rest
+## What stays on the device
 
-Source text, manuscripts, extraction cache and revisions are stored in local SQLite **without database encryption**. Use OS disk encryption and appropriate account permissions for confidential material. Project JSON backups include the source text; treat them as confidential documents.
+The SQLite database holds source text, manuscripts, settings, extraction cache and revisions. Project folders hold Inbox material and preserved originals. This content is **not database-encrypted**. Use OS account protections, disk encryption and appropriate backups for confidential work.
 
-On Windows, stored API credentials are protected with DPAPI and tied to the user context. On other systems, an available OS keyring is used; otherwise keys are session-only. There is no plaintext fallback. Keys are not returned to the browser or exported in project backups.
+Project JSON backups include source text. Research packages include the manuscript, protocol and evidence metadata. Treat both as documents that may contain sensitive information; they are not anonymized automatically.
 
-## Network and providers
+## Credential storage
 
-Cloud processing requires explicit consent. Once enabled, task-relevant source passages, project instructions and drafts are sent to the selected providers, including JEV when enabled. Their retention/training/processing terms apply; local storage does not imply offline model processing.
+Windows API credentials use DPAPI rather than plaintext storage. Other systems can use an available OS keyring; otherwise keys remain session-only. The interface receives presence/status flags, not the saved API secrets, and project exports do not include them.
 
-URL imports are explicit network operations separate from model consent. They support public HTTP/S resources on ordinary ports, validate DNS addresses, pin a vetted address for connection and revalidate redirects. Private, loopback and link-local article URLs are rejected. TLS verification stays enabled. There is no credentialed browser scraping, hidden cookie forwarding or paywall bypass.
+Codex manages its own sign-in state in GraphPaper’s separate `codex-account` directory. Do not treat that directory as an ordinary shareable project folder. Signing out there does not automatically sign out unrelated Codex installations. DPAPI-protected keys may not be portable to a different Windows account or computer.
 
-A custom **model** base URL is deliberately different from an article URL: localhost is supported so users can run local inference. Only configure a provider endpoint you trust with the associated key.
+Do not paste tokens into manuscript prompts, source documents, command examples or public screenshots. Environment-provided credentials used for development deserve the same protection.
 
-## Local interface
+## When network requests happen
 
-The service uses a per-session HttpOnly, SameSite cookie plus a custom request header for stateful API access and validates Origin/Host. Content Security Policy disallows arbitrary scripts, eval and framing. User source text and model output are rendered with escaping; the app does not execute code received from a model. Native file access is limited to explicit export dialogs. External links open outside the app; file-URL navigation and implicit downloads are disabled in the shell.
+| Action | What may leave the device |
+|---|---|
+| Cloud extraction, drafting, review, voice learning or prose editing | Task-relevant project text sent to the selected writing provider |
+| JEV decisions | The candidate/evidence or editorial state required for the decision |
+| Public URL import / author-page discovery | The requested URL and ordinary network request information |
+| Scholarly search / full-text retrieval | Search terms, requested identifiers, and an optional service credential |
+| Codex browser sign-in | The official account-authentication flow handled by Codex |
+| Optional Graphify subprocess | A temporary source corpus and the configured provider connection |
 
-The Python bridge's export and close operations are narrow but are not an isolation boundary against malicious code already running under your Windows account. This app does not claim to defend a compromised computer.
+Cloud generation requires permission. Website imports and scholarly searches are distinct user-triggered network operations and do not require an LLM key. Provider processing, retention, account and rate-limit policies still apply. The app has no analytics or hidden automatic publishing.
 
-## Optional Graphify
+## Local interface protections
 
-Running Graphify executes a user-selected local program. Only choose a trusted installation. It receives the configured model credential and a temporary source-text corpus. As an independent program it is outside GraphPaper's internal request accounting; do not assume the app can audit every action or guarantee all child-process behaviour. Use native extraction instead when that additional trust is inappropriate.
+The backend binds to an ephemeral **127.0.0.1** port, not the LAN. API access uses a per-session HttpOnly/SameSite cookie, a custom header and Origin/Host checks. The interface escapes imported text and generated output, uses a restrictive Content Security Policy and does not execute model-provided code.
 
-## Publishing helper
+The native bridge exposes four explicit methods rather than recursively exposing database, runner or Windows objects. Save-before-close dispatches without blocking the Windows message loop. These boundaries prevent the known native interaction defect; they are not a defense against malicious software already running as your user.
 
-The optional publisher uses a hash-checked allowlist, not the studio database directory. It clones a fixed repository into a fresh working folder, copies the source package, commits, pushes a new branch and opens a comparison. It never requests a raw GitHub token, disables Git security or force-pushes main. Git Credential Manager is responsible for sign-in.
+Do not expose the local service through a public reverse proxy or change it into a multi-user hosted deployment without a separate security design.
 
-A manifest detects accidental changes, not a sophisticated attacker who can replace both the code and its hashes. The package is **not digitally signed**. Review source changes and use the GitHub pull request before merging. The publisher is not called by normal startup.
+## Files and public URLs
 
-## Reporting
+Ingestion enforces limits and checks supported types. Public article retrieval validates network destinations, rejects private/loopback/link-local addresses, pins a validated address and rechecks redirects. It does not use your authenticated browser cookies or bypass access controls.
 
-Report security issues privately to the repository owner before publishing sensitive details. Do not include credentials or confidential manuscript text in screenshots, issue attachments or logs. Review files before sharing an entire local data folder.
+The **model endpoint** is deliberately different: localhost is permitted for local inference. Only enter a provider URL you trust with the associated credential.
+
+Inbox import checks stable files and rejects unsafe filesystem cases such as symlinks. Those checks do not turn an untrusted downloaded program into a safe attachment. Imported documents remain untrusted data for model prompts.
+
+## Optional executables and release integrity
+
+Graphify is a separate executable selected by the user. Its behavior, retries and child processes are outside GraphPaper’s internal metering. Use a trusted installation or native extraction instead.
+
+The Windows release bundles an official Codex runtime with version and checksum provenance. `SHA256SUMS.txt` identifies the exact application ZIP. The GraphPaper binary is unsigned; a checksum is not a signed publisher identity or an independent audit.
+
+## Sharing and reporting
+
+Before sharing a log, screenshot or project, remove credentials, confidential writing and personal data. Report ordinary reproducible defects through [Issues](https://github.com/AronAxe/GraphPaper/issues). Use an established private contact route to the repository maintainer for a security-sensitive report; do not publish active credentials or an exploit against someone’s live installation.
+
+This documentation describes implemented safeguards and their limits, not a formal penetration-test certification. [Validation scope →](QUALITY.md)
