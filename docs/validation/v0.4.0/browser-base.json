@@ -1,0 +1,25 @@
+{
+  "mode": "HTTP browser",
+  "live_models": false,
+  "checks": [
+    "Welcome and empty state",
+    "Illustrative graph renders with 18 nodes",
+    "Inspect graph node and persist pin",
+    "Path query and highlight",
+    "Edit and select an angle",
+    "Edit and reorder outline",
+    "Manuscript autosave and safe live preview",
+    "Clickable source references",
+    "Read and restore earlier version",
+    "Export options and valid Word output",
+    "Configure provider through UI (mock transport only)",
+    "Browser file-input upload and source ingestion",
+    "Complete graph \u2192 JEV \u2192 angle \u2192 outline \u2192 draft \u2192 review path with deterministic AI",
+    "Explicit revision job and versioning",
+    "Fiction from premise, scene generation and continuity ledger",
+    "Light theme",
+    "Responsive 390px layout without horizontal overflow"
+  ],
+  "page_errors": [],
+  "ok": true
+}

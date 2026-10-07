@@ -25,6 +25,9 @@ class Brief(Model):
     format: str = "Long-form essay"
     voice: str = "Clear, thoughtful, specific; wit without glibness. No formulaic AI phrasing."
     direction: str = ""
+    thesis: str = Field('', max_length=8000)
+    stance_policy: Literal['auto', 'preserve', 'explore'] = 'auto'
+    rhetorical_force: int = Field(70, ge=0, le=100)
     target_words: int = Field(1800, ge=200, le=20000)
     originality: int = Field(65, ge=0, le=100)
     rigor: int = Field(85, ge=0, le=100)
@@ -128,6 +131,8 @@ class Review(Model):
     citation_audit: dict[str, Any] = Field(default_factory=dict)
     verdict: str = "Not reviewed"
     draft_hash: str = ""
+    context_hash: str = ""
+    authorial_assessment: dict[str, Any] = Field(default_factory=dict)
 
 
 class VoiceProfile(Model):
@@ -145,6 +150,7 @@ class VoiceProfile(Model):
 class PolishCandidate(Model):
     mode: str
     original_hash: str
+    context_hash: str = ""
     draft: str = Field(max_length=1_000_000)
     created: str = ''
     review: dict[str, Any] = Field(default_factory=dict)
@@ -157,7 +163,7 @@ class PolishCandidate(Model):
 class Project(Model):
     id: str = Field(default_factory=lambda: uid("p_"))
     title: str = Field(default="Untitled project", min_length=1, max_length=200)
-    mode: Literal["nonfiction", "fiction", "science"] = "nonfiction"
+    mode: Literal["nonfiction", "fiction", "science", "polemic"] = "nonfiction"
     created: str = Field(default_factory=now)
     updated: str = Field(default_factory=now)
     version: int = 0
@@ -166,6 +172,8 @@ class Project(Model):
     graph: Graph = Field(default_factory=Graph)
     angles: list[Angle] = Field(default_factory=list)
     selected_angle: str = ""
+    angles_context_hash: str = ""
+    outline_context_hash: str = ""
     outline: list[Section] = Field(default_factory=list)
     draft: str = ""
     review: Review = Field(default_factory=Review)

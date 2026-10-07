@@ -62,3 +62,7 @@ A network timeout can represent a request the provider already processed. The ap
 Open a [GitHub issue](https://github.com/AronAxe/GraphPaper/issues) with the version, source-versus-executable edition, exact action, error text and a small non-confidential example when possible. Say whether the failure occurs in an empty project and which provider/model is involved—without including keys.
 
 Review diagnostics before sharing them. Never attach `credentials.dpapi`, Codex account files, a private manuscript or an unredacted data-directory archive. Security-sensitive disclosures should go privately to the maintainer, not into a public issue. [Privacy and security →](SECURITY.md)
+
+## Angles are too cautious or ignore my voice
+
+Use the 0.4 release. It removes forced counterbalancing and supplies voice context to the early editorial stages. In an existing project, choose **current mode · Change -> Polemic**, then edit **Core thesis** and **Rhetorical force**. In Angles, choose **Refresh angles with my voice**; old saved angles do not rewrite themselves when a slider changes. The existing graph is reused. Evidence detail is a separate control and never sets how moderate your position must be. Ordinary Nonfiction can also **Develop and defend my position**.

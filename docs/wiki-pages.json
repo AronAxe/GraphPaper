@@ -1,6 +1,6 @@
 {
   "repository": "AronAxe/GraphPaper",
-  "docs_version": "0.3.1",
+  "docs_version": "0.4.0",
   "pages": [
     {
       "title": "Home",
@@ -25,6 +25,11 @@
     {
       "title": "Nonfiction-Workflow",
       "source": "docs/NONFICTION.md",
+      "section": "Writing workflows"
+    },
+    {
+      "title": "Polemic-and-Authorial-Intent",
+      "source": "docs/POLEMIC.md",
       "section": "Writing workflows"
     },
     {

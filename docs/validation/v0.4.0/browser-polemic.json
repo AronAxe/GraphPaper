@@ -1,0 +1,19 @@
+{
+  "real_http_browser": true,
+  "live_model": false,
+  "synthetic_material": true,
+  "checks": [
+    "Four distinct modes are available, including Polemic",
+    "Existing project converts to Polemic without replacing its sources, graph, voice or draft",
+    "Old angles are explicitly marked stale instead of pretending the brief rewrote them",
+    "Thesis, rhetorical force and evidence detail save as separate controls",
+    "Refreshing angles uses actual voice and intent inputs without rebuilding the graph",
+    "The outline receives the same author voice and argumentative contract",
+    "Drafting and the reviewer receive the authorial contract and report fidelity separately",
+    "Polemic retains normal citation and bibliography export",
+    "Argument-led intent also works in ordinary nonfiction; changing labels is not the sole fix",
+    "Controls fit a smaller desktop window"
+  ],
+  "page_errors": [],
+  "ok": true
+}

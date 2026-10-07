@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "method": "Compare compiled Python semantic code objects against final source; exact-byte comparison for UI assets.",
+  "modules": [
+    "editorial",
+    "argument_draft",
+    "editorial_routes",
+    "models",
+    "pipeline",
+    "polish",
+    "server",
+    "studio_routes",
+    "voice",
+    "export"
+  ],
+  "ui_assets": [
+    "app.js",
+    "graphify.js",
+    "graphpaper.ico",
+    "icon.svg",
+    "index.html",
+    "polemic.css",
+    "polemic.js",
+    "science.css",
+    "science.js",
+    "studio.css",
+    "studio.js",
+    "styles.css"
+  ],
+  "executable_sha256": "9693f75a6baf7816a8739f8aaae94dbbc1f359ef45076881eee91fcee598e433"
+}

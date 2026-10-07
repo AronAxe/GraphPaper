@@ -40,6 +40,7 @@ jobs:
       - run: python scripts/ui_studio_smoke.py
       - run: python scripts/ui_science_smoke.py
       - run: python scripts/ui_graphify_smoke.py
+      - run: python scripts/ui_polemic_smoke.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

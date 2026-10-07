@@ -61,6 +61,8 @@ class ScriptedClients:
             return {"angles":[{"title":"A test direction","thesis":"Individual choices can reshape a shared place.","hook":"An opening.","why":"A relationship to investigate.","motif_ids":[data["motifs"][0]["id"]],"counterargument":"There may be competing causes.","questions":["What evidence is missing?"],"evaluation_questions":["Is the competing explanation addressed?"]}]}
         if task.startswith("Build an editable outline"):
             return {"sections":[{"title":name,"purpose":"Advance a distinct part.","beats":["A specific beat"],"source_ids":["S1"],"target_words":600} for name in ["The place","The choice","The consequence"]]}
+        if task.startswith("Write the complete argumentative essay"):
+            return "# A test argument\n\nA specific fact supports the case. [S1] The conclusion is a judgment, not an invented experiment."
         if task.startswith("Write only this section"):
             return "Mira shut the drawer and left the key on the sill. She had not yet chosen whom to disappoint." if data["mode"]=="fiction" else "The notes describe a choice about shared space. [S1] That observation motivates a question, not a universal conclusion."
         if task.startswith("Update a compact continuity ledger"):

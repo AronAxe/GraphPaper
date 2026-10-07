@@ -20,6 +20,7 @@ jobs:
       - run: python scripts/ui_studio_smoke.py
       - run: python scripts/ui_science_smoke.py
       - run: python scripts/ui_graphify_smoke.py
+      - run: python scripts/ui_polemic_smoke.py
   windows:
     needs: quality
     runs-on: windows-latest
@@ -37,7 +38,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         run: ./scripts/build_release.ps1
       - name: Exercise the actual Windows window, native dialogs and save-on-close
-        run: python scripts/native_smoke.py --science --graphify --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
+        run: python scripts/native_smoke.py --science --graphify --polemic --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
       - uses: actions/upload-artifact@v4
         with:
           name: GraphPaper-Windows-x64
@@ -53,7 +54,7 @@ jobs:
           $version = python -c "from graphpaper import __version__; print(__version__)"
           if ($env:GITHUB_REF_NAME -ne "v$version") { throw 'Tag does not match application version.' }
           gh release view $env:GITHUB_REF_NAME *> $null
-          if ($LASTEXITCODE -ne 0) { gh release create $env:GITHUB_REF_NAME --verify-tag --title "GraphPaper $env:GITHUB_REF_NAME" --notes-file docs/RELEASE-0.3.1.md }
+          if ($LASTEXITCODE -ne 0) { gh release create $env:GITHUB_REF_NAME --verify-tag --title "GraphPaper $env:GITHUB_REF_NAME" --notes-file docs/RELEASE-0.4.0.md }
           $packageName = "GraphPaper-v$version-Windows-x64.zip"
           $release = gh release view $env:GITHUB_REF_NAME --json assets | ConvertFrom-Json
           if ($release.assets.name -contains $packageName) {

@@ -21,17 +21,18 @@
   <a href="CHANGELOG.md">Changelog</a>
 </p>
 
-GraphPaper is a **local-first writing studio for nonfiction, fiction and scientific manuscripts**. Upload your material, explore its knowledge graph, choose a direction, shape the outline and refine the draft—all in a Windows desktop interface.
+GraphPaper is a **local-first writing studio for nonfiction, fiction, polemic and scientific manuscripts**. Upload your material, explore its knowledge graph, choose a direction, shape the outline and refine the draft—all in a Windows desktop interface.
 
-Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argument, the evidence and the final words.
+Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argument, the evidence and the final words. **Polemic and argument-led nonfiction preserve your thesis and voice across angle selection, outlining and review.** [Continue an existing project in Polemic](docs/POLEMIC.md).
 
 **External Graphify now supports Codex sign-in and per-model reasoning.** The Windows release includes the public runtime; there is no extra API-key requirement or duplicate Native pass. [Graphify setup and distribution](docs/UPDATE-0.3.1.md)
 
-## Three ways to write
+## Four ways to write
 
 | Mode | Start with | Build toward |
 |---|---|---|
 | **Nonfiction** | Articles, documents, notes and a question | A distinctive, source-linked essay or article |
+| **Polemic** | A position, your reasoning and your own writing voice | An argument with conviction, wit and factual precision—not compulsory balance |
 | **Fiction** | A premise, characters and the rules of your world | Scene-driven writing with a continuity ledger |
 | **Science** | A research question and an explicit search protocol | An evidence-led manuscript, APA references and an auditable research package |
 

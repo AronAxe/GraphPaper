@@ -63,7 +63,7 @@ def lint(text):
 
 
 def polish_draft(project, clients, job, mode, instruction=''):
-    from .pipeline import BOUNDARY
+    from .editorial import system as editorial_system, context as editorial_context, review_stamp
     from .models import PolishCandidate, now
     from .providers import ProviderError
     if mode not in {'humanize', 'deslop', 'both'}:
@@ -79,19 +79,21 @@ def polish_draft(project, clients, job, mode, instruction=''):
             if mode == 'deslop' else 'HUMANIZE AND DESLOP: remove formulaic filler while restoring the author’s natural rhythm and specificity. ')
     prompt = {'task': task + 'Return the complete revised Markdown only. Use the same language. Preserve every material claim, uncertainty, causal direction, named entity, narrator, character motivation and intended ending. Do not invent personal experiences, facts, anecdotes, evidence or additional scenes. Do not mechanically ban punctuation or replace every formal word. Author samples override generic style rules. Every GPKEEP marker must remain exactly once, in its correct semantic position. Markers conceal protected spans; do not rewrite, renumber or infer new contents for them.',
               'mode': project.mode, 'brief': project.brief.model_dump(), 'voice': voice_context(project),
-              'author_instruction': instruction, 'lint': before, 'draft': masked}
-    candidate = clients.complete(BOUNDARY, json.dumps(prompt, ensure_ascii=False), role='editor')
+              'author_instruction': instruction, 'lint': before, 'draft': masked, **editorial_context(project)}
+    candidate = clients.complete(editorial_system(project, "polish"), json.dumps(prompt, ensure_ascii=False), role='editor')
     candidate = unmask(candidate, saved)
     if Counter(m.group(0) for m in PROTECTED.finditer(original)) != Counter(m.group(0) for m in PROTECTED.finditer(candidate)):
         raise ProviderError('The proposed edit introduced or altered protected factual material. Original preserved.')
     if len(candidate.strip()) < max(20, len(original.strip()) * .3):
         raise ProviderError('The proposed edit discarded too much of the manuscript. Original preserved.')
     job.note('Checking the edit for meaning drift before presenting it beside the original.', 65)
-    review = clients.complete(BOUNDARY, json.dumps({'task': 'Compare original and proposed prose edit. Identify factual/semantic drift, altered named entities, lost qualifiers or reordered citations that no longer support their claims. For fiction also check narrator, scene events, motivation and ending. Judge fidelity separately from fluency. Return an honest review. Do not rewrite.', 'mode': project.mode, 'original': original, 'candidate': candidate,
-        'schema': {'meaning_preserved': True, 'summary': 'Specific editorial assessment', 'warnings': ['Concrete risks or unresolved differences'], 'improvements': ['Specific changes']}}, ensure_ascii=False), role='editor', json_mode=True)
+    review = clients.complete(editorial_system(project, "polish"), json.dumps({'task': 'Compare original and proposed prose edit. Identify factual/semantic drift, altered named entities, lost qualifiers or reordered citations that no longer support their claims. For fiction also check narrator, scene events, motivation and ending. Judge fidelity separately from fluency. Preserve the intended thesis, indignation, satire, humor and force; polite equivocation is a meaning change, not an improvement. Distinguish essential factual qualifiers from gratuitous caveats. Return an honest review. Do not rewrite.', 'mode': project.mode, 'original': original, 'candidate': candidate, 'author_instruction': instruction, **editorial_context(project),
+        'schema': {'meaning_preserved': True, 'stance_preserved': True, 'voice_preserved': True, 'summary': 'Specific editorial assessment', 'warnings': ['Concrete risks or unresolved differences'], 'improvements': ['Specific changes']}}, ensure_ascii=False), role='editor', json_mode=True)
     if not isinstance(review.get('meaning_preserved'), bool):
         raise ProviderError('The edit reviewer did not provide a valid fidelity assessment. Original preserved.')
-    project.polish = PolishCandidate(mode=mode, original_hash=hashlib.sha256(original.encode()).hexdigest(), draft=candidate,
+    if review.get('stance_preserved') is False:
+        review['meaning_preserved'] = False
+    project.polish = PolishCandidate(mode=mode, context_hash=review_stamp(project), original_hash=hashlib.sha256(original.encode()).hexdigest(), draft=candidate,
         created=now(), review=review, before=before, after=lint(candidate), protected_spans=len(saved),
         diff=list(difflib.unified_diff(original.splitlines(), candidate.splitlines(), fromfile='Original', tofile='Proposed', lineterm=''))[:12000])
     job.note('Proposed edit ready. Compare the versions and explicitly accept or discard it.', 95)

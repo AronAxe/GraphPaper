@@ -150,6 +150,11 @@ def create_app(root=None):
     async def create_project(request: Request):
         raw = await request.json()
         p = Project(title=raw.get("title", "Untitled project"), mode=raw.get("mode", "nonfiction"))
+        if p.mode == "polemic":
+            p.brief.format = "Polemic / argumentative essay"
+            p.brief.stance_policy = "preserve"
+            p.brief.rhetorical_force = 85
+            p.brief.voice = "Incisive, witty and direct. Preserve the author's judgments and rhetorical energy."
         if p.mode == "science":
             p.brief.format = "APA scientific manuscript"
             p.brief.audience = "Scientific journal reviewers and researchers"
@@ -189,6 +194,9 @@ def create_app(root=None):
         if "draft" in raw and p.draft != raw["draft"]:
             store.snapshot(p, "Before manual edit")
         new = Project.model_validate(p.model_dump() | raw)
+        from .editorial import fingerprint as editorial_fingerprint, review_stamp
+        if 'angles' in raw: new.angles_context_hash = editorial_fingerprint(new)
+        if 'outline' in raw: new.outline_context_hash = review_stamp(new)
         if len(new.draft) > 1_000_000 or len(new.angles) > 100 or len(new.outline) > 40 or len(new.feedback) > 1000:
             raise ValueError("Project field exceeds size limits.")
         return store.save(new, version)
@@ -343,6 +351,8 @@ def create_app(root=None):
 
     from .studio_routes import install
     install(app, store, vault, runner, settings)
+    from .editorial_routes import install as install_editorial
+    install_editorial(app,store,runner)
     from .science_routes import install as install_science
     install_science(app, store, vault, runner, settings)
     app.mount("/static", StaticFiles(directory=asset_directory()), name="static")
