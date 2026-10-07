@@ -18,7 +18,7 @@ CONSOLE_PYTHON = RUNTIME / ("Scripts/python.exe" if os.name == "nt" else "bin/py
 STAMP = RUNTIME / "graphpaper-requirements.sha256"
 NO_WINDOW = subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0
 requirements = ROOT / "requirements-desktop.txt"
-fingerprint = hashlib.sha256(requirements.read_bytes() + (ROOT / "requirements.txt").read_bytes()).hexdigest()
+fingerprint = hashlib.sha256(requirements.read_bytes() + (ROOT / "requirements.txt").read_bytes() + ((ROOT / "requirements-graphify.txt").read_bytes() if (ROOT / "requirements-graphify.txt").exists() else b"")).hexdigest()
 
 
 def launch():

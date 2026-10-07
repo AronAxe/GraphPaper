@@ -76,6 +76,10 @@ The optional automatic revision is bounded, not an open-ended agent loop. JEV ju
 
 Graph view limits are distinct from stored-graph size. Character budgets are not exact tokenizer counts for every model. Source packs contain selected passages rather than a promise that every request sees the entire library. A voice profile is source-informed prompting, not fine-tuning.
 
-Graphify is optional external execution with separate costs. Scholarly records, preprints and abstract-only sources are not automatically validated science. Citation matching samples support; it cannot prove every inference.
+Graphify is an optional graph engine with a bundled public runtime in Windows releases. Its external worker calls a job-scoped loopback gateway; GraphPaper routes the selected extraction provider/model/effort and records the usage. There is no duplicate Native pass. Scholarly records, preprints and abstract-only sources are not automatically validated science. Citation matching samples support; it cannot prove every inference.
 
 The application is not currently documented as a multi-user server, an MCP service or an installed agent plugin. Future integrations should preserve explicit project permission and avoid exposing credentials. [Development](DEVELOPMENT.md) and [Security](SECURITY.md) describe the corresponding checks.
+
+## External Graphify runtime boundary
+
+`graphify_worker.py` hosts the unmodified pinned public CLI in a separate process. `graphify_gateway.py` implements its authenticated, text-only loopback completion endpoint. `graphify_runtime.py` probes availability and prepares an isolated environment; `graphify_process.py` manages owned process lifetimes. The adapter validates the complete graph before the existing optimistic project save. File provenance remains a retrieval pointer, not a truth status. [Protocol and distribution](UPDATE-0.3.1.md).

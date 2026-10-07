@@ -8,7 +8,7 @@ The graph is an inspectable map of ideas and possible relationships. It helps di
 
 **Import graph** accepts Graphify/NetworkX-style node-link JSON with `nodes` and either `edges` or `links`. Imported relationships remain unverified. External confidence values are not promoted to evidence.
 
-**Graphify CLI** is optional for an existing trusted installation. It runs separately, with its own model requests, and native extraction adds source checking. It is not bundled with the Windows release. [Technical integration details →](INTEGRATIONS.md#graphify)
+**Graphify (external process)** uses the public Graphify 0.9.80 runtime included with the Windows release. It builds the graph separately, while GraphPaper supplies your selected extraction model and reasoning setting, including Codex OAuth, and accounts for the requests. No second Native pass runs. Leave the custom executable path blank for the bundled runtime. [Setup and public dependency strategy](UPDATE-0.3.1.md)
 
 ## Read the status, not only the picture
 
@@ -20,7 +20,7 @@ The graph is an inspectable map of ideas and possible relationships. It helps di
 | **Proposed** | A possibility to develop or examine |
 | **Imported** | External graph content that has not been verified against this project’s sources |
 
-Quoted text is checked for occurrence in the imported source. It can still be misleading, disputed or insufficient to support the claim. Read the surrounding passage.
+External Graphify nodes also retain source-file links. These pointers support retrieval for angle evaluation without pretending the file proves a relationship. Quoted text is checked for occurrence in the imported source. It can still be misleading, disputed or insufficient to support the claim. Read the surrounding passage.
 
 ## Navigate and guide discovery
 

@@ -14,6 +14,7 @@ import time
 import webbrowser
 from urllib.parse import urlsplit
 from .providers import ProviderError, Cancelled
+from .graphify_process import OwnedProcess
 
 REGISTRY = {}
 REGISTRY_LOCK = threading.RLock()
@@ -70,7 +71,7 @@ class Codex:
                 stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,
                 text=True,encoding='utf-8',errors='strict',bufsize=1,creationflags=flags)
             threading.Thread(target=self._read,args=(self.proc,),daemon=True,name='graphpaper-codex-auth').start()
-        self.rpc('initialize',{'clientInfo':{'name':'graphpaper','title':'GraphPaper','version':'0.3.0'}})
+        self.rpc('initialize',{'clientInfo':{'name':'graphpaper','title':'GraphPaper','version':'0.3.1'}})
         self._send({'method':'initialized','params':{}})
 
     def _send(self, value):
@@ -181,8 +182,9 @@ class Codex:
             prompt = ('You are the prose/structured-output engine inside GraphPaper. This is a text transformation, not a coding task. '
                       'Do not use tools, inspect files, execute commands or access the network. Return only the requested answer.\n\n'
                       + system + '\n\n' + user)
-            proc = subprocess.Popen(args,cwd=temp,env=self.env,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
-                text=True,encoding='utf-8',errors='replace',creationflags=flags)
+            owned = OwnedProcess(args,cwd=temp,env=self.env,stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                text=True,encoding='utf-8',errors='replace')
+            proc = owned.proc
             started = time.monotonic()
             try:
                 first = True
@@ -216,12 +218,7 @@ class Codex:
                     raise ProviderError('Codex returned an empty answer.')
                 return text
             finally:
-                if proc.poll() is None:
-                    proc.terminate()
-                    try:
-                        proc.communicate(timeout=5)
-                    except subprocess.TimeoutExpired:
-                        proc.kill();proc.communicate()
+                owned.close()
 
     def close(self):
         with self.lock:

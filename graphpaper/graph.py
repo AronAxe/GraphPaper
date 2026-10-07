@@ -130,6 +130,7 @@ def import_graph(raw: dict) -> Graph:
 
 def mine_motifs(project: Project, limit=60) -> list[dict]:
     """Bounded motif discovery; graph structure nominates, never proves, a thesis."""
+    eligible_sources = {s.id for s in project.sources if s.enabled and s.role != "voice"}
     excluded = set(project.brief.excluded_nodes)
     nodes = {n.id: n for n in project.graph.nodes if n.id not in excluded}
     edges = [e for e in project.graph.edges if e.source in nodes and e.target in nodes]
@@ -147,7 +148,7 @@ def mine_motifs(project: Project, limit=60) -> list[dict]:
         seen.add(key)
         ns = list(dict.fromkeys(ns))
         es = list({e.id: e for e in es}.values())
-        source_ids = sorted({v.source_id for e in es for v in e.evidence if v.verified} | {v.source_id for n in ns for v in nodes[n].evidence if v.verified})
+        source_ids = sorted(({v.source_id for e in es for v in e.evidence if v.verified} | {v.source_id for n in ns for v in nodes[n].evidence if v.verified} | {sid for e in es for sid in e.source_ids} | {sid for n in ns for sid in nodes[n].source_ids}) & eligible_sources)
         pin = sum(n in project.brief.pinned_nodes for n in ns)
         tension = kind in {"contradiction", "conflict", "divergence", "cross-community bridge"}
         rank = pin * 5 + len(source_ids) * 2 + int(tension) * 2 + min(len(ns), 5)

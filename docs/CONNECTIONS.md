@@ -66,3 +66,7 @@ Cloud generation requires explicit permission to send project material. URL impo
 Advanced settings include maximum requests per job, output-token cap, context budget in **characters**, candidate count and request timeout. A request limit is not a monetary cap. Provider-reported cost is displayed when supplied; missing cost stays unknown. Cancellation cannot undo a request already submitted.
 
 Never put keys into prompts, screenshots, issue reports or project documents. [Credential storage and privacy →](SECURITY.md)
+
+## External Graphify in 0.3.1
+
+Choose **Graphify (external process)** under Advanced limits & Graphify. Leave the custom path blank for the included Windows runtime. **Check Graphify runtime** does not call a model. The external action now uses this same provider connection, including Codex OAuth, with the extraction-role model and reasoning setting. [Detailed setup and distribution](UPDATE-0.3.1.md).

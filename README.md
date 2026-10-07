@@ -25,6 +25,8 @@ GraphPaper is a **local-first writing studio for nonfiction, fiction and scienti
 
 Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argument, the evidence and the final words.
 
+**External Graphify now supports Codex sign-in and per-model reasoning.** The Windows release includes the public runtime; there is no extra API-key requirement or duplicate Native pass. [Graphify setup and distribution](docs/UPDATE-0.3.1.md)
+
 ## Three ways to write
 
 | Mode | Start with | Build toward |

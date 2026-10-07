@@ -1,3 +1,5 @@
 -r requirements.txt
 pytest>=8.4,<10
 playwright>=1.55,<2
+
+-r requirements-graphify.txt
