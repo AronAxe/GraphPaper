@@ -1,0 +1,7 @@
+{
+  "ok": true,
+  "version": "codex-cli 0.160.1",
+  "unauthenticated_app_server_handshake": true,
+  "live_model_call": false,
+  "browser_oauth_completed": false
+}

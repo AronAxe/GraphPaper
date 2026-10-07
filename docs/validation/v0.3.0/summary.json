@@ -1,15 +1,15 @@
 {
   "version": "0.3.0",
-  "validated_at": "2026-10-07T07:16:42.531905+00:00",
+  "validated_at": "2026-10-07T07:30:54.282413+00:00",
   "windows_unit_tests": {
-    "passed": 169,
+    "passed": 172,
     "skipped": 1,
     "failed": 0
   },
   "browser_workflow_checks": 39,
   "browser_page_errors": [],
   "native_source_checks": 10,
-  "native_packaged_executable_checks": 0,
+  "native_packaged_executable_checks": 10,
   "live_model_calls": false,
   "live_user_oauth_completed": false,
   "apa_rendered_pages": 4,
@@ -24,5 +24,8 @@
       "database": "semantic_scholar",
       "error": "ValueError: Semantic Scholar returned HTTP 429. Add its optional API key or try later."
     }
-  ]
+  ],
+  "archive": "GraphPaper-v0.3.0-Windows-x64.zip",
+  "size_bytes": 157726720,
+  "sha256": "b32cb385726f185ee50c1347a31eb4631d924e7fc4247b46afc2003c14de0a1b"
 }

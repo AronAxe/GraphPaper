@@ -23,3 +23,9 @@ Use **Connections -> Load available models -> Reasoning depth** to choose effort
 Database search is real network retrieval, not simulated research. Searches are bounded and never presented as exhaustive when capped. Abstracts/preprints are labelled. Systematic/scoping review completeness checks are stricter. The author must verify original sources, specialized references and the target journal's reporting requirements. Live metadata checks are separate from controlled model tests; no real user OAuth sign-in or paid writing-model call is claimed as part of release validation.
 
 Detailed instructions: [UPDATE-0.3.md](https://github.com/AronAxe/GraphPaper/blob/main/docs/UPDATE-0.3.md). Validation reports are under `docs/validation/v0.3.0`. SHA256SUMS.txt identifies the exact downloadable archive.
+
+## Verified release build
+
+172 automated Windows tests passed (one symlink-permission skip), all 39 browser workflow checks passed, and all 10 native checks passed against the actual compiled executable. The APA export received a four-page visual check. Live metadata retrieval succeeded on PubMed, arXiv, Crossref and Europe PMC; Semantic Scholar anonymous access was rate-limited with HTTP 429, reported explicitly. These are native local-build results, not a claim that a hosted Actions run completed.
+
+Windows ZIP: **157,726,720 bytes**. SHA-256: `b32cb385726f185ee50c1347a31eb4631d924e7fc4247b46afc2003c14de0a1b`. The official Codex runtime remains bundled and its signed-out protocol check passed.

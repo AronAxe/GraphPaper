@@ -14,7 +14,6 @@ python scripts/check_package.py dist/GraphPaper
 if ($LASTEXITCODE -ne 0) { throw 'Compiled application self-test failed.' }
 $version = python -c "from graphpaper import __version__; print(__version__)"
 $zip = "dist/GraphPaper-v$version-Windows-x64.zip"
-Compress-Archive -Path dist/GraphPaper -DestinationPath $zip -Force
-$hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
-"$hash  GraphPaper-v$version-Windows-x64.zip" | Set-Content -Encoding ascii "dist/SHA256SUMS.txt"
+python scripts/package_windows.py dist/GraphPaper $zip
+if ($LASTEXITCODE -ne 0) { throw 'Streaming release packaging or verification failed.' }
 Write-Host "Built $zip"
