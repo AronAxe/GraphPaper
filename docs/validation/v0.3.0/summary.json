@@ -1,0 +1,28 @@
+{
+  "version": "0.3.0",
+  "validated_at": "2026-10-07T07:16:42.531905+00:00",
+  "windows_unit_tests": {
+    "passed": 169,
+    "skipped": 1,
+    "failed": 0
+  },
+  "browser_workflow_checks": 39,
+  "browser_page_errors": [],
+  "native_source_checks": 10,
+  "native_packaged_executable_checks": 0,
+  "live_model_calls": false,
+  "live_user_oauth_completed": false,
+  "apa_rendered_pages": 4,
+  "live_scholarly_databases": [
+    "pubmed",
+    "arxiv",
+    "crossref",
+    "europe_pmc"
+  ],
+  "live_scholarly_failures": [
+    {
+      "database": "semantic_scholar",
+      "error": "ValueError: Semantic Scholar returned HTTP 429. Add its optional API key or try later."
+    }
+  ]
+}

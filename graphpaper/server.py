@@ -137,13 +137,18 @@ def create_app(root=None):
             if result is None:
                 raise ValueError("JEV is off or no JEV-capable key is configured.")
             return {"ok": True, "message": "JEV returned a valid typed probability.", "result": result}
-        result = await run_in_threadpool(c.complete, "Reply with the word Connected only.", "Connection test.", max_tokens=1000)
+        result = await run_in_threadpool(c.complete, "Reply with the word Connected only.", "Connection test.", max_tokens=(settings().max_output_tokens if settings().reasoning_effort != "default" else 1000))
         return {"ok": True, "message": "Writing model responded.", "response": result[:200]}
 
     @app.post("/api/projects")
     async def create_project(request: Request):
         raw = await request.json()
         p = Project(title=raw.get("title", "Untitled project"), mode=raw.get("mode", "nonfiction"))
+        if p.mode == "science":
+            p.brief.format = "APA scientific manuscript"
+            p.brief.audience = "Scientific journal reviewers and researchers"
+            p.brief.target_words = 4000
+            p.brief.voice = "Precise academic prose; explain methods, effect sizes and limitations without inflated claims."
         if p.mode == "fiction":
             p.brief.format = "Short story"
             p.brief.avoid = "Expository monologues, generic imagery, unearned resolutions, continuity breaks."
@@ -172,6 +177,9 @@ def create_app(root=None):
         allowed = {"title", "brief", "draft", "outline", "angles", "selected_angle", "feedback", "voice_profile", "auto_import"}
         if set(raw) - allowed:
             raise ValueError("Unsupported project field")
+        if p.mode == 'science' and set(raw) & {'draft','brief','outline'}:
+            p.research.acknowledgements = {}
+            p.research.confirmation_hash = ''
         if "draft" in raw and p.draft != raw["draft"]:
             store.snapshot(p, "Before manual edit")
         new = Project.model_validate(p.model_dump() | raw)
@@ -190,7 +198,7 @@ def create_app(root=None):
         if runner.active(pid):
             raise ValueError("Wait for the current job before changing sources.")
         p = store.get(pid)
-        if len(p.sources) >= 100:
+        if len(p.sources) >= (600 if p.mode == "science" else 100):
             raise ValueError("Limit: 100 sources per project.")
         text = clean(text)
         fingerprint = digest(text)
@@ -304,7 +312,7 @@ def create_app(root=None):
         raw = await request.json()
         p = Project.model_validate(raw)
         # Imported projects carry text and metadata, never execution instructions or credentials.
-        if len(p.sources) > 100 or len(p.graph.nodes) > 5000 or len(p.graph.edges) > 20000 or len(p.draft) > 1_000_000:
+        if len(p.sources) > (600 if p.mode == "science" else 100) or len(p.graph.nodes) > 5000 or len(p.graph.edges) > 20000 or len(p.draft) > 1_000_000:
             raise ValueError("Project exceeds import limits")
         if len({s.id for s in p.sources}) != len(p.sources):
             raise ValueError("Duplicate source IDs")
@@ -329,5 +337,7 @@ def create_app(root=None):
 
     from .studio_routes import install
     install(app, store, vault, runner, settings)
+    from .science_routes import install as install_science
+    install_science(app, store, vault, runner, settings)
     app.mount("/static", StaticFiles(directory=asset_directory()), name="static")
     return app

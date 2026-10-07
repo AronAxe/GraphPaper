@@ -18,6 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--executable',type=Path)
+    parser.add_argument('--science',action='store_true',help='Exercise the Science workspace in the actual native shell')
     parser.add_argument('--out',type=Path,default=ROOT/'test-results/native')
     args=parser.parse_args()
     if sys.platform!='win32':raise SystemExit('This regression requires a native Windows desktop.')
@@ -33,7 +34,7 @@ def main():
     u.PostMessageW.argtypes=[wintypes.HWND,wintypes.UINT,wintypes.WPARAM,wintypes.LPARAM]
     u.SendMessageTimeoutW.argtypes=[wintypes.HWND,wintypes.UINT,wintypes.WPARAM,wintypes.LPARAM,wintypes.UINT,wintypes.UINT,ctypes.POINTER(ctypes.c_size_t)]
     u.SendMessageTimeoutW.restype=ctypes.c_size_t
-    report={'native_windows':True,'packaged_executable':bool(args.executable),'live_models':False,'checks':[],'page_errors':[],'ok':False}
+    report={'native_windows':True,'packaged_executable':bool(args.executable),'science_mode':bool(args.science),'live_models':False,'checks':[],'page_errors':[],'ok':False}
     def check(name):report['checks'].append(name);print('PASS',name,flush=True)
     with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
     data=Path(tempfile.mkdtemp(prefix='GraphPaper-native-test-'))
@@ -105,9 +106,20 @@ def main():
             page.wait_for_selector('#project-title');responsive(hwnd)
             check('A Windows mouse click opens the project dialog without freezing the host')
             page.locator('#project-title').fill('Native regression project')
-            page.get_by_role('button',name='Create project',exact=True).click();page.wait_for_selector('#dropzone')
+            if args.science:
+                page.locator('#project-mode').select_option('science')
+                page.locator('#project-premise').fill('A scientific test question')
+            page.get_by_role('button',name='Create project',exact=True).click();page.wait_for_selector('.science-stats' if args.science else '#dropzone')
             pid=page.evaluate('() => state.p.id');check('Native window supports typing and project creation')
+            if args.science:
+                page.get_by_role('button',name='Research protocol',exact=True).click()
+                page.locator('#rp-queries').fill('memory AND sleep')
+                page.get_by_role('button',name='Save research plan',exact=True).click()
+                expect(page.locator('.modal')).to_have_count(0)
+                assert page.evaluate('() => state.p.research.plan.queries[0]')=='memory AND sleep'
+                check('Native Science research protocol edits and saves without a model call')
             page.locator('[data-action="settings"]').click();page.wait_for_selector('#s-provider')
+            expect(page.locator('#s-reasoning_effort')).to_have_count(1)
             page.get_by_role('button',name='Close dialog',exact=True).click();responsive(hwnd)
             check('Connections dialog opens and closes in the native window')
             page.locator('.nav-link[data-tab="write"]').click();page.wait_for_selector('#manuscript')

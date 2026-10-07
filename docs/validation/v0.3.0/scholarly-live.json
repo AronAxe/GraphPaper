@@ -1,0 +1,109 @@
+{
+  "checked_at": "2026-10-07T07:16:18.555810+00:00",
+  "live_metadata": true,
+  "live_models": false,
+  "api_keys_used": false,
+  "checks": [
+    {
+      "database": "pubmed",
+      "ok": true,
+      "retrieved": 2,
+      "total_hits": 85425,
+      "query": "working memory",
+      "capped": true,
+      "identifiers": [
+        {
+          "doi": "10.1126/science.1736359",
+          "pmid": "1736359",
+          "arxiv": ""
+        },
+        {
+          "doi": "10.1016/j.jecp.2009.11.003",
+          "pmid": "20018296",
+          "arxiv": ""
+        }
+      ],
+      "scopes": [
+        "abstract",
+        "abstract"
+      ]
+    },
+    {
+      "database": "semantic_scholar",
+      "ok": false,
+      "error": "ValueError: Semantic Scholar returned HTTP 429. Add its optional API key or try later."
+    },
+    {
+      "database": "arxiv",
+      "ok": true,
+      "retrieved": 2,
+      "total_hits": 18027,
+      "query": "all:working AND all:memory",
+      "capped": true,
+      "identifiers": [
+        {
+          "doi": "",
+          "pmid": "",
+          "arxiv": "1805.09354v1"
+        },
+        {
+          "doi": "",
+          "pmid": "",
+          "arxiv": "2006.16850v1"
+        }
+      ],
+      "scopes": [
+        "abstract",
+        "abstract"
+      ]
+    },
+    {
+      "database": "crossref",
+      "ok": true,
+      "retrieved": 2,
+      "total_hits": 511827,
+      "query": "working memory",
+      "capped": true,
+      "identifiers": [
+        {
+          "doi": "10.1080/741940668",
+          "pmid": "",
+          "arxiv": ""
+        },
+        {
+          "doi": "10.1111/j.1467-9922.2010.00573.x",
+          "pmid": "",
+          "arxiv": ""
+        }
+      ],
+      "scopes": [
+        "metadata",
+        "metadata"
+      ]
+    },
+    {
+      "database": "europe_pmc",
+      "ok": true,
+      "retrieved": 2,
+      "total_hits": 376574,
+      "query": "working memory",
+      "capped": true,
+      "identifiers": [
+        {
+          "doi": "10.1016/bs.acdb.2026.07.001",
+          "pmid": "42716667",
+          "arxiv": ""
+        },
+        {
+          "doi": "10.1037/rev0000645",
+          "pmid": "42782713",
+          "arxiv": ""
+        }
+      ],
+      "scopes": [
+        "abstract",
+        "abstract"
+      ]
+    }
+  ]
+}

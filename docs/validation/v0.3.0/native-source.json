@@ -1,0 +1,35 @@
+{
+  "native_windows": true,
+  "packaged_executable": false,
+  "science_mode": true,
+  "live_models": false,
+  "checks": [
+    "Actual Windows/WebView2 window starts and responds to Windows messages",
+    "Native bridge initializes with only four explicit methods and resolves its promise",
+    "Strict application CSP remains enabled",
+    "A Windows mouse click opens the project dialog without freezing the host",
+    "Native window supports typing and project creation",
+    "Native Science research protocol edits and saves without a model call",
+    "Connections dialog opens and closes in the native window",
+    "Native Save As dialog opens, cancels and returns without blocking the interface",
+    "Windows close completes the save handshake and exits normally",
+    "Pending manuscript text is persisted before the native process exits"
+  ],
+  "page_errors": [],
+  "ok": true,
+  "bridge_methods": [
+    "cancel_close",
+    "notify_ready",
+    "request_close",
+    "save_export"
+  ],
+  "native_child_classes": [
+    "Chrome_RenderWidgetHostHWND",
+    "Chrome_WidgetWin_0",
+    "Chrome_WidgetWin_1",
+    "Intermediate D3D Window",
+    "WindowsForms10.Window.8.app.0.aec740_r21_ad1"
+  ],
+  "exit_code": 0,
+  "recursion_errors": false
+}

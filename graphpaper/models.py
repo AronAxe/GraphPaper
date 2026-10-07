@@ -5,6 +5,7 @@ from typing import Any, Literal
 from uuid import uuid4
 
 from pydantic import BaseModel, Field, ConfigDict
+from .science_models import ResearchWorkspace, ScholarlyMeta
 
 
 def uid(prefix: str = "") -> str:
@@ -49,6 +50,7 @@ class Source(Model):
     enabled: bool = True
     warnings: list[str] = Field(default_factory=list)
     digest: str = ""
+    scholarly: ScholarlyMeta | None = None
 
 
 class Evidence(Model):
@@ -153,7 +155,7 @@ class PolishCandidate(Model):
 class Project(Model):
     id: str = Field(default_factory=lambda: uid("p_"))
     title: str = Field(default="Untitled project", min_length=1, max_length=200)
-    mode: Literal["nonfiction", "fiction"] = "nonfiction"
+    mode: Literal["nonfiction", "fiction", "science"] = "nonfiction"
     created: str = Field(default_factory=now)
     updated: str = Field(default_factory=now)
     version: int = 0
@@ -173,6 +175,7 @@ class Project(Model):
     voice_profile: VoiceProfile = Field(default_factory=VoiceProfile)
     polish: PolishCandidate | None = None
     auto_import: bool = True
+    research: ResearchWorkspace = Field(default_factory=ResearchWorkspace)
 
 
 class Settings(Model):
@@ -182,6 +185,11 @@ class Settings(Model):
     codex_executable: str = ""
     editor_model: str = ""
     extraction_model: str = ""
+    reasoning_effort: str = Field('default', pattern=r'^[a-z][a-z0-9_-]{0,31}$')
+    editor_reasoning_effort: str = Field('default', pattern=r'^[a-z][a-z0-9_-]{0,31}$')
+    extraction_reasoning_effort: str = Field('default', pattern=r'^[a-z][a-z0-9_-]{0,31}$')
+    reasoning_budget_tokens: int = Field(4096, ge=1024, le=128000)
+    request_timeout_seconds: int = Field(600, ge=60, le=1800)
     max_output_tokens: int = Field(7000, ge=1000, le=64000)
     context_chars: int = Field(90000, ge=16000, le=1500000)
     jev_provider: Literal["auto", "openrouter", "typesafe", "off"] = "auto"

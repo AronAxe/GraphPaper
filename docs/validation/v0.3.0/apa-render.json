@@ -1,0 +1,18 @@
+{
+  "renderer": "LibreOffice via the DOCX rendering tool on Linux",
+  "fixture": "Synthetic scientific manuscript, not a research finding",
+  "pages": 4,
+  "all_pages_visually_inspected": true,
+  "blank_pages": 0,
+  "checks": [
+    "APA professional title and author-note page",
+    "Abstract and keywords on their own page",
+    "Consistent Times New Roman body and headings",
+    "One-inch margins and double spacing",
+    "Author-year citations before sentence punctuation",
+    "Hanging-indent references with journal and volume italics",
+    "Running head and page numbers"
+  ],
+  "exporter_source_sha256": "e995a53c4807c32e68ddc24d92eb775e9861c7a41b409b7fc00edf1246eacd34",
+  "native_microsoft_word_test": false
+}

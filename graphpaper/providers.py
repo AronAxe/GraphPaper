@@ -12,6 +12,7 @@ import httpx
 
 from .models import Settings
 from .secrets import Vault
+from .reasoning import normalize_model, selected_effort, request_fields
 
 
 class ProviderError(Exception):
@@ -48,6 +49,8 @@ def endpoint(base: str) -> str:
 class Clients:
     def __init__(self, settings: Settings, vault: Vault, job=None, transport=None):
         self.settings, self.vault, self.job, self.transport = settings, vault, job, transport
+        self._model_cache = None
+        self._active_effort = "default"
 
     def llm_key(self) -> str:
         if self.settings.provider == "openrouter":
@@ -77,7 +80,7 @@ class Clients:
             if self.job:
                 self.job.before_call(label, self.settings.max_calls)
             try:
-                with httpx.Client(timeout=httpx.Timeout(180, connect=20), follow_redirects=False, transport=self.transport) as client:
+                with httpx.Client(timeout=httpx.Timeout(self.settings.request_timeout_seconds, connect=20), follow_redirects=False, transport=self.transport) as client:
                     res = client.post(url, json=payload, headers=headers)
             except (httpx.TimeoutException, httpx.NetworkError) as e:
                 # A timeout may have been billed: avoid automatically duplicating it.
@@ -104,6 +107,8 @@ class Clients:
                 raise ProviderError(f"{label} returned an API error. No result was applied.")
             if self.job:
                 self.job.record_usage(label, data.get("usage", {}), data.get("model", ""))
+                if label != "JEV" and self.job.receipts:
+                    self.job.receipts[-1]["reasoning_effort"] = self._active_effort
                 self.job.check()
             return data
         raise ProviderError("Provider retry limit reached")
@@ -116,22 +121,29 @@ class Clients:
         if len(system) + len(user) > s.context_chars:
             raise ProviderError("This request exceeds your configured context character budget. Raise it for a suitable model, narrow the selected graph or split the project. Nothing was silently truncated.")
         cap = max_tokens or s.max_output_tokens
+        effort = selected_effort(s, role)
+        self._active_effort = effort
+        info = None
+        if effort != 'default' and s.provider != 'codex':
+            catalog = self.discover_models()
+            info = next((m for m in catalog if m['id'] == model), None)
+        fields = request_fields(s, role, info, cap) if s.provider != 'codex' else {}
         base = endpoint(s.base_url)
         if json_mode:
             system += "\nReturn only a valid JSON object. No fences, commentary, NaN or Infinity."
         if s.provider == "codex":
             from .codex import get_codex
             self.check('https://chatgpt.com')
-            text = get_codex(self.vault.path.parent, s.codex_executable).complete(system, user, model, self.job, s.max_calls)
+            text = get_codex(self.vault.path.parent, s.codex_executable).complete(system, user, model, self.job, s.max_calls, reasoning_effort=effort, timeout_seconds=s.request_timeout_seconds)
             return parse_json(text) if json_mode else text
         if s.provider == "anthropic":
-            data = self.post((base if base.endswith("/v1") else base + "/v1") + "/messages", {"model": model, "system": system, "messages": [{"role": "user", "content": user}], "max_tokens": cap}, self.llm_key(), role, True)
+            data = self.post((base if base.endswith("/v1") else base + "/v1") + "/messages", {"model": model, "system": system, "messages": [{"role": "user", "content": user}], "max_tokens": cap, **fields}, self.llm_key(), role, True)
             if data.get("stop_reason") == "max_tokens":
                 raise ProviderError("Output limit reached. Raise the output budget or shorten this task; the truncated draft was not applied.")
             text = "".join(x.get("text", "") for x in data.get("content", []) if x.get("type") == "text")
         else:
             token_field = "max_completion_tokens" if urlsplit(base).hostname == "api.openai.com" else "max_tokens"
-            payload = {"model": model, "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}], token_field: cap}
+            payload = {"model": model, "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}], token_field: cap, **fields}
             if json_mode:
                 payload["response_format"] = {"type": "json_object"}
             data = self.post(base + "/chat/completions", payload, self.llm_key(), role)
@@ -183,9 +195,12 @@ class Clients:
         return answers
 
     def discover_models(self):
+        if self._model_cache is not None:
+            return self._model_cache
         if self.settings.provider == 'codex':
             from .codex import get_codex
-            return get_codex(self.vault.path.parent, self.settings.codex_executable).models()
+            self._model_cache = get_codex(self.vault.path.parent, self.settings.codex_executable).models()
+            return self._model_cache
         if self.settings.provider == "anthropic":
             headers = {"x-api-key": self.llm_key(), "anthropic-version": "2023-06-01"}
         else:
@@ -198,4 +213,5 @@ class Clients:
         if res.is_error:
             raise ProviderError(f"Model list: HTTP {res.status_code}. Enter your model ID manually.")
         raw = res.json().get("data", [])
-        return [{"id": x["id"], "name": x.get("name", x.get("display_name", x["id"]))} for x in raw if isinstance(x, dict) and x.get("id")][:2000]
+        self._model_cache = [normalize_model(x, self.settings.provider) for x in raw if isinstance(x, dict) and x.get("id")][:2000]
+        return self._model_cache

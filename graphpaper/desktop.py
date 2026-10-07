@@ -86,7 +86,7 @@ class DesktopBridge:
     def save_export(self, project_id: str, kind: str):
         try:
             import webview
-            if kind not in {"md", "docx", "html", "json", "graph"}:
+            if kind not in {"md", "docx", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission"}:
                 return {"error": "Unknown export type"}
             p = self._store.get(project_id)
             data, _, ext = export(p, kind)
