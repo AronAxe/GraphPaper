@@ -40,8 +40,10 @@ def test_file_attribution_is_limited_to_exported_sources(tmp_path):
 
 def test_expired_job_scope_reports_timeout():
     job=Job('synthetic','graph')
-    scope=JobScope(job,.001)
-    time.sleep(.005)
+    scope=JobScope(job,10)
+    # Windows Python 3.12 can expose a coarse monotonic clock. Test the
+    # expiry predicate deterministically; the process test covers real time.
+    scope.deadline=time.monotonic()-1
     with pytest.raises(ProviderError,match='timeout'):scope.check()
 
 
