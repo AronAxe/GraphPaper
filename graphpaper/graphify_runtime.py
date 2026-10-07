@@ -31,7 +31,10 @@ def isolated_environment(home: Path) -> dict[str,str]:
     env={k:v for k,v in os.environ.items() if k.lower() in names}
     for name in ['HOME','USERPROFILE','APPDATA','LOCALAPPDATA','XDG_CONFIG_HOME','XDG_CACHE_HOME','TEMP','TMP','TMPDIR']:
         env[name]=str(home)
-    env.update({'PYTHONIOENCODING':'utf-8','PYTHONUTF8':'1','PYTHONNOUSERSITE':'1',
+    # Upstream restarts as `python -m graphify` when no hash seed is supplied.
+    # A frozen GraphPaper.exe is not a general Python CLI; supply the seed
+    # before launching its worker so the unmodified upstream CLI stays there.
+    env.update({'PYTHONHASHSEED':'0','PYTHONIOENCODING':'utf-8','PYTHONUTF8':'1','PYTHONNOUSERSITE':'1',
         'GRAPHIFY_NO_AUTO_REFRESH':'1','GRAPHIFY_QUERY_LOG_DISABLE':'1','GRAPHIFY_GOOGLE_WORKSPACE':'0',
         'GRAPHIFY_MAX_RETRIES':'0','GRAPHIFY_MAX_RETRY_DEPTH':'0','GRAPHIFY_MAX_WORKERS':'1',
         'GRAPHIFY_LLM_TEMPERATURE':'none','NO_PROXY':'127.0.0.1,localhost','no_proxy':'127.0.0.1,localhost'})

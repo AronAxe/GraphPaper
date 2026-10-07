@@ -55,3 +55,10 @@ def test_cancelled_scope_and_late_accounting():
     before=dict(job.usage)
     scope.record_usage('fixture',{'input_tokens':200},'fixture')
     assert job.usage==before
+
+
+def test_external_worker_receives_hash_seed_before_python_start(tmp_path):
+    from graphpaper.graphify_runtime import isolated_environment
+    environment=isolated_environment(tmp_path/'home')
+    assert environment['PYTHONHASHSEED']=='0'
+    assert 'PYTEST_CURRENT_TEST' not in environment

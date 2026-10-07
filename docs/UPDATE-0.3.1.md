@@ -50,6 +50,8 @@ The graphical Windows source launcher installs its desktop requirements, includi
 
 The **Windows ZIP includes the Graphify Python modules, runtime dependencies, distribution metadata, tokenizer cache, upstream licences/notices and official Codex executable**. GraphPaper launches a dedicated worker mode of its own executable to host the unmodified Graphify CLI; it does not require a separate system Python or Graphify installation.
 
+The worker launch supplies `PYTHONHASHSEED=0` before Python starts, satisfying the upstream startup contract without its normal `python -m graphify` re-execution. A frozen GraphPaper executable is not treated as a general Python command.
+
 Release preparation verifies installed dependency versions, prepares the tokenizer cache and requires the upstream licence. The package contains `vendor/graphify-runtime.json` inside its bundled assets, recording versions, public provenance and cache/licence checksums. Packaging tests must exercise the frozen Graphify worker, not merely check that the main window's HTTP assets load.
 
 A custom Graphify executable must match the supported release and have its OpenAI-compatible SDK dependencies installed. Its version probe cannot establish the health of an arbitrary custom environment; the included runtime has the stronger package-level verification.
