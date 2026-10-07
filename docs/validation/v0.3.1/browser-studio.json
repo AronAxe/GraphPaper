@@ -1,0 +1,17 @@
+{
+  "mode": "real HTTP",
+  "live_models": false,
+  "checks": [
+    "Voice sample upload through the actual file input",
+    "Learn, inspect and edit a persistent author voice profile",
+    "Project folder import and automatic source ownership",
+    "Idle folder watcher detects and imports new files without an AI call",
+    "Local explainable prose inspection",
+    "Humanizer proposal, side-by-side comparison and explicit acceptance",
+    "Separate deslopping pass and non-destructive rejection",
+    "Codex subscription provider selectable without an API key",
+    "New controls fit a smaller desktop window"
+  ],
+  "page_errors": [],
+  "ok": true
+}

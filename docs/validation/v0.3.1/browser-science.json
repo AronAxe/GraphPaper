@@ -1,0 +1,22 @@
+{
+  "mode": "real HTTP browser",
+  "live_models": false,
+  "live_databases": false,
+  "checks": [
+    "Three distinct writing modes on the welcome screen",
+    "Advertised Codex ultra and independent writer/editor/extractor efforts persist",
+    "Science project opens directly on the research desk",
+    "Research protocol, search terms, eligibility and APA author declarations save",
+    "Database search result cards carry metadata and access labels",
+    "Actual query, count and search status are visible in the audit log",
+    "Screened studies become correctly associated evidence sources",
+    "Full-text retrieval and source-quoted appraisal populate the evidence matrix",
+    "Scientific outline produces source-linked IMRaD manuscript and abstract",
+    "APA preview resolves author-year citations and references from metadata",
+    "APA Word export downloads an actual DOCX manuscript",
+    "Submission package requires author confirmation and rejects stale approval after edits",
+    "Research desk fits a smaller desktop window"
+  ],
+  "page_errors": [],
+  "ok": true
+}

@@ -25,3 +25,9 @@ Validation separates implementation tests, real upstream Graphify execution, a r
 Cancellation cannot refund a provider request that was already submitted. File attribution and quote matching do not prove scientific validity. macOS compatibility is not presented as a tested desktop build. Existing local installations are not modified by publishing this release.
 
 [Integration and distribution guide](https://github.com/AronAxe/GraphPaper/blob/main/docs/UPDATE-0.3.1.md) · [Public Graphify distribution](https://pypi.org/project/graphifyy/0.9.80/)
+
+## Verified build
+
+217 automated Windows tests passed (1 platform-permission skip). All 44 browser workflow checks passed, all 10 native-source checks passed, and all 15 checks against the actual compiled executable passed. The compiled-native checks include a real public Graphify worker with synthetic model transport, source provenance, native Save As and save-on-close.
+
+Real Codex-backed extraction was verified separately with synthetic documents and the packaged Graphify worker, using the explicitly selected `gpt-6-luna` model at `low` reasoning. It used 1 model request(s), with no duplicate Native pass or API-key fallback. Exact outcomes, dependency versions and platform results are recorded in `docs/validation/v0.3.1`. This is not a claim of paid API testing for every provider or a macOS desktop build.

@@ -1,5 +1,13 @@
 # Validation and quality
 
+## Version 0.3.1 validation
+
+217 automated Windows tests passed (1 platform-permission skip). All 44 browser workflow checks passed, all 10 native-source checks passed, and all 15 checks against the actual compiled executable passed. The compiled-native checks include a real public Graphify worker with synthetic model transport, source provenance, native Save As and save-on-close.
+
+Real Codex-backed extraction was verified separately with synthetic documents and the packaged Graphify worker, using the explicitly selected `gpt-6-luna` model at `low` reasoning. It used 1 model request(s), with no duplicate Native pass or API-key fallback. Exact outcomes, dependency versions and platform results are recorded in `docs/validation/v0.3.1`. This is not a claim of paid API testing for every provider or a macOS desktop build.
+
+The legacy native-test waits were too short on some cold Windows runs. The harness now waits for actual extraction readiness and records export diagnostics while retaining bounded cancellation and shutdown checks. Earlier reports below are historical.
+
 Passing software tests and producing a better article are different questions. This page keeps recorded release checks, live service checks and editorial evaluation separate.
 
 ## Recorded validation: GraphPaper 0.3.0

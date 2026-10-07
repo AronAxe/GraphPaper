@@ -1,0 +1,54 @@
+{
+  "native_windows": true,
+  "packaged_executable": true,
+  "science_mode": true,
+  "live_models": false,
+  "checks": [
+    "Actual Windows/WebView2 window starts and responds to Windows messages",
+    "Native bridge initializes with only four explicit methods and resolves its promise",
+    "Strict application CSP remains enabled",
+    "A Windows mouse click opens the project dialog without freezing the host",
+    "Native window supports typing and project creation",
+    "Native Science research protocol edits and saves without a model call",
+    "Graphify runtime is available through the real graphical status check",
+    "External engine, extraction model and reasoning settings save from the interface",
+    "Build graph runs the actual external Graphify worker through the selected model and effort",
+    "Only evidence sources reach inference; no second Native extraction or uncounted request",
+    "External graph source provenance opens the correct original document",
+    "Connections dialog opens and closes in the native window",
+    "Native Save As dialog opens, cancels and returns without blocking the interface",
+    "Windows close completes the save handshake and exits normally",
+    "Pending manuscript text is persisted before the native process exits"
+  ],
+  "page_errors": [],
+  "ok": true,
+  "bridge_methods": [
+    "cancel_close",
+    "notify_ready",
+    "request_close",
+    "save_export"
+  ],
+  "native_child_classes": [
+    "Chrome_RenderWidgetHostHWND",
+    "Chrome_WidgetWin_0",
+    "Chrome_WidgetWin_1",
+    "Intermediate D3D Window",
+    "WindowsForms10.Window.8.app.0.aec740_r21_ad1"
+  ],
+  "external_graphify": {
+    "nodes": 3,
+    "edges": 2,
+    "model_requests": 1,
+    "runtime": "0.9.80",
+    "engine": "Graphify 0.9.80 via openai-compatible",
+    "reasoning": "high",
+    "model": "fixture-extractor",
+    "live_model": false
+  },
+  "save_bridge_result": {
+    "saved": false
+  },
+  "close_seconds": 8.329,
+  "exit_code": 0,
+  "recursion_errors": false
+}
