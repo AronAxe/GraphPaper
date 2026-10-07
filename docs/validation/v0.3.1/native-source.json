@@ -1,0 +1,153 @@
+{
+  "native_windows": true,
+  "packaged_executable": false,
+  "science_mode": true,
+  "live_models": false,
+  "checks": [
+    "Actual Windows/WebView2 window starts and responds to Windows messages",
+    "Native bridge initializes with only four explicit methods and resolves its promise",
+    "Strict application CSP remains enabled",
+    "A Windows mouse click opens the project dialog without freezing the host",
+    "Native window supports typing and project creation",
+    "Native Science research protocol edits and saves without a model call",
+    "Connections dialog opens and closes in the native window",
+    "Native Save As dialog opens, cancels and returns without blocking the interface",
+    "Windows close completes the save handshake and exits normally",
+    "Pending manuscript text is persisted before the native process exits"
+  ],
+  "page_errors": [],
+  "ok": true,
+  "bridge_methods": [
+    "cancel_close",
+    "notify_ready",
+    "request_close",
+    "save_export"
+  ],
+  "native_child_classes": [
+    "Chrome_RenderWidgetHostHWND",
+    "Chrome_WidgetWin_0",
+    "Chrome_WidgetWin_1",
+    "Intermediate D3D Window",
+    "WindowsForms10.Window.8.app.0.aec740_r21_ad1"
+  ],
+  "save_bridge_result": null,
+  "export_window_classes": [
+    {
+      "class": "Auto-Suggest Dropdown",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "tooltips_class32",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "tooltips_class32",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "tooltips_class32",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "tooltips_class32",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "_SearchEditBoxFakeWindow",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "tooltips_class32",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "tooltips_class32",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "tooltips_class32",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "#32770",
+      "visible": true,
+      "title": "Save As"
+    },
+    {
+      "class": "WindowsForms10.Window.8.app.0.aec740_r21_ad1",
+      "visible": true,
+      "title": "GraphPaper \u2014 a studio for connected thought"
+    },
+    {
+      "class": "ComboLBox",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "ComboLBox",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "WorkerW",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "WorkerW",
+      "visible": false,
+      "title": ""
+    },
+    {
+      "class": "GDI+ Hook Window Class",
+      "visible": false,
+      "title": "GDI+ Window (python.exe)"
+    },
+    {
+      "class": ".NET-BroadcastEventWindow.4.0.0.0.aec740.0",
+      "visible": false,
+      "title": ".NET-BroadcastEventWindow.4.0.0.0.aec740.0"
+    },
+    {
+      "class": "IME",
+      "visible": false,
+      "title": "Default IME"
+    },
+    {
+      "class": "MSCTFIME UI",
+      "visible": false,
+      "title": "MSCTFIME UI"
+    },
+    {
+      "class": "MSCTFIME UI",
+      "visible": false,
+      "title": "MSCTFIME UI"
+    },
+    {
+      "class": "IME",
+      "visible": false,
+      "title": "Default IME"
+    },
+    {
+      "class": "IME",
+      "visible": false,
+      "title": "Default IME"
+    },
+    {
+      "class": "IME",
+      "visible": false,
+      "title": "Default IME"
+    }
+  ],
+  "exit_code": 0,
+  "recursion_errors": false
+}

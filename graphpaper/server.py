@@ -124,6 +124,12 @@ def create_app(root=None):
         store.set_settings(value.model_dump())
         return public_settings()
 
+    @app.get("/api/graphify/status")
+    async def graphify_status():
+        from .graphify_runtime import check_runtime
+        result = await run_in_threadpool(check_runtime, settings().graphify_executable)
+        return {k:v for k,v in result.items() if k != "command"}
+
     @app.get("/api/models")
     async def get_models():
         return await run_in_threadpool(Clients(settings(), vault).discover_models)

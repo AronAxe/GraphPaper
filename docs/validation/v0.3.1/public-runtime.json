@@ -1,0 +1,1154 @@
+{
+  "available": true,
+  "package": "graphifyy",
+  "version": "0.9.80",
+  "required_version": "0.9.80",
+  "dependencies": {
+    "graphifyy": "0.9.80",
+    "openai": "3.26.0",
+    "tiktoken": "0.14.0",
+    "networkx": "3.7",
+    "numpy": "2.5.3",
+    "rapidfuzz": "3.14.6",
+    "tree-sitter": "0.25.2"
+  },
+  "missing": [],
+  "distribution": "public PyPI, unmodified Graphify CLI",
+  "error": "",
+  "distribution_record_files_verified": {
+    "graphifyy": 240,
+    "openai": 1938,
+    "tiktoken": 14
+  },
+  "source": "https://pypi.org/project/graphifyy/0.9.80/",
+  "upstream": "https://github.com/Graphify-Labs/graphify",
+  "patched_upstream": false,
+  "tokenizer_cache": [
+    {
+      "file": "9b5ad71b2ce5302211f9c61530b329a4922fc6a4",
+      "sha256": "223921b76ee99bde995b7ff738513eef100fb51d18c93597a113bcffe865b2a7"
+    }
+  ],
+  "distributions": [
+    {
+      "name": "altgraph",
+      "version": "0.17.5",
+      "licenses": [
+        {
+          "file": "graphify-licenses/altgraph/LICENSE",
+          "sha256": "6c194d6db0c64d45535d10c95142b9b0cda7b7dcc7f1ddee302b3d536f3dbe46"
+        }
+      ]
+    },
+    {
+      "name": "annotated-doc",
+      "version": "0.0.5",
+      "licenses": [
+        {
+          "file": "graphify-licenses/annotated-doc/LICENSE",
+          "sha256": "fff170779a6acbf65abdb405c087f1cee1786691e4a96a4034517e4a504a0cdf"
+        }
+      ]
+    },
+    {
+      "name": "annotated-types",
+      "version": "0.8.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/annotated-types/LICENSE",
+          "sha256": "fe1049884b1a0d9342901e88e07f32925d24b3121d9972b6a6805fb9824b095d"
+        }
+      ]
+    },
+    {
+      "name": "anyio",
+      "version": "4.15.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/anyio/LICENSE",
+          "sha256": "5361ac9dc58f2ef5fd2e9b09c68297c17f04950909bbc8023bdb82eacf22c2b0"
+        }
+      ]
+    },
+    {
+      "name": "beautifulsoup4",
+      "version": "4.15.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/beautifulsoup4/LICENSE",
+          "sha256": "55b4d8d4b1e5bc86d10efac91b74c87bcb77526b0f5b9edaf8b9cd2adc7397b2"
+        }
+      ]
+    },
+    {
+      "name": "bottle",
+      "version": "0.13.4",
+      "licenses": [
+        {
+          "file": "graphify-licenses/bottle/LICENSE",
+          "sha256": "af150257b1f7cce92b6207854f2e8f90ea9ae52d7cac758d13a47bd12e2a2443"
+        }
+      ]
+    },
+    {
+      "name": "certifi",
+      "version": "2026.7.22",
+      "licenses": [
+        {
+          "file": "graphify-licenses/certifi/LICENSE",
+          "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+        }
+      ]
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/cffi/LICENSE",
+          "sha256": "5ba24ddc57067f9249add644c3afc41a5d6dc37e23433ef759d95df370b0af63"
+        }
+      ]
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/charset-normalizer/LICENSE",
+          "sha256": "18577485d3704f1a479ded8e573c0976cfed315fd2fd17983fa988da4c2f70d1"
+        }
+      ]
+    },
+    {
+      "name": "click",
+      "version": "8.5.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/click/LICENSE.txt",
+          "sha256": "9a8ad106a394e853bfe21f42f4e72d592819a22805d991b5f3275029292b658d"
+        }
+      ]
+    },
+    {
+      "name": "clr_loader",
+      "version": "0.3.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/clr_loader/LICENSE",
+          "sha256": "dd6bdca10cdc3b24c6b0b6cef5fd611b7feb6917f127833283ddcdb310d3b453"
+        }
+      ]
+    },
+    {
+      "name": "colorama",
+      "version": "0.4.6",
+      "licenses": [
+        {
+          "file": "graphify-licenses/colorama/LICENSE.txt",
+          "sha256": "cac35c02686e5d04a5a7140bfb3b36e73aed496656e891102e428886d7930318"
+        }
+      ]
+    },
+    {
+      "name": "defusedxml",
+      "version": "0.7.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/defusedxml/LICENSE",
+          "sha256": "b80ce9da8c42a1f91079627fbbe2bf27210ae108a0ffe5f077d5b08e076c24c8"
+        }
+      ]
+    },
+    {
+      "name": "fastapi",
+      "version": "0.142.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/fastapi/LICENSE",
+          "sha256": "4ec89ffc81485b97fec584b2d4a961032eeffe834453894fd9c1274906cc744e"
+        }
+      ]
+    },
+    {
+      "name": "graphifyy",
+      "version": "0.9.80",
+      "licenses": [
+        {
+          "file": "graphify-licenses/graphifyy/LICENSE",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "file": "graphify-licenses/graphifyy/LICENSE-MIT",
+          "sha256": "36ecff6bbb97aca1be64e95f42538cf796adde5864edac583e620643c096931a"
+        },
+        {
+          "file": "graphify-licenses/graphifyy/NOTICE",
+          "sha256": "3448ea175bba09f6fed8a743000139fb4c7112de83f164355b5540b158576621"
+        }
+      ]
+    },
+    {
+      "name": "greenlet",
+      "version": "3.5.6",
+      "licenses": [
+        {
+          "file": "graphify-licenses/greenlet/LICENSE",
+          "sha256": "ab977b654605670319509481ece49198f405a129372ac38c96f51cd96c2f452e"
+        },
+        {
+          "file": "graphify-licenses/greenlet/LICENSE.PSF",
+          "sha256": "69efa689cc7aec7736236d3039c1d665e4b0c734a5bfea5abf633023abb2fff4"
+        }
+      ]
+    },
+    {
+      "name": "h11",
+      "version": "0.16.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/h11/LICENSE.txt",
+          "sha256": "37db5bb85926db28a427a25867f10b1232003aea1be69ccb851138adb8e6f361"
+        }
+      ]
+    },
+    {
+      "name": "httpcore",
+      "version": "1.0.9",
+      "licenses": [
+        {
+          "file": "graphify-licenses/httpcore/LICENSE.md",
+          "sha256": "fdcb59154c74cbaba16a11242f7740bea9f23d6feb5547917d8c5f94a80392a5"
+        }
+      ]
+    },
+    {
+      "name": "httpcore2",
+      "version": "2.13.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/httpcore2/LICENSE.md",
+          "sha256": "c4df125c807b0613501e943a5c92496dd11d2c16604ce396097a8dde396304d9"
+        }
+      ]
+    },
+    {
+      "name": "httpx",
+      "version": "0.28.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/httpx/LICENSE.md",
+          "sha256": "4ec59d544f12b5f539a3a716fd321ac58ccd8030b465221f2c880200cdf28d8d"
+        }
+      ]
+    },
+    {
+      "name": "httpx2",
+      "version": "2.13.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/httpx2/LICENSE.md",
+          "sha256": "7e7d6dbaf7fe160d39fd6e84fd02c33cab96bcbea34d36998d545bceb4a19c30"
+        }
+      ]
+    },
+    {
+      "name": "idna",
+      "version": "3.20",
+      "licenses": [
+        {
+          "file": "graphify-licenses/idna/LICENSE.md",
+          "sha256": "1a9a4f0e3d479a27240ddd59a9137a66ab4a0f9dfdc8ca6188cc0bfd85187f04"
+        }
+      ]
+    },
+    {
+      "name": "iniconfig",
+      "version": "2.3.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/iniconfig/LICENSE",
+          "sha256": "3409fa91f7ace557894632676656e32264fe5ef7581535725dc9a23774551bd4"
+        }
+      ]
+    },
+    {
+      "name": "jiter",
+      "version": "0.17.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/jiter/LICENSE",
+          "sha256": "e65c152aa65deaaa52019855bf1bbce4a0d592a048cb523b6ca691965741241e"
+        }
+      ]
+    },
+    {
+      "name": "lxml",
+      "version": "6.1.3",
+      "licenses": [
+        {
+          "file": "graphify-licenses/lxml/LICENSE.txt",
+          "sha256": "e7c3ce8d76331b0101cc46790ab43958ea90a364bcf962ed8763d5a818340e69"
+        },
+        {
+          "file": "graphify-licenses/lxml/LICENSES.txt",
+          "sha256": "df682c668de65321677b5e4861dca4128a8bad8067f230956e9da3f985b3d398"
+        }
+      ]
+    },
+    {
+      "name": "networkx",
+      "version": "3.7",
+      "licenses": [
+        {
+          "file": "graphify-licenses/networkx/LICENSE.txt",
+          "sha256": "6025f323ea29dc2f0ee0abd9523bf910186f55b0e148e6ebf646c55566278e2e"
+        }
+      ]
+    },
+    {
+      "name": "numpy",
+      "version": "2.5.3",
+      "licenses": [
+        {
+          "file": "graphify-licenses/numpy/LICENSE.txt",
+          "sha256": "a804dff0ead9fadc5293456410bcbfc32bf024be9c4513459663fb7b442d2341"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.txt",
+          "sha256": "d544761558b510866c21f7e8a2d5716fca76e0b98117e3b6b86314db7244d150"
+        },
+        {
+          "file": "graphify-licenses/numpy/COPYING",
+          "sha256": "aea41976c720f91bd19725c16916a1ace40eb1ea42620d340e587a5de4bbcea0"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE",
+          "sha256": "d208152e2777ffd0126eacc1bd21c0320d69e4e6b622d21a2a12a47e8ef73763"
+        },
+        {
+          "file": "graphify-licenses/numpy/dragon4_LICENSE.txt",
+          "sha256": "b0fd592d4ead563148e3977e7b589169d46a5ef2ff133c755a81af880a3fc919"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "a732977853530066790c42817087f4829b518dd98d340c916acbfd227e39d3cb"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE",
+          "sha256": "585483905b13d4b42f800c55ba99e89d6e2e33ccd5f503e201c07531d148ff41"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "8db000e158c162e7249787852d8c69764706502ccee725c06641b31c1e95c8af"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.txt",
+          "sha256": "19060ef465e1797d682ee0fc3081bd25ab1395e995e43d25c9d13c95d9a3cd6b"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE",
+          "sha256": "d78dbb208b80d92b4d333e41a4baae50d12444f46e53199fa7726a91de6e2da7"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "b4bc2f4fa1c95778f1ed3dd8f14706bece399475b978f9f34b5d3cd72521b48a"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "cf5619f25b112d5ce7c896efffc8e610bcb345dfadcc19f2c1460aa48fff2c9e"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "92c10699884321f1c2947fe2a70ab23b0fbf1507f756d89dd08f38c61fc3d4fa"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "41190663b77bee5302386495a07b7eabfbfa571aa0ae2f11da6764162062fc4f"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "322ac46d870c8aeead6c53adcccc839296fb3c8e456eae155081297daf7f8013"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "28cad82ce1379dc529df30da78ec012d7d0d1d576b03ddcb93388aee53659f59"
+        },
+        {
+          "file": "graphify-licenses/numpy/LICENSE.md",
+          "sha256": "454ec7350e478e037061850b67395753b425b1cb0a34bbc26290b020bf89d763"
+        }
+      ]
+    },
+    {
+      "name": "openai",
+      "version": "3.26.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/openai/LICENSE",
+          "sha256": "636eb7d79da9bb6d515a4b3fd417aa26679eb3cf16396ddab4bc55fa74e616e4"
+        }
+      ]
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": "1.45.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/opentelemetry-api/LICENSE",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+        }
+      ]
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "licenses": [
+        {
+          "file": "graphify-licenses/packaging/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "file": "graphify-licenses/packaging/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "file": "graphify-licenses/packaging/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        }
+      ]
+    },
+    {
+      "name": "pefile",
+      "version": "2024.8.26",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pefile/LICENSE",
+          "sha256": "b44409c067c6da52bfb54bb6624fb11a7b52157c3a13ae1400232f8196e86ad3"
+        }
+      ]
+    },
+    {
+      "name": "pillow",
+      "version": "12.3.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pillow/LICENSE",
+          "sha256": "4f7866a74802c6326f81faff59a56546b6aec2b10b91973e0e9308de95e79857"
+        }
+      ]
+    },
+    {
+      "name": "pip",
+      "version": "26.1.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pip/LICENSE.txt",
+          "sha256": "634300a669d49aeae65b12c6c48c924c51a4cdf3d1ff086dc3456dc8bcaa2104"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE.txt",
+          "sha256": "86eeee87be2a43f3ff1f56496f451f69243926f025fedbb033666c304c4c161b"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "e93716da6b9c0d5a4a1df60fe695b370f0695603d21f6f83f053e42cfc10caf7"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE.txt",
+          "sha256": "808e10c8a6ab8deb149ff9b3fb19f447a808094606d712a9ca57fead3552599d"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "cb5e8e7e5f4a3988e1063c142c60dc2df75605f4c46515e776e3aca6df976e14"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE.md",
+          "sha256": "b7a336abf3b04e180ec065cdd16e705d079e1cc7a14f910aa6e9187f36b9cd87"
+        },
+        {
+          "file": "graphify-licenses/pip/COPYING",
+          "sha256": "492dedba85da5872f78e6091bcd1fea474d660d35acb4dee964b8aab3f007427"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "1b22b049b5267d6dfc23a67bf4a84d8ec04b9fdfb1a51d360e42b4342c8b4154"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "f388fd38cad13112c1dc0f669bbe80e7f84541edbafb72f3030d2ca7642c3c9d"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "deed7c17a4318158190a3ea239cc879a5a50271cebb98ae7025f48fbe58dca15"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE",
+          "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
+        },
+        {
+          "file": "graphify-licenses/pip/LICENSE.txt",
+          "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+        }
+      ]
+    },
+    {
+      "name": "playwright",
+      "version": "1.63.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/playwright/LICENSE",
+          "sha256": "7fab1461b41970ff376f1c9303a637076bfaaeb71cd12dd3a1c44aaf59a1a2b9"
+        }
+      ]
+    },
+    {
+      "name": "pluggy",
+      "version": "1.6.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pluggy/LICENSE",
+          "sha256": "d6b65e6c213a5d0b577911d34d6e5949b9f59d76c238c5071a2f3fc16cfb2606"
+        }
+      ]
+    },
+    {
+      "name": "proxy_tools",
+      "version": "0.1.0",
+      "licenses": []
+    },
+    {
+      "name": "pycparser",
+      "version": "3.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pycparser/LICENSE",
+          "sha256": "0c846399369ea76ddd7b5c44fe6d16497415fcf015f5cbb508c24bf98b81c5b1"
+        }
+      ]
+    },
+    {
+      "name": "pydantic",
+      "version": "2.13.5",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pydantic/LICENSE",
+          "sha256": "a9e186f3ca16b5eef84318e7a701721351a00cb7b8ae3a4394b67b49e3529ef3"
+        }
+      ]
+    },
+    {
+      "name": "pydantic_core",
+      "version": "2.46.5",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pydantic_core/LICENSE",
+          "sha256": "fbe7f615f18d135c07000e5a86325db27f42c7729699ef166ac1f7a3f4586bf4"
+        }
+      ]
+    },
+    {
+      "name": "pyee",
+      "version": "13.0.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pyee/LICENSE",
+          "sha256": "1ff556ca206b107f10e1c562ae454d3292e0296c3510eb90eb7f114caee32a66"
+        }
+      ]
+    },
+    {
+      "name": "Pygments",
+      "version": "2.21.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/Pygments/LICENSE",
+          "sha256": "a9d66f1d526df02e29dce73436d34e56e8632f46c275bbdffc70569e882f9f17"
+        }
+      ]
+    },
+    {
+      "name": "pyinstaller",
+      "version": "6.22.3",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pyinstaller/COPYING.txt",
+          "sha256": "0598064c7d2718e38d7914a7d08343b2fa008e3bea9ebba2aa7a6ffa5900dd64"
+        }
+      ]
+    },
+    {
+      "name": "pyinstaller-hooks-contrib",
+      "version": "2026.8",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pyinstaller-hooks-contrib/LICENSE",
+          "sha256": "91d0baaff00773038e72c0a1fc9d5d2d38706b7a2b9c04f34296608f931b9cd0"
+        }
+      ]
+    },
+    {
+      "name": "pypdf",
+      "version": "6.19.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pypdf/LICENSE",
+          "sha256": "a97ac230e5f33ef10a5367a850eb01f91f1a0b064e34742c7794d2294557f524"
+        }
+      ]
+    },
+    {
+      "name": "pytest",
+      "version": "9.1.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pytest/LICENSE",
+          "sha256": "ca836a5f9ecca3b2f350230faa20a48fb8b145653b5568d784862df864706b9b"
+        }
+      ]
+    },
+    {
+      "name": "python-docx",
+      "version": "1.2.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/python-docx/LICENSE",
+          "sha256": "7652f271e46d0d533e9dc463f3b5fcbdcacf4d6a9c8d6b554d15efd0f37f6132"
+        }
+      ]
+    },
+    {
+      "name": "python-multipart",
+      "version": "0.0.32",
+      "licenses": [
+        {
+          "file": "graphify-licenses/python-multipart/LICENSE.txt",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        }
+      ]
+    },
+    {
+      "name": "pythonnet",
+      "version": "3.2.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pythonnet/LICENSE",
+          "sha256": "e1dc3a6ff017a6800dc27a7220500f512b95fbcd996d38ebbbff85c693245369"
+        }
+      ]
+    },
+    {
+      "name": "pywebview",
+      "version": "6.2.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pywebview/LICENSE",
+          "sha256": "4a988dd3598832cd3653de20dc33cb677d0fb53ab5551c879ca31280ae653675"
+        }
+      ]
+    },
+    {
+      "name": "pywin32-ctypes",
+      "version": "0.2.3",
+      "licenses": [
+        {
+          "file": "graphify-licenses/pywin32-ctypes/LICENSE.txt",
+          "sha256": "dfa83b3e2709adfcdb838d9ad55823ca674abb780e60563d9dd9544ccbf785e9"
+        }
+      ]
+    },
+    {
+      "name": "RapidFuzz",
+      "version": "3.14.6",
+      "licenses": [
+        {
+          "file": "graphify-licenses/RapidFuzz/LICENSE",
+          "sha256": "f34ccdffdff56fc417785915eedf18601d5479755df3c472b2c754c29802d683"
+        }
+      ]
+    },
+    {
+      "name": "regex",
+      "version": "2026.9.29",
+      "licenses": [
+        {
+          "file": "graphify-licenses/regex/LICENSE.txt",
+          "sha256": "3d220c06594b826bbabf110312f60f385f99e57e529fa4b9e536f79091f8b4c7"
+        }
+      ]
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/requests/LICENSE",
+          "sha256": "09e8a9bcec8067104652c168685ab0931e7868f9c8284b66f5ae6edae5f1130b"
+        },
+        {
+          "file": "graphify-licenses/requests/NOTICE",
+          "sha256": "f5110972dedad2b4e9d314518daf3b7d72d6e02e499acd802181de6f74571dcc"
+        }
+      ]
+    },
+    {
+      "name": "setuptools",
+      "version": "84.0.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "ade78d04982d69972d444a8e14a94f87a2334dd3855cc80348ea8e240aa0df2d"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "458502e12d97bbf64438606a20044aa85eb05fb0a8a807bb35dbec253fd1fc04"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "86da0f01aeae46348a3c3d465195dc1ceccde79f79e87769a64b8da04b2a4741"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "9755a18519666e5f0f4cae3daad3d7012bcae48a600b31237d75e9fe134e6683"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "5a57cb4db85e2a2dd88c290628908add57e3451449e0a9a71fdfb38776fd759d"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "09f1c8c9e941af3e584d59641ea9b87d83c0cb0fd007eb5ef391a7e2643c1a46"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "cad1ef5bd340d73e074ba614d26f7deaca5c7940c3d8c34852e65c4909686c48"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE.APACHE",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE.BSD",
+          "sha256": "b70e7e9b742f1cc6f948b34c16aa39ffece94196364bc88ff0d2180f0028fac5"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "29e0fd62e929850e86eb28c3fdccf0cefdf4fa94879011cffb3d0d4bed6d4db6"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "b80816b0d530b8accb4c2211783790984a6e3b61922c2b5ee92f3372ab2742fe"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE.txt",
+          "sha256": "30c23618679108f3e8ea1d2a658c7ca417bdfc891c98ef1a89fa4ff0c9828654"
+        },
+        {
+          "file": "graphify-licenses/setuptools/LICENSE",
+          "sha256": "5a57cb4db85e2a2dd88c290628908add57e3451449e0a9a71fdfb38776fd759d"
+        }
+      ]
+    },
+    {
+      "name": "sniffio",
+      "version": "1.3.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/sniffio/LICENSE",
+          "sha256": "652c878488d1456361e08c3f8607fd7ba59892a14103d15cce4ff93c85b5cc8b"
+        },
+        {
+          "file": "graphify-licenses/sniffio/LICENSE.APACHE2",
+          "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+        },
+        {
+          "file": "graphify-licenses/sniffio/LICENSE.MIT",
+          "sha256": "3e6dae555eb92787fc82d1d48355677f454c7f65aeb38d3f9e72bf9a3daf034b"
+        }
+      ]
+    },
+    {
+      "name": "soupsieve",
+      "version": "2.10",
+      "licenses": [
+        {
+          "file": "graphify-licenses/soupsieve/LICENSE.md",
+          "sha256": "76a0acdb98c3a63681e20b6f096699ef8cad5fb35d56eef8387e0fa71d797a9a"
+        }
+      ]
+    },
+    {
+      "name": "starlette",
+      "version": "1.7.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/starlette/LICENSE.md",
+          "sha256": "dcb95677a02240243187e964f941847d19b17821cf99e5afae684fab328c19bf"
+        }
+      ]
+    },
+    {
+      "name": "tiktoken",
+      "version": "0.14.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tiktoken/LICENSE",
+          "sha256": "258463fc3788f1f9b6a3f1820d8a87481ac24018d53167597e25d3e9031851ca"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter",
+      "version": "0.25.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter/LICENSE",
+          "sha256": "c40a115b3d7d429c839bc51ace3464c2f37c9559bad6c6251a86281c27ea5431"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-bash",
+      "version": "0.25.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-bash/LICENSE",
+          "sha256": "49bf33cf78ef5897e4e161ce1517df7de1ae5042a65b6bcfd44401e0fc606559"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-c",
+      "version": "0.24.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-c/LICENSE",
+          "sha256": "2e0110e07abef7c2548b26ec9d6969775617ca539a0dc8dbeeb14d6452c711d1"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-c-sharp",
+      "version": "0.23.5",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-c-sharp/LICENSE",
+          "sha256": "778fb7d63b8c1844da315648c02f325c4713a6f4a5d19644fd413421422776d3"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-cpp",
+      "version": "0.23.4",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-cpp/LICENSE",
+          "sha256": "2e0110e07abef7c2548b26ec9d6969775617ca539a0dc8dbeeb14d6452c711d1"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-elixir",
+      "version": "0.3.5",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-elixir/LICENSE",
+          "sha256": "6d1d968fb225eca367cb7f0b8831ab012a35d92b547e945e17ef8e7b05c3e5cc"
+        },
+        {
+          "file": "graphify-licenses/tree-sitter-elixir/NOTICE",
+          "sha256": "ab7644c34e7bd8a38fc3ffa4b60b5c20a47491d56082308b7a407fc76f39bb6d"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-fortran",
+      "version": "0.6.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-fortran/LICENSE",
+          "sha256": "c0fc02a86ae2b179c4729694c523bbf42da674e5136ed8e12e3cb2f26556ea9f"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-go",
+      "version": "0.25.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-go/LICENSE",
+          "sha256": "2e0110e07abef7c2548b26ec9d6969775617ca539a0dc8dbeeb14d6452c711d1"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-groovy",
+      "version": "0.1.2",
+      "licenses": []
+    },
+    {
+      "name": "tree-sitter-java",
+      "version": "0.23.5",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-java/LICENSE",
+          "sha256": "52ed137b039cd9c46409bc22e89938af911c95b157feae2d040b51e6084369a7"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-javascript",
+      "version": "0.25.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-javascript/LICENSE",
+          "sha256": "2e0110e07abef7c2548b26ec9d6969775617ca539a0dc8dbeeb14d6452c711d1"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-json",
+      "version": "0.24.8",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-json/LICENSE",
+          "sha256": "2e0110e07abef7c2548b26ec9d6969775617ca539a0dc8dbeeb14d6452c711d1"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-julia",
+      "version": "0.23.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-julia/LICENSE",
+          "sha256": "74f800107f200f4e28da33e9c3f86230d37d8f4c0a4916f7111e800c395ee3a2"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-kotlin",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-kotlin/LICENSE",
+          "sha256": "0eea8dc45e89deeb03c7799bbbc7b4688f365fb274562f4540ecfebdea82e727"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-lua",
+      "version": "0.5.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-lua/LICENSE.md",
+          "sha256": "9a32b02e4c917b1ce6b5e79d8ea81e25cefd7f27d89c7235f2afb262c06cf32e"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-objc",
+      "version": "3.0.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-objc/LICENSE",
+          "sha256": "099c44248f8cf353123211318680e93465587c005a4b3730ce8cb5334de043d6"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-php",
+      "version": "0.24.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-php/LICENSE",
+          "sha256": "664764fabf40c0b318e06324a5a12379092a2df25b8cbf2415f71bc0bb352346"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-powershell",
+      "version": "0.26.4",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-powershell/LICENSE",
+          "sha256": "1fca8454c0d77a73f9922a52d39e1f7c339f5da5d03f2766eff66b859fa19477"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-python",
+      "version": "0.25.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-python/LICENSE",
+          "sha256": "d724405ce238a22c0d35769c5a36b386ad5958192efe8bbb304fb2896254575f"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-ruby",
+      "version": "0.23.1",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-ruby/LICENSE",
+          "sha256": "ee006f02a3d856df282e409be2a86e24a65bb573a98b9c28343771141351bb6b"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-rust",
+      "version": "0.24.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-rust/LICENSE",
+          "sha256": "31d5b6f4243d5c7c6e1c4ebbbb9f6407bd1457a08bcc4f706521710341acba36"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-scala",
+      "version": "0.26.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-scala/LICENSE",
+          "sha256": "1f95ed26e1f4074074c9c7083e61c0a9e4c3b9f435745044995f3beb4ed28575"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-swift",
+      "version": "0.7.4",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-swift/LICENSE",
+          "sha256": "ee75f972f821e2f0407b5fc7a82ff508e00d35db84075bf2d9e59ee75cea0be4"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-typescript",
+      "version": "0.23.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-typescript/LICENSE",
+          "sha256": "49bf33cf78ef5897e4e161ce1517df7de1ae5042a65b6bcfd44401e0fc606559"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-verilog",
+      "version": "1.0.3",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-verilog/LICENSE",
+          "sha256": "8d2ff8d1e308828099436c43dc8bfbb8b6f368ad2a012ab9802a80ca22b03b53"
+        }
+      ]
+    },
+    {
+      "name": "tree-sitter-zig",
+      "version": "1.1.2",
+      "licenses": [
+        {
+          "file": "graphify-licenses/tree-sitter-zig/LICENSE",
+          "sha256": "0eea8dc45e89deeb03c7799bbbc7b4688f365fb274562f4540ecfebdea82e727"
+        }
+      ]
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.4",
+      "licenses": [
+        {
+          "file": "graphify-licenses/truststore/LICENSE",
+          "sha256": "33be7b7e8fa4fd19b1760e1a8ed8a668bdab852c91b692dd41424bcb725a9fca"
+        }
+      ]
+    },
+    {
+      "name": "typing-inspection",
+      "version": "0.4.4",
+      "licenses": [
+        {
+          "file": "graphify-licenses/typing-inspection/LICENSE",
+          "sha256": "804b59b25f2c31bd278f9202a19ae49a3945aa2664387e2d0a128c7cacc61ec3"
+        }
+      ]
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/typing_extensions/LICENSE",
+          "sha256": "3b2f81fe21d181c499c59a256c8e1968455d6689d269aa85373bfb6af41da3bf"
+        }
+      ]
+    },
+    {
+      "name": "urllib3",
+      "version": "2.8.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/urllib3/LICENSE.txt",
+          "sha256": "130e3a64d5fdd5d096a752694634a7d9df284469de86e5732100268041e3d686"
+        }
+      ]
+    },
+    {
+      "name": "uvicorn",
+      "version": "0.54.0",
+      "licenses": [
+        {
+          "file": "graphify-licenses/uvicorn/LICENSE.md",
+          "sha256": "efe1acf3e62fb99c288b0ec73e5a773b7268ef4320fe757ea994214e4b63c371"
+        }
+      ]
+    }
+  ]
+}

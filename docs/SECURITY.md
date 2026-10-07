@@ -25,7 +25,7 @@ Do not paste tokens into manuscript prompts, source documents, command examples 
 | Public URL import / author-page discovery | The requested URL and ordinary network request information |
 | Scholarly search / full-text retrieval | Search terms, requested identifiers, and an optional service credential |
 | Codex browser sign-in | The official account-authentication flow handled by Codex |
-| Optional Graphify subprocess | A temporary source corpus and the configured provider connection |
+| External Graphify subprocess | Enabled non-voice source text and a temporary loopback credential; inference is routed by GraphPaper |
 
 Cloud generation requires permission. Website imports and scholarly searches are distinct user-triggered network operations and do not require an LLM key. Provider processing, retention, account and rate-limit policies still apply. The app has no analytics or hidden automatic publishing.
 
@@ -47,7 +47,7 @@ Inbox import checks stable files and rejects unsafe filesystem cases such as sym
 
 ## Optional executables and release integrity
 
-Graphify is a separate executable selected by the user. Its behavior, retries and child processes are outside GraphPaper’s internal metering. Use a trusted installation or native extraction instead.
+The included public Graphify runtime runs as an owned child process with a temporary configuration home. It receives source text and a job-specific loopback credential, not real provider or OAuth credentials. Inference passes through GraphPaper and shares its request accounting. Native process cleanup is lifecycle management, not a hostile-code sandbox: a custom executable is still an explicit trust choice. See [external Graphify](UPDATE-0.3.1.md).
 
 The Windows release bundles an official Codex runtime with version and checksum provenance. `SHA256SUMS.txt` identifies the exact application ZIP. The GraphPaper binary is unsigned; a checksum is not a signed publisher identity or an independent audit.
 

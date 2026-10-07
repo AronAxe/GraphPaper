@@ -69,9 +69,11 @@ class Node(Model):
     evidence: list[Evidence] = Field(default_factory=list)
     status: Literal["sourced", "inferred", "canon", "proposed", "imported"] = "inferred"
     community: int = 0
+    source_ids: list[str] = Field(default_factory=list)
 
 
 class Edge(Model):
+    source_ids: list[str] = Field(default_factory=list)
     id: str = Field(default_factory=lambda: uid("e_"))
     source: str
     target: str
@@ -196,6 +198,8 @@ class Settings(Model):
     jev_model: str = "jev-latest"
     graph_engine: Literal["native", "graphify"] = "native"
     graphify_executable: str = ""
+    graphify_timeout_seconds: int = Field(1200, ge=10, le=7200)
+    graphify_chunk_tokens: int = Field(4000, ge=500, le=16000)
     max_calls: int = Field(80, ge=5, le=500)
     max_candidates: int = Field(30, ge=6, le=80)
     refine: bool = True

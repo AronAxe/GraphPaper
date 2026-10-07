@@ -1,0 +1,4 @@
+# Public upstream distribution; no private fork, unreleased patch or user-local dependency.
+graphifyy[openai]==0.9.80
+openai==3.26.0
+tiktoken==0.14.0

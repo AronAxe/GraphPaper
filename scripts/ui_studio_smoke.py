@@ -101,6 +101,7 @@ def main():
                 page.get_by_role('button',name='Your writing voice',exact=True).click();assert 'direct verbs' in page.locator('#voice-instructions').input_value()
                 page.locator('#voice-instructions').fill('Use precise verbs. Vary rhythm. Leave deliberate wit alone.')
                 page.get_by_role('button',name='Save voice settings',exact=True).click()
+                page.wait_for_function("() => state.p.voice_profile?.instructions?.startsWith('Use precise') && !document.querySelector('.modal')")
                 assert client.get(base).json()['voice_profile']['instructions'].startswith('Use precise')
                 report['checks'].append('Learn, inspect and edit a persistent author voice profile')
                 page.get_by_role('button',name='Your writing voice',exact=True).click();page.screenshot(path=str(out/'voice.png'),full_page=True);page.get_by_role('button',name='Close dialog',exact=True).click()

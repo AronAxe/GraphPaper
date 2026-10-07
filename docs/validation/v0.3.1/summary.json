@@ -1,0 +1,63 @@
+{
+  "version": "0.3.1",
+  "validated_at": "2026-10-07T19:20:22.041137+00:00",
+  "source_commit": "e1b64107fb7f8db11e9182a6218acd09f86165b4",
+  "windows_unit": {
+    "passed": 217,
+    "skipped": 1,
+    "failed": 0
+  },
+  "browser_checks": 44,
+  "native_source_checks": 10,
+  "native_packaged_checks": 15,
+  "live_codex": true,
+  "existing_installation_modified": false,
+  "macos_directly_tested": false,
+  "live_codex_result": {
+    "nodes": 5,
+    "edges": 4,
+    "coverage": {
+      "engine": "external_graphify",
+      "runtime_version": "0.9.80",
+      "runtime_selection": "bundled",
+      "sources": 2,
+      "characters": 146,
+      "source_ids": [
+        "S1",
+        "S2"
+      ],
+      "model": "gpt-6-luna",
+      "reasoning_effort": "low",
+      "model_requests": 1,
+      "requests": [
+        {
+          "call": 1,
+          "model": "gpt-6-luna",
+          "provider": "codex",
+          "reasoning_effort": "low",
+          "prompt_tokens": 16775,
+          "completion_tokens": 553,
+          "total_tokens": 17328
+        }
+      ],
+      "scope": "Enabled source text exported in full; Graphify controls chunking and extraction. No extra Native extraction pass was run."
+    },
+    "source_links": [
+      "S1",
+      "S2"
+    ],
+    "no_extra_native_pass": true
+  },
+  "public_graphify_version": "0.9.80",
+  "dependency_file_verification": {
+    "graphifyy": 240,
+    "openai": 1938,
+    "tiktoken": 14
+  },
+  "application_source_sha256": "26bcdd8224fb324555c6a7afd8415de884139191732fef41801c2d3df794e72e",
+  "linux_source_ci_passed": true,
+  "native_verification_note": "Actual Windows/WebView2 interaction; synthetic projects; bounded OS dialog and teardown waits. macOS not directly tested.",
+  "archive": "GraphPaper-v0.3.1-Windows-x64.zip",
+  "archive_size_bytes": 187511280,
+  "archive_sha256": "1a0690506aaa6a45d0e2d0ebc6967f715d8da96dfdad5fd02443bf6d2a5bbed3"
+}

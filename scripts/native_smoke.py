@@ -18,7 +18,9 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--executable',type=Path)
+    parser.add_argument('--trace-source',action='store_true',help='Capture Python thread stacks for this isolated source test only')
     parser.add_argument('--science',action='store_true',help='Exercise the Science workspace in the actual native shell')
+    parser.add_argument('--graphify',action='store_true',help='Verify the actual external Graphify action using a synthetic loopback model')
     parser.add_argument('--out',type=Path,default=ROOT/'test-results/native')
     args=parser.parse_args()
     if sys.platform!='win32':raise SystemExit('This regression requires a native Windows desktop.')
@@ -43,6 +45,9 @@ def main():
     else:
         # Avoid Windows venv's redirector process so proc.pid owns the window.
         command=[str(Path(sys.base_prefix)/'python.exe'),'-m','graphpaper.desktop']
+        if args.trace_source:
+            trace_code="import runpy,faulthandler;f=open("+repr(str(out/'thread-stacks.txt'))+",'w');faulthandler.dump_traceback_later(25,repeat=True,file=f);runpy.run_module('graphpaper.desktop',run_name='__main__')"
+            command=[str(Path(sys.base_prefix)/'python.exe'),'-c',trace_code]
         env['PYTHONPATH']=os.pathsep.join([str(ROOT),*sys.path])
     log=(out/'native.log').open('w',encoding='utf-8')
     proc=subprocess.Popen(command,cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT)
@@ -118,6 +123,10 @@ def main():
                 expect(page.locator('.modal')).to_have_count(0)
                 assert page.evaluate('() => state.p.research.plan.queries[0]')=='memory AND sleep'
                 check('Native Science research protocol edits and saves without a model call')
+            if args.graphify:
+                from graphify_ui_checks import exercise
+                report['external_graphify']=exercise(page,check,out)
+                responsive(hwnd)
             page.locator('[data-action="settings"]').click();page.wait_for_selector('#s-provider')
             expect(page.locator('#s-reasoning_effort')).to_have_count(1)
             page.get_by_role('button',name='Close dialog',exact=True).click();responsive(hwnd)
@@ -128,9 +137,17 @@ def main():
             # Invoke a real native Save As dialog through the actual JS bridge;
             # cancel it using the OS close button message, not a mocked return.
             page.evaluate("id => {window.__saveTest=null;window.pywebview.api.save_export(id,'md').then(r=>window.__saveTest=r).catch(e=>window.__saveTest={error:String(e)});}",pid)
-            dlg=wait_test(lambda:next((w for w in windows() if w['visible'] and w['class']=='#32770'),None))
+            def export_dialog_ready():
+                result=page.evaluate('() => window.__saveTest')
+                report['save_bridge_result']=result
+                if result is not None:raise AssertionError('Native export returned before opening its dialog: '+json.dumps(result))
+                current=windows()
+                report['export_window_classes']=[{'class':w['class'],'visible':w['visible'],'title':w['title']} for w in current]
+                return next((w for w in current if w['visible'] and w['class']=='#32770'),None)
+            dlg=wait_test(export_dialog_ready,25)
             u.PostMessageW(dlg['hwnd'],0x10,0,0)
             result=wait_test(lambda:page.evaluate('() => window.__saveTest'))
+            report['save_bridge_result']=result
             assert result=={'saved':False},result;responsive(hwnd)
             check('Native Save As dialog opens, cancels and returns without blocking the interface')
             page.screenshot(path=str(out/'native-writing.png'))
@@ -138,14 +155,17 @@ def main():
             draft='# Native test\n\nThis pending edit must survive the native close button.'
             page.locator('#manuscript').fill(draft)
             assert page.evaluate('() => Object.keys(pending).length')>0
+            closing_started=time.monotonic()
             u.PostMessageW(hwnd,0x10,0,0)
-            proc.wait(timeout=15)
+            proc.wait(timeout=30)
+            report['close_seconds']=round(time.monotonic()-closing_started,3)
             assert proc.returncode==0,proc.returncode
             check('Windows close completes the save handshake and exits normally')
             with sqlite3.connect(data/'studio.sqlite3') as c:stored=json.loads(c.execute('SELECT data FROM projects WHERE id=?',(pid,)).fetchone()[0])
             assert stored['draft']==draft,stored['draft'];check('Pending manuscript text is persisted before the native process exits')
             assert not report['page_errors'],report['page_errors']
             report['ok']=True
+            report.pop('export_window_classes',None)
     except Exception:
         report['error']=traceback.format_exc();raise
     finally:
@@ -153,6 +173,8 @@ def main():
             subprocess.run(['taskkill','/PID',str(proc.pid),'/T','/F'],capture_output=True)
             proc.wait(timeout=10)
         log.close()
+        if (data/'desktop.log').exists():
+            (out/'desktop.log').write_bytes((data/'desktop.log').read_bytes())
         report['exit_code']=proc.returncode
         report['recursion_errors']='maximum recursion depth' in (out/'native.log').read_text(encoding='utf-8',errors='replace')
         if report['recursion_errors']:report['ok']=False

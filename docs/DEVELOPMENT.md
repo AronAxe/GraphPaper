@@ -85,3 +85,7 @@ Preserve user artwork and verify its path/hash when reorganizing README content.
 Open a focused issue or pull request explaining the user-visible behavior, the change and the checks you actually ran. Include a non-confidential reproduction when useful. Do not commit runtime binaries, test environments, credentials, manuscript databases or real private source documents.
 
 For application releases, continue with [Packaging](PUBLISHING.md). For sensitive disclosures, use a private route to the maintainer and read [Security](SECURITY.md).
+
+## External Graphify in 0.3.1
+
+The full developer/test requirements include the public pinned Graphify distribution. Run `python scripts/prepare_graphify.py` for tokenizer/licence assets, `python scripts/check_graphify.py` for an isolated real-worker test with synthetic inference, and `python scripts/ui_graphify_smoke.py` for its graphical workflow. Windows builds also test the frozen worker. Opt-in live Codex testing is documented in the check script and requires an explicitly selected existing official account profile. [Detailed setup and distribution](UPDATE-0.3.1.md).

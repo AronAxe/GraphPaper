@@ -46,3 +46,7 @@ Normal compiled-release users do not need the `.vbs` launcher, the optional publ
 The normal log directory is `%LOCALAPPDATA%\GraphPaper`. Logs may contain diagnostics; inspect them before sharing. Do not upload the full data directory or credential files to an issue.
 
 For model, import and manuscript problems, continue with [Troubleshooting](TROUBLESHOOTING.md). For developer builds and native checks, see [Releases and packaging](PUBLISHING.md).
+
+## External Graphify in 0.3.1
+
+The 0.3.1 Windows package includes the public Graphify runtime and its dependencies. No separate Graphify installation is required. Clear an old custom executable path to select the included runtime; custom paths are never silently overridden. [Detailed setup and distribution](UPDATE-0.3.1.md).

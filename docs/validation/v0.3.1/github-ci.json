@@ -1,0 +1,104 @@
+[
+  {
+    "run_id": 37672455260,
+    "name": "Documentation and wiki",
+    "head_sha": "e1b64107fb7f8db11e9182a6218acd09f86165b4",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/AronAxe/GraphPaper/actions/runs/37672455260",
+    "jobs": [
+      {
+        "name": "documentation",
+        "id": 112967393724,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "wiki",
+        "id": 112967473942,
+        "status": "completed",
+        "conclusion": "skipped"
+      }
+    ]
+  },
+  {
+    "run_id": 37672455238,
+    "name": "Quality checks",
+    "head_sha": "e1b64107fb7f8db11e9182a6218acd09f86165b4",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/AronAxe/GraphPaper/actions/runs/37672455238",
+    "jobs": [
+      {
+        "name": "browser",
+        "id": 112967392642,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "tests (windows-latest, 3.12)",
+        "id": 112967392840,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "tests (ubuntu-latest, 3.13)",
+        "id": 112967393000,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "tests (windows-latest, 3.13)",
+        "id": 112967393044,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "tests (ubuntu-latest, 3.12)",
+        "id": 112967393490,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  },
+  {
+    "run_id": 37672446358,
+    "name": "Quality checks",
+    "head_sha": "e1b64107fb7f8db11e9182a6218acd09f86165b4",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/AronAxe/GraphPaper/actions/runs/37672446358",
+    "jobs": [
+      {
+        "name": "browser",
+        "id": 112967361420,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "tests (windows-latest, 3.12)",
+        "id": 112967361584,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "tests (windows-latest, 3.13)",
+        "id": 112967361627,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "tests (ubuntu-latest, 3.13)",
+        "id": 112967361673,
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "name": "tests (ubuntu-latest, 3.12)",
+        "id": 112967361679,
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ]
+  }
+]

@@ -91,14 +91,17 @@ def build_graph(p: Project, clients: Clients, store: Store, job: Job):
         else:
             raise ValueError("Add a source first, or give your fiction project a premise in Direction.")
     parts = [(s, a, b, t) for s in sources for a, b, t in chunks(s.text)]
-    if len(parts) > 350:
+    if clients.settings.graph_engine != "graphify" and len(parts) > 350:
         raise ValueError(f"This library requires {len(parts)} extraction chunks. Split it into projects or import an existing graph.")
     graphs = []
-    extra = None
     if clients.settings.graph_engine == "graphify":
         from .graphify_adapter import run_graphify
-        extra = run_graphify(p, clients, job)
-        graphs.append(extra)
+        result = run_graphify(p, clients, job)
+        job.check()
+        p.graph = result
+        p.angles, p.selected_angle = [], ""
+        job.note(f"External Graphify complete: {len(result.nodes)} nodes and {len(result.edges)} edges. No duplicate Native extraction pass.", 95)
+        return
     for i, (source, a, b, text) in enumerate(parts):
         job.note(f"Reading {source.title} · passage {i + 1} of {len(parts)}", 5 + int(80 * i / len(parts)))
         cachekey = digest("extract-v1|" + source.id + "|" + source.digest + "|" + source.role + "|" + p.mode + "|" + (clients.settings.extraction_model or clients.settings.model) + "|" + clients.settings.base_url + "|" + str(a))
@@ -122,16 +125,13 @@ def build_graph(p: Project, clients: Clients, store: Store, job: Job):
     bad_quotes = sum(not ev.verified for n in g.nodes for ev in n.evidence) + sum(not ev.verified for e in g.edges for ev in e.evidence)
     if bad_quotes:
         g.warnings.append(f"{bad_quotes} extracted quote anchors did not exactly match the text. These are flagged, not accepted as evidence.")
-    if extra:
-        g.engine = extra.engine
-        g.warnings.extend(extra.warnings)
     p.graph = g
     p.angles, p.selected_angle = [], ""
     job.note(f"Graph ready: {len(g.nodes)} concepts and {len(g.edges)} relationships. All {len(parts)} text passages processed.", 95)
 
 
 def compact_motif(c):
-    return {"id": c["id"], "motif": c["motif"], "nodes": [{"id": n["id"], "label": n["label"], "description": n["description"][:500]} for n in c["nodes"]], "edges": [{"relation": e["relation"], "description": e["description"][:350], "status": e["status"], "evidence": [{"source_id": v["source_id"], "quote": v["quote"][:400]} for v in e["evidence"] if v["verified"]][:3]} for e in c["edges"]], "source_ids": c["source_ids"]}
+    return {"id": c["id"], "motif": c["motif"], "nodes": [{"id": n["id"], "label": n["label"], "description": n["description"][:500]} for n in c["nodes"]], "edges": [{"relation": e["relation"], "description": e["description"][:350], "status": e["status"], "evidence": [{"source_id": v["source_id"], "quote": v["quote"][:400]} for v in e["evidence"] if v["verified"]][:3]} for e in c["edges"]], "source_ids": c["source_ids"], "source_context": c.get("source_context", [])}
 
 
 def make_angles(p: Project, clients: Clients, job: Job):
@@ -147,6 +147,21 @@ def make_angles(p: Project, clients: Clients, job: Job):
                 candidates.append({"id": "m_" + n.id, "motif": "single concept", "nodes": [n.model_dump()], "edges": [], "node_ids": [n.id], "edge_ids": [], "source_ids": sorted({e.source_id for e in n.evidence if e.verified}), "structural_rank": 0})
     if not candidates:
         raise ValueError("No concepts remain after exclusions.")
+    if p.graph.coverage.get('engine') == 'external_graphify':
+        # File provenance is a retrieval pointer, not verified entailment. Give
+        # the evaluator bounded original passages rather than trusting a label.
+        source_index = {s.id:s for s in p.sources if s.enabled and s.role != 'voice'}
+        for c in candidates:
+            c['source_ids'] = sorted(set(c['source_ids']) | {sid for n in c['nodes'] for sid in n.get('source_ids',[]) if sid in source_index})
+            c['source_context'] = []
+            for sid in c['source_ids'][:3]:
+                source = source_index.get(sid)
+                if source is None: continue
+                positions = [source.text.lower().find(n['label'].lower()) for n in c['nodes'] if len(n['label']) > 2]
+                found = [v for v in positions if v >= 0]
+                start = max(0, min(found)-180) if found else 0
+                c['source_context'].append({'source_id':sid,'role':source.role,'text':source.text[start:start+1000],
+                    'scope':'Retrieved source excerpt, not proof that the proposed relationship follows.'})
     job.note(f"Discovered {len(candidates)} diverse paths and motifs.", 10)
     for offset in range(0, len(candidates), 4):
         batch = candidates[offset:offset + 4]

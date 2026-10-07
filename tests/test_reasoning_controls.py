@@ -1,3 +1,4 @@
+from types import SimpleNamespace
 import json
 from unittest.mock import Mock,patch
 import httpx
@@ -85,7 +86,7 @@ def test_codex_exec_receives_exact_effort_and_no_shell(tmp_path):
         captured.append((args,kwargs));Path(args[args.index('-o')+1]).write_text('Answer',encoding='utf-8')
         proc=Mock();proc.communicate.return_value=('{"type":"turn.completed","usage":{"input_tokens":8,"output_tokens":2}}\n','');proc.returncode=0;proc.poll.return_value=0
         return proc
-    with patch('graphpaper.codex.subprocess.Popen',popen):
+    with patch('graphpaper.codex.OwnedProcess',lambda args,**kwargs:SimpleNamespace(proc=popen(args,**kwargs),close=lambda:None)):
         assert codex.complete('System','User','test',reasoning_effort='ultra')=='Answer'
     assert 'model_reasoning_effort="ultra"' in captured[0][0]
     assert not captured[0][1].get('shell',False)

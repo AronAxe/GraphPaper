@@ -1,6 +1,6 @@
 # Integration reference
 
-This page describes the interfaces implemented in GraphPaper 0.3.0. User-facing setup is in [Models and reasoning](CONNECTIONS.md). External endpoints, model IDs and capability vocabularies can change independently; consult the linked primary documentation and test a connection before a large job.
+This page describes the interfaces implemented in GraphPaper 0.3.1. User-facing setup is in [Models and reasoning](CONNECTIONS.md). External endpoints, model IDs and capability vocabularies can change independently; consult the linked primary documentation and test a connection before a large job.
 
 ## Writing providers
 
@@ -46,19 +46,17 @@ Primary references: [NCBI](https://www.ncbi.nlm.nih.gov/home/develop/api/), [Sem
 
 ## Graphify
 
-Native extraction does not require Graphify. Imported Graphify/NetworkX JSON supports `nodes` and either `edges` or `links`; relationships are not accepted as factual evidence merely because the JSON supplies a confidence value.
+Native extraction remains independently available. External extraction runs the unmodified public `graphifyy[openai]==0.9.80` CLI. The Windows package includes its dependencies, metadata, tokenizer cache and upstream licences; source environments use [requirements-graphify.txt](../requirements-graphify.txt).
 
-The optional CLI adapter invokes a user-selected executable without a shell, prepares enabled non-voice source text in a temporary folder and selects the configured provider backend. Its command contract includes:
+The worker receives only an isolated non-voice text corpus and a per-job loopback credential. It calls Graphify's OpenAI-compatible backend, but the authenticated local gateway routes inference through **GraphPaper's selected extraction provider, model and reasoning setting**. This includes official Codex OAuth, OpenRouter, API-compatible and Anthropic connections. No real provider/OAuth credential is passed to Graphify, and no API-key fallback is introduced.
 
-```text
-graphify extract <temporary-source-folder> --backend openai --mode deep --no-viz --no-cluster --token-budget 4000 --max-concurrency 2
-```
+Graphify requests share GraphPaper's budget and receipts. Extraction is serial; upstream retry layers are disabled to avoid multiplying requests. The total deadline and cancellation cover owned workers. A previously submitted cloud request can still consume allowance after cancellation. Invalid, missing, oversized, empty or dangling graph output does not replace the previous graph. No second Native extraction is run.
 
-For direct Anthropic it selects the corresponding Claude backend. The adapter looks for `graphify-out/graph.json` or `graph.json` and adds native evidence extraction. Version compatibility must be checked against the installed Graphify executable. Graphify is not bundled, and the external process has not been validated by a live run in the recorded GraphPaper release tests.
+The output remains an external interpretation. Source-file IDs are retained as retrieval pointers, not truth labels; exact quotation anchors are checked separately. The native graph UI and angle discovery use the completed result.
 
-Graphify’s calls and retries are outside GraphPaper’s internal request/cost meter. Codex subscription sign-in is not a drop-in API credential for this external adapter; use native extraction with Codex or provide the external process with its supported API connection.
+A custom executable is an explicit trust choice and must match the supported upstream version. Its version check is not a full audit of that custom environment. [Complete protocol, runtime and distribution guide](UPDATE-0.3.1.md)
 
-Project references: [Graphify repository](https://github.com/Graphify-Labs/graphify), [Graphify documentation](https://docs.graphify.com).
+Primary references: [public Graphify distribution](https://pypi.org/project/graphifyy/0.9.80/), [upstream source](https://github.com/Graphify-Labs/graphify), [Codex non-interactive execution](https://developers.openai.com/codex/noninteractive).
 
 ## Local API and desktop bridge
 

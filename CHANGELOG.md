@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.1
+
+- Repair external Graphify extraction with the configured provider, including official Codex OAuth and extraction-role reasoning.
+- Bundle pinned public Graphify 0.9.80, SDKs, metadata, tokenizer cache and licences in Windows builds; publish explicit source requirements.
+- Route job-scoped inference through an authenticated loopback adapter, with shared accounting, no API fallback and no duplicate Native extraction.
+- Preserve source-file provenance into graph inspection and angle retrieval; reject malformed/partial graph results.
+- Add runtime diagnostics, deadline/cancellation coverage, compatibility tests, actual external-worker tests and compiled-native release gates.
+
+
 ## 0.3.0
 
 - Provider-native, model-aware reasoning effort for writer/editor/extraction roles, with Codex catalog support and explicit thinking budgets.

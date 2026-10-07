@@ -1,0 +1,24 @@
+{
+  "real_http_browser": true,
+  "real_graphify_process": true,
+  "live_model": false,
+  "checks": [
+    "Graphify runtime is available through the real graphical status check",
+    "External engine, extraction model and reasoning settings save from the interface",
+    "Build graph runs the actual external Graphify worker through the selected model and effort",
+    "Only evidence sources reach inference; no second Native extraction or uncounted request",
+    "External graph source provenance opens the correct original document"
+  ],
+  "page_errors": [],
+  "ok": true,
+  "extraction": {
+    "nodes": 3,
+    "edges": 2,
+    "model_requests": 1,
+    "runtime": "0.9.80",
+    "engine": "Graphify 0.9.80 via openai-compatible",
+    "reasoning": "high",
+    "model": "fixture-extractor",
+    "live_model": false
+  }
+}

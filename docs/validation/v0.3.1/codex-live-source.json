@@ -1,0 +1,53 @@
+{
+  "platform": "Windows",
+  "python": "3.13.14",
+  "packaged_graphify_worker": false,
+  "real_graphify_process": true,
+  "live_codex": true,
+  "synthetic_project": true,
+  "ok": true,
+  "graphify_version": "0.9.80",
+  "job_state": "completed",
+  "usage": {
+    "calls": 1,
+    "input_tokens": 16771,
+    "output_tokens": 566,
+    "reported_cost": 0.0,
+    "unpriced_calls": 1
+  },
+  "nodes": 5,
+  "edges": 3,
+  "coverage": {
+    "engine": "external_graphify",
+    "runtime_version": "0.9.80",
+    "runtime_selection": "python-environment",
+    "sources": 2,
+    "characters": 146,
+    "source_ids": [
+      "S1",
+      "S2"
+    ],
+    "model": "gpt-6-luna",
+    "reasoning_effort": "low",
+    "model_requests": 1,
+    "requests": [
+      {
+        "call": 1,
+        "model": "gpt-6-luna",
+        "provider": "codex",
+        "reasoning_effort": "low",
+        "prompt_tokens": 16771,
+        "completion_tokens": 566,
+        "total_tokens": 17337
+      }
+    ],
+    "scope": "Enabled source text exported in full; Graphify controls chunking and extraction. No extra Native extraction pass was run."
+  },
+  "source_links": [
+    "S1",
+    "S2"
+  ],
+  "voice_source_excluded": true,
+  "no_extra_native_pass": true,
+  "settings_preserved": true
+}
