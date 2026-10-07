@@ -11,7 +11,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Public Graphify runtime verification failed.' 
 python -m PyInstaller --noconfirm --clean --windowed --onedir --name GraphPaper --paths . --additional-hooks-dir scripts/hooks --icon ui/graphpaper.ico --add-data 'ui;ui' --add-data 'vendor;vendor' --collect-all webview scripts/desktop_entry.py
 if ($LASTEXITCODE -ne 0) { throw 'Windows desktop build failed.' }
 Copy-Item README.md, LICENSE -Destination dist/GraphPaper/
-Copy-Item docs/RELEASE-0.3.1.md -Destination dist/GraphPaper/WHATS-NEW.md
+Copy-Item docs/RELEASE-0.4.0.md -Destination dist/GraphPaper/WHATS-NEW.md
 python scripts/check_package.py dist/GraphPaper
 if ($LASTEXITCODE -ne 0) { throw 'Compiled application self-test failed.' }
 python scripts/check_graphify.py --executable dist/GraphPaper/GraphPaper.exe --out test-results/graphify-package.json

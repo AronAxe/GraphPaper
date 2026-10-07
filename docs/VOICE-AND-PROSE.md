@@ -46,3 +46,7 @@ A lower cue count is not a quality score. The goal is a better passage with the 
 ## Design references
 
 The independent implementation was informed by the writing-focused approaches in [blader/humanizer](https://github.com/blader/humanizer) and [stephenturner/skill-deslop](https://github.com/stephenturner/skill-deslop). No full third-party prompt or code is presented as GraphPaper’s own. Historical research notes are preserved in [the 0.2 update](UPDATE-0.2.md); star counts are not treated as permanent quality rankings.
+
+## Voice before the prose
+
+Since 0.4, voice samples and the authorial contract are supplied to angle generation, JEV evaluation, outlining and the initial reviewer as well as drafting and prose edits. Rhetorical stance, humor and willingness to conclude are part of authorial style, not merely punctuation. Moral judgments are distinct from factual claims. See [Polemic and argumentative writing](POLEMIC.md).

@@ -56,3 +56,7 @@ With JEV off, structural exploration still works and results are not given fabri
 After adding, changing, excluding or reclassifying sources, rebuild before relying on graph coverage. Scientific screening can change the enabled evidence set as well. Inspect important connections again when their underlying material changes.
 
 A stronger graph is useful only if it leads to a better argument or story. The [quality protocol](QUALITY.md) separates that editorial question from the fact that the software tests passed.
+
+## Argument-led angle discovery
+
+Polemic generates alternative routes into your thesis, not alternative opinions on whether you may hold it. JEV now receives the author voice and editorial contract and scores stance/voice fidelity explicitly. Counterarguments are optional and must be directly consequential. Brief or voice changes mark old angles as stale; refresh them without re-running Graphify. [Authorial-intent controls](POLEMIC.md).

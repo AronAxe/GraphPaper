@@ -2,13 +2,13 @@
 
 Use Nonfiction for essays, reports, cultural analysis and source-led articles. Choose [Science](SCIENCE.md) instead when you need scholarly database searching, a recorded screening process and academic manuscript exports.
 
-## Start with a question, not a compulsory conclusion
+## State the purpose: argue or explore
 
-In the Creative brief, specify the audience, format, voice, target length and the issue you want to investigate. A productive direction leaves room for the sources to surprise you:
+Nonfiction is not automatically a neutral survey. State what the piece should do in the Creative brief: investigate an open question, develop an interpretation, defend a position or make a criticism. **Writing purpose** can follow the brief, explicitly preserve your position, or explore without a predetermined verdict.
 
-> Explore when public lighting serves safety and when it intrudes on private rest. Address the strongest argument for brighter streets.
+Use **Core thesis** for a proposition you want preserved, or leave it blank to use Direction. Your enabled voice samples now guide angle selection and outlining as well as prose. Factual checks can correct a premise without deciding that the author should hold a more moderate opinion.
 
-This is a suggested brief, not a factual claim about lighting research. The included nonfiction demo uses invented illustrative notes; replace them with real evidence before publication.
+For explicitly polemical essays, satire and opinion, choose [Polemic](POLEMIC.md). An existing project can switch modes without replacing its sources or graph. The distinction is the job you are asking the writer to do, not permission to invent facts.
 
 ## Prepare the source library
 
@@ -34,7 +34,7 @@ Read the thesis, counterargument, evidence links and unresolved questions. Use *
 
 Each section should change what the reader understands. Edit its purpose, beats and planned word count, and reorder sections before drafting. Source IDs make it possible to return to the material behind a section.
 
-The writer produces sections sequentially and then reviews the whole draft. The context contains selected relevant passages and prior prose, not necessarily the whole corpus on every call. Avoid interpreting a complete-looking article as evidence that every source was read in full at every stage.
+Explicitly argument-led outlines up to 3,000 words are drafted as one coherent piece, then reviewed. Other nonfiction uses sequential sections followed by a whole-draft review. The context contains selected relevant passages and prior prose, not necessarily the whole corpus on every call. Avoid interpreting a complete-looking article as evidence that every source was read in full at every stage.
 
 ## Edit, verify, export
 

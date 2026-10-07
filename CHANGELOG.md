@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0
+
+- Add Polemic and a reversible writing-mode switch for existing projects.
+- Separate thesis, writing purpose, rhetorical force and evidence detail; remove unconditional neutrality/counterargument pressure.
+- Supply author voice and intention to angle selection, JEV scoring, outlining, review, revision and prose polishing.
+- Draft short argumentative pieces as coherent wholes rather than restarting the same disclaimers for each section.
+- Track stale angle/outline/review context; refresh angles without rebuilding the graph; flag stance drift as a meaning change.
+- Preserve source checks, native Windows fixes, Graphify/Codex, Science/APA, project folders and existing manuscripts.
+
+
 ## 0.3.1
 
 - Repair external Graphify extraction with the configured provider, including official Codex OAuth and extraction-role reasoning.

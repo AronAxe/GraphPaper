@@ -2,7 +2,7 @@
 
 **A studio for connected thought.** GraphPaper brings source material, graph exploration and a writing desk into one local-first Windows application.
 
-These guides describe **GraphPaper 0.3.1**. The [release page](https://github.com/AronAxe/GraphPaper/releases/latest) provides the current Windows download; [CHANGELOG](../CHANGELOG.md) records version history. The same guides are published in the [GitHub wiki](https://github.com/AronAxe/GraphPaper/wiki).
+These guides describe **GraphPaper 0.4.0**. The [release page](https://github.com/AronAxe/GraphPaper/releases/latest) provides the current Windows download; [CHANGELOG](../CHANGELOG.md) records version history. The same guides are published in the [GitHub wiki](https://github.com/AronAxe/GraphPaper/wiki).
 
 ## Start here
 
@@ -12,6 +12,7 @@ These guides describe **GraphPaper 0.3.1**. The [release page](https://github.co
 | Upgrade Windows or use the source edition | [Windows installation](WINDOWS.md) |
 | Use ChatGPT sign-in, API models or deeper reasoning | [Models and reasoning](CONNECTIONS.md) |
 | Write an essay or researched article | [Nonfiction workflow](NONFICTION.md) |
+| Make a forceful argument without forced neutrality | [Polemic and authorial intent](POLEMIC.md) |
 | Develop a story and preserve its canon | [Fiction workflow](FICTION.md) |
 | Search scholarly literature and write a manuscript | [Science workflow](SCIENCE.md) |
 

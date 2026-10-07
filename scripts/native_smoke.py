@@ -21,6 +21,7 @@ def main():
     parser.add_argument('--trace-source',action='store_true',help='Capture Python thread stacks for this isolated source test only')
     parser.add_argument('--science',action='store_true',help='Exercise the Science workspace in the actual native shell')
     parser.add_argument('--graphify',action='store_true',help='Verify the actual external Graphify action using a synthetic loopback model')
+    parser.add_argument('--polemic',action='store_true',help='Verify mode conversion and authorial controls in the native shell')
     parser.add_argument('--out',type=Path,default=ROOT/'test-results/native')
     args=parser.parse_args()
     if sys.platform!='win32':raise SystemExit('This regression requires a native Windows desktop.')
@@ -127,6 +128,24 @@ def main():
                 from graphify_ui_checks import exercise
                 report['external_graphify']=exercise(page,check,out)
                 responsive(hwnd)
+            if args.polemic:
+                before=page.evaluate('() => ({sources:state.p.sources, graph:state.p.graph, draft:state.p.draft, voice:state.p.voice_profile})')
+                page.locator('[data-action="writing-mode"]').click()
+                page.locator('#writing-mode').select_option('polemic')
+                page.get_by_role('button',name='Apply writing mode',exact=True).click()
+                expect(page.locator('.modal')).to_have_count(0)
+                after=page.evaluate('() => ({sources:state.p.sources, graph:state.p.graph, draft:state.p.draft, voice:state.p.voice_profile})')
+                assert after==before
+                assert page.evaluate('() => state.p.mode')=='polemic'
+                check('Native mode conversion preserves sources, graph, voice and manuscript')
+                page.get_by_role('button',name='Creative brief',exact=True).click()
+                page.locator('#b-thesis').fill('An authorial argument, not a neutral survey.')
+                page.locator('#b-rhetorical_force').evaluate("el => {el.value=95;el.dispatchEvent(new Event('input',{bubbles:true}));}")
+                page.get_by_role('button',name='Save brief',exact=True).click()
+                expect(page.locator('.modal')).to_have_count(0)
+                assert page.evaluate('() => state.p.brief.rhetorical_force')==95
+                check('Native Polemic thesis and rhetorical force controls save correctly')
+                page.screenshot(path=str(out/'polemic.png'),full_page=True)
             page.locator('[data-action="settings"]').click();page.wait_for_selector('#s-provider')
             expect(page.locator('#s-reasoning_effort')).to_have_count(1)
             page.get_by_role('button',name='Close dialog',exact=True).click();responsive(hwnd)

@@ -52,7 +52,7 @@ def main():
             page.on('pageerror',lambda err:report['page_errors'].append(str(err)))
             try:
                 page.goto(f'http://127.0.0.1:{port}/');page.wait_for_selector('.welcome')
-                expect(page.locator('.welcome-card')).to_have_count(3);check('Three distinct writing modes on the welcome screen')
+                expect(page.locator('.welcome-card')).to_have_count(4);check('Four distinct writing modes on the welcome screen')
                 page.locator('[data-action="settings"]').click();page.locator('#s-provider').select_option('codex');page.locator('#s-allow_cloud').check();page.locator('#s-refine').uncheck();page.locator('#s-remember_keys').uncheck()
                 page.get_by_role('button',name='Load available models',exact=True).click()
                 expect(page.locator('#s-reasoning_effort option[value="ultra"]')).to_have_count(1)

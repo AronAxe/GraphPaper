@@ -14,7 +14,7 @@ def referenced_sources(p: Project):
 
 def markdown(p: Project):
     text = p.draft
-    sources = referenced_sources(p) if p.mode == "nonfiction" else []
+    sources = referenced_sources(p) if p.mode in {"nonfiction", "polemic"} else []
     if sources:
         text += "\n\n---\n\n## Sources\n\n"
         for s in sources:

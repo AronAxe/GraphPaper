@@ -68,7 +68,10 @@ def install(app, store, vault, runner, settings):
             candidate = p.polish
             if not candidate or candidate.original_hash != hashlib.sha256(p.draft.encode()).hexdigest():
                 raise Conflict('The draft changed since this edit was proposed. Generate a fresh edit; nothing was overwritten.')
-            if not candidate.review.get('meaning_preserved') and not raw.get('acknowledge_warnings',False):
+            from .editorial import review_stamp
+            if candidate.context_hash and candidate.context_hash != review_stamp(p):
+                raise Conflict('The brief or author voice changed since this edit was proposed. Generate a fresh edit; nothing was overwritten.')
+            if (not candidate.review.get('meaning_preserved') or candidate.review.get('stance_preserved') is False) and not raw.get('acknowledge_warnings',False):
                 raise ValueError('The reviewer flagged meaning changes. Check the comparison and explicitly acknowledge those warnings before applying.')
             store.snapshot(p,'Before '+candidate.mode)
             p.draft = candidate.draft
