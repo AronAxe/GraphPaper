@@ -80,7 +80,14 @@ def test_cancel_running_graphify_job(client,app,monkeypatch):
     pid=prepare(client,app,Slow)
     before=app.state.store.get(pid)
     job=client.post('/api/projects/'+pid+'/jobs',json={'action':'graph'}).json()
-    assert Slow.entered.wait(25)
+    # Wait for actual inference readiness, not a fixed cold-start assumption.
+    # Fail immediately with the backend error if startup fails.
+    ready_deadline=time.monotonic()+60
+    while not Slow.entered.wait(.1):
+        startup=client.get('/api/jobs/'+job['id']).json()
+        assert startup['state'] in {'queued','running'},startup
+        assert time.monotonic()<ready_deadline, startup
+
     response=client.post('/api/jobs/'+job['id']+'/cancel')
     assert response.status_code==200
     result=wait_for_job(client,job['id'],15)
@@ -116,9 +123,9 @@ def test_missing_backend_does_not_change_the_existing_graph(client,app,tmp_path)
 
 def test_public_console_entry_point_as_custom_runtime(client,app):
     from pathlib import Path
-    import os,sys
+    import os,sys,sysconfig
     pid=prepare(client,app)
-    executable=Path(sys.executable).parent/('graphify.exe' if os.name=='nt' else 'graphify')
+    executable=Path(sysconfig.get_path('scripts'))/('graphify.exe' if os.name=='nt' else 'graphify')
     assert executable.is_file()
     settings=fixture_settings().model_copy(update={'graphify_executable':str(executable)})
     app.state.store.set_settings(settings.model_dump())

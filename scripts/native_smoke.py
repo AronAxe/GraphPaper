@@ -147,6 +147,7 @@ def main():
             dlg=wait_test(export_dialog_ready,25)
             u.PostMessageW(dlg['hwnd'],0x10,0,0)
             result=wait_test(lambda:page.evaluate('() => window.__saveTest'))
+            report['save_bridge_result']=result
             assert result=={'saved':False},result;responsive(hwnd)
             check('Native Save As dialog opens, cancels and returns without blocking the interface')
             page.screenshot(path=str(out/'native-writing.png'))
@@ -154,14 +155,17 @@ def main():
             draft='# Native test\n\nThis pending edit must survive the native close button.'
             page.locator('#manuscript').fill(draft)
             assert page.evaluate('() => Object.keys(pending).length')>0
+            closing_started=time.monotonic()
             u.PostMessageW(hwnd,0x10,0,0)
             proc.wait(timeout=30)
+            report['close_seconds']=round(time.monotonic()-closing_started,3)
             assert proc.returncode==0,proc.returncode
             check('Windows close completes the save handshake and exits normally')
             with sqlite3.connect(data/'studio.sqlite3') as c:stored=json.loads(c.execute('SELECT data FROM projects WHERE id=?',(pid,)).fetchone()[0])
             assert stored['draft']==draft,stored['draft'];check('Pending manuscript text is persisted before the native process exits')
             assert not report['page_errors'],report['page_errors']
             report['ok']=True
+            report.pop('export_window_classes',None)
     except Exception:
         report['error']=traceback.format_exc();raise
     finally:
