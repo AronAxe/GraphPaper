@@ -42,7 +42,7 @@ def reports():
 
 def manifest():
     allowed_roots = {'.github','docs','examples','graphpaper','scripts','tests','ui'}
-    allowed_top = {'README.md','CHANGELOG.md','LICENSE','.gitignore','.gitattributes','pyproject.toml','requirements.txt','requirements-dev.txt','requirements-desktop.txt','GraphPaper.pyw','Open GraphPaper.vbs','Publish GraphPaper.pyw','Publish GraphPaper.vbs'}
+    allowed_top = {'README.md','CONTRIBUTING.md','SECURITY.md','CHANGELOG.md','LICENSE','.gitignore','.gitattributes','pyproject.toml','requirements.txt','requirements-dev.txt','requirements-desktop.txt','GraphPaper.pyw','Open GraphPaper.vbs','Publish GraphPaper.pyw','Publish GraphPaper.vbs'}
     paths = set(subprocess.check_output(['git','ls-files','-z'], cwd=ROOT).decode().split('\0'))
     for folder in ['docs/images','docs/validation','examples','ui']:
         paths.update(p.relative_to(ROOT).as_posix() for p in (ROOT/folder).rglob('*') if p.is_file())

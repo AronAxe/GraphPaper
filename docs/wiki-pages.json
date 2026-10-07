@@ -1,0 +1,96 @@
+{
+  "repository": "AronAxe/GraphPaper",
+  "docs_version": "0.3.0",
+  "pages": [
+    {
+      "title": "Home",
+      "source": "docs/README.md",
+      "section": "Start here"
+    },
+    {
+      "title": "Getting-Started",
+      "source": "docs/GETTING-STARTED.md",
+      "section": "Start here"
+    },
+    {
+      "title": "Windows-Installation",
+      "source": "docs/WINDOWS.md",
+      "section": "Start here"
+    },
+    {
+      "title": "Models-and-Reasoning",
+      "source": "docs/CONNECTIONS.md",
+      "section": "Start here"
+    },
+    {
+      "title": "Nonfiction-Workflow",
+      "source": "docs/NONFICTION.md",
+      "section": "Writing workflows"
+    },
+    {
+      "title": "Fiction-Workflow",
+      "source": "docs/FICTION.md",
+      "section": "Writing workflows"
+    },
+    {
+      "title": "Science-Workflow",
+      "source": "docs/SCIENCE.md",
+      "section": "Writing workflows"
+    },
+    {
+      "title": "Projects-and-Sources",
+      "source": "docs/PROJECTS-AND-SOURCES.md",
+      "section": "Studio guides"
+    },
+    {
+      "title": "Graph-Exploration-and-JEV",
+      "source": "docs/GRAPH-AND-JEV.md",
+      "section": "Studio guides"
+    },
+    {
+      "title": "Author-Voice-and-Prose-Tools",
+      "source": "docs/VOICE-AND-PROSE.md",
+      "section": "Studio guides"
+    },
+    {
+      "title": "Exports-and-APA",
+      "source": "docs/EXPORTS-AND-APA.md",
+      "section": "Studio guides"
+    },
+    {
+      "title": "Privacy-and-Security",
+      "source": "docs/SECURITY.md",
+      "section": "Reference"
+    },
+    {
+      "title": "Troubleshooting",
+      "source": "docs/TROUBLESHOOTING.md",
+      "section": "Reference"
+    },
+    {
+      "title": "Architecture",
+      "source": "docs/ARCHITECTURE.md",
+      "section": "Reference"
+    },
+    {
+      "title": "Integration-Reference",
+      "source": "docs/INTEGRATIONS.md",
+      "section": "Reference"
+    },
+    {
+      "title": "Validation-and-Quality",
+      "source": "docs/QUALITY.md",
+      "section": "Reference"
+    },
+    {
+      "title": "Development",
+      "source": "docs/DEVELOPMENT.md",
+      "section": "Reference"
+    },
+    {
+      "title": "Releases-and-Packaging",
+      "source": "docs/PUBLISHING.md",
+      "section": "Reference"
+    }
+  ]
+}

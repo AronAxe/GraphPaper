@@ -1,0 +1,63 @@
+name: Documentation and wiki
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+      - 'docs/**'
+      - 'scripts/docs_tool.py'
+      - 'tests/test_documentation_tools.py'
+      - '.github/workflows/docs.yml'
+  pull_request:
+    paths:
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'SECURITY.md'
+      - 'docs/**'
+      - 'scripts/docs_tool.py'
+      - 'tests/test_documentation_tools.py'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: graphpaper-docs-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -p test_documentation_tools.py -v
+      - run: python scripts/docs_tool.py check
+      - run: python scripts/docs_tool.py render-wiki --output test-results/wiki-preview
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wiki-preview
+          path: test-results/wiki-preview/
+  wiki:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: documentation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Publish managed wiki pages without replacing independent edits
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/docs_tool.py publish-wiki

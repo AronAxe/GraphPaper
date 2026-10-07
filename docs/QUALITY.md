@@ -1,94 +1,58 @@
-# Quality, tests and known limits
+# Validation and quality
 
-## Version 0.3.0 validation
+Passing software tests and producing a better article are different questions. This page keeps recorded release checks, live service checks and editorial evaluation separate.
 
-Validated on 7 October 2026 in an isolated native Windows build environment:
+## Recorded validation: GraphPaper 0.3.0
 
-- **172 automated tests passed; one symlink-permission test skipped.**
-- **39 real-HTTP browser workflow checks passed**, with no JavaScript page errors: 17 base, 9 author-voice/folder/prose-tool, and 13 Science/reasoning checks.
-- **10 native Windows source checks and 10 checks against the compiled executable passed.** These include a genuine Windows mouse interaction, Science protocol editing, bridge initialization, Connections, a native Save As dialog, and pending manuscript persistence before normal process exit.
-- Actual metadata queries succeeded for PubMed, arXiv, Crossref and Europe PMC. Anonymous Semantic Scholar returned HTTP 429; that limitation is recorded, and its optional API-key route remains available.
-- The APA exporter was rendered and visually inspected across four synthetic manuscript pages. Blank-page and inherited font-theme issues were fixed. This was a LibreOffice-rendered check of the same exporter source, not a Microsoft Word automation claim.
-- The release uses streaming ZIP packaging and archive CRC/checksum verification, avoiding the large in-memory buffer used by PowerShell compression. Three packaging regression tests are included.
+The [release summary](validation/v0.3.0/summary.json) records native Windows validation for the published 0.3.0 build. These are **recorded local-build results**, not a claim that every current GitHub Actions run passed.
 
-No real user OAuth ceremony or paid writing/JEV call was used in these tests. Model/database fixtures in UI tests are explicitly synthetic; live metadata connectivity is tested separately. Full reports are in [validation/v0.3.0](validation/v0.3.0/). Earlier version results below are historical.
-
-## 0.2.1 native Windows correction ? 6 October 2026
-
-The reported interface freeze exposed a gap in the earlier validation: the
-Windows startup probe and Chromium tests did not initialize or interact with
-the native JavaScript/Python bridge. That bridge exposed a public native Window,
-so pywebview recursively inspected Windows/COM objects. A separate close callback
-also waited for JavaScript while holding the WinForms UI thread. Both are fixed.
-
-The corrected **compiled executable**, not just a browser substitute, passed all
-9 native interaction checks: Windows mouse input, restricted API initialization,
-promise round-trip, project creation/typing, Connections, native Save As open/cancel,
-and saving pending text before a normal Windows close. The same native test also
-passed from source. 126 automated Windows tests passed, with one symlink-permission
-skip. All 26 browser workflows passed; no JavaScript page errors occurred.
-
-Reports: [release summary](validation/v0.2.1/summary.json) and
-[native executable test](validation/v0.2.1/native-package.json). All tests used
-isolated temporary projects. No user manuscript or credentials were used, and no
-live model or OAuth request was made. The strict CSP is unchanged.
-
-
-## Version 0.2 validation update
-
-The 0.2 update was tested on a native Windows 11 machine with an isolated Python 3.13 environment: **120 automated tests passed**, with one symlink-permission test skipped; **all 26 real-HTTP browser workflow checks passed** with zero JavaScript page errors. The official bundled **Codex CLI 0.160.1** passed its signed-out app-server handshake and required-command checks. These are local Windows results, not GitHub-hosted CI results; the hosted runner remained queued and that run was cancelled. Reports are in [validation/v0.2](validation/v0.2/) (or the corresponding directory from this documentation page).
-
-A real user OAuth completion, paid model calls, output-quality comparisons and hands-on native-window dialog interaction are not claimed as tested. Historical 0.1 results below remain a record of that earlier build.
-
-## Initial local validation
-
-Validation date: **5 October 2026**. Initial build environment: **Linux, Python 3.13**, system Chromium. Subsequent GitHub Actions results are separate and visible in the repository's Actions tab.
-
-| Check | Initial result | Scope |
+| Check | Recorded result | Evidence |
 |---|---|---|
-| Automated pytest suite | **86 passed, 1 skipped** | Storage/CAS, ingestion, graphs, provider contracts, JEV routing, Origin checks, source support, pipelines, cancellation, exports, desktop close bridge and publisher manifest validation |
-| Graphical workflow tests | **17 passed, zero page errors** | Actual interface, real FastAPI routes/store and deterministic model doubles |
-| Loopback service self-test | **Passed** | Health, index and bundled JS/CSS served over local HTTP |
-| Native Windows DPAPI | **Skipped locally** | Windows-only test included in CI matrix |
-| Native WebView2 and frozen Windows application | **Not run locally** | Check actual Windows CI results separately; a packaged backend self-test does not certify interactive WebView2 behaviour |
-| Live writing/JEV providers | **Not run** | Controlled HTTP mock responses; no live keys |
-| Live external Graphify CLI | **Not run** | Optional adapter; not installed in the build environment |
-| GitHub push from GUI publisher | **Not run** | Manifest/path controls tested; the repository upload uses the authorized connector instead |
+| Automated Windows tests | 172 passed, 1 symlink-permission skip, 0 failures | [JUnit report](validation/v0.3.0/windows.xml) |
+| Base browser workflow | 17 checks passed | [Report](validation/v0.3.0/browser-base.json) |
+| Voice/folder/prose browser workflow | 9 checks passed | [Report](validation/v0.3.0/browser-studio.json) |
+| Science/reasoning browser workflow | 13 checks passed | [Report](validation/v0.3.0/browser-science.json) |
+| Native Windows source interface | 10 checks passed | [Report](validation/v0.3.0/native-source.json) |
+| Actual compiled Windows interface | 10 checks passed | [Report](validation/v0.3.0/native-package.json) |
+| Compiled backend/assets | Passed | [Report](validation/v0.3.0/package.json) |
+| APA export rendering | Four synthetic manuscript pages visually inspected | [Scope](validation/v0.3.0/apa-render.json) |
 
-The managed browser in the initial environment blocked URL navigation, including loopback. Initial browser checks used Playwright set_content with the actual interface scripts and an in-process bridge to FastAPI's TestClient. No browser policy was disabled. The normal HTTP version of the same workflow script is used by GitHub CI. File-input upload is exercised through Playwright; a native Windows OS file dialog is a separate check.
+The 39 browser checks reported no JavaScript page errors. The compiled native test exercises a Windows mouse interaction, bridge initialization, Science protocol editing, Connections, native Save As and persistence of a pending edit before normal process exit. It is not merely a request to a health endpoint.
 
-Reports are in [validation](validation/). CI refreshes these reports when validating the repository import. Screenshots are actual interface renders of original illustrative material, not a mockup of unimplemented screens. AI responses inside the test harness are controlled fixtures, not evidence of writing quality.
+## Live versus controlled tests
 
-## The 17 interface checks
+Browser/model fixtures are synthetic and labelled. They verify workflow behavior, not prose quality or scientific findings. The release checks did not complete a real user OAuth ceremony or make paid writing/JEV requests.
 
-Welcome; illustrative graph; node inspection and pinning; path highlighting; angle edit/selection; outline edit/reordering; manuscript autosave/preview; source references; version restore; export controls/valid Word bytes; provider settings; browser file-input import; full nonfiction pipeline; explicit revision; fiction scenes/ledger; light theme; responsive 390-pixel layout.
+The [separate live metadata check](validation/v0.3.0/scholarly-live.json) succeeded for PubMed, arXiv, Crossref and Europe PMC. Anonymous Semantic Scholar returned HTTP 429; the failure was recorded rather than turned into zero results. This is a dated connectivity check, not a guarantee of current availability.
 
-## Evidence safeguards
+The bundled official Codex runtime received a signed-out protocol check. External Graphify execution was not exercised by a live run in the recorded release validation. Mock contract tests cannot establish continued availability of an external endpoint.
 
-Exact quote matching, role separation and source references help prevent fabrication. They do not establish source truth, detect every distorted paraphrase or prove logical entailment. The critic samples up to 12 important claims; it is not an exhaustive legal, scientific or factual audit. Imported graphs are hypotheses until anchored. Images, scanned PDF content, DOCX comments and tracked-revision metadata are not silently interpreted as complete source text.
+APA rendering used the same exporter source with synthetic material in LibreOffice on Linux, not Microsoft Word automation. Visual checks found and corrected blank-page and inherited-font issues. The final manuscript still needs inspection under the target journal’s requirements.
 
-Fiction canon is author-supplied. The generated continuity ledger is useful context, not an infallible record. Whole-draft revisions and manual edits can make it stale; check it against the latest prose.
+## Current CI status
 
-## Cost and recovery
+The README’s quality badge is dynamic and links to the actual [quality workflow](https://github.com/AronAxe/GraphPaper/actions/workflows/quality.yml). It should not be replaced with a static “passing” label. A queued, skipped or failed hosted run is distinct from the recorded release results above.
 
-Request budgets count GraphPaper's own calls and bounded retries, not external Graphify subprocess usage. Real provider-reported cost is recorded when supplied; unknown cost stays unknown. Jobs can be cancelled, but an in-flight request may still incur a charge. Long drafting jobs save intermediate versions. Exceeding context/output constraints fails explicitly instead of overwriting with a truncated manuscript.
+The [Windows release workflow](../.github/workflows/windows.yml) requires the compiled native regression before artifact publication. Later CI rebuilds are not allowed to silently replace an existing verified release package. Checksums identify exact assets, not a general claim that all builds are identical.
 
-Extraction may require many calls on a large manuscript. Start with a small real project, inspect the extracted graph and provider receipts, then set budgets deliberately. Automatic revision is bounded to one pass; the app is not an open-ended self-improvement loop.
+## Evaluate the writing advantage
 
-## How to test the actual writing advantage
+Compare GraphPaper with a strong direct-writing baseline using the same sources, models, target length and a comparable inference budget. Blind the evaluator to the generation route where practical.
 
-No claim is made that this system already produces better prose than every direct prompt. Evaluate it against a serious baseline with the same models, sources, word targets and comparable inference budget.
+For nonfiction, assess source support, reasoning, useful novelty, counterarguments, structure and author editing time. Count unsupported claims and misleading citations separately from style preferences.
 
-For nonfiction, blind-rate factual support, reasoning, novelty, organization, voice and reader usefulness. Count unsupported claims and misleading citations separately from subjective quality. For fiction, blind-rate motivation, continuity, scene causality, prose, emotional progression and originality. Record the author's edit time, not just the model's self-score.
+For fiction, assess motivation, agency, canon consistency, scene causality, emotional progression, prose and the ending. Do not reward more generated explanation when it makes the story worse.
 
-Compare direct prompt, outline-and-review baseline, GraphPaper without JEV, and GraphPaper with JEV. Separate one-source articles from larger corpora. A graph that yields attractive but spurious connections should score worse, not better. Do not train and evaluate angle selection on the same author-rated examples.
+For Science, check search completeness claims, actual source access, screening decisions, reported study details, interpretation and references. A model-generated appraisal is not a validated bias assessment or meta-analysis.
 
-The practical quality goal is a better final article or story with less author correction, not the largest graph, most agents or highest self-awarded score.
+Compare direct prompt, outline/review baseline, graph workflow without JEV and graph workflow with JEV. Keep one-source and large-corpus tasks separate. Avoid training a preference model and evaluating it on the same rated examples.
 
-## Known release limitations
+## Known limits
 
-The source launcher and visual native shell need a real Windows interactive validation pass. No signed installer is included. Provider endpoint/model availability can change. Citation support is sampled. There is no automatic paywall bypass, OCR, live-web fact verification, trained author-preference model, cloud-sync collaboration or full WYSIWYG editor. HTML/Word typography should still be checked for a publisher's specific template.
+Source quotation matching does not prove truth or entailment. Claim review samples important statements rather than exhaustively certifying the manuscript. Graphs can contain plausible but spurious links. Fiction ledgers can become stale after revisions. Science searches are bounded; metadata and abstracts do not count as full-text appraisal.
 
-Large graphs are visually capped while the full project remains stored. Graphify IDs and native canonical IDs may leave duplicate conceptual labels after augmentation. Direction and pins influence candidate exploration but do not guarantee every requested connection is defensible.
+There is no measured claim that GraphPaper outperforms every direct prompt, no trained global model of an author’s taste, no automatic journal approval and no guarantee that a protected prose edit preserves every nuance.
 
-The compiled Windows executable passed its startup, local backend and bundled-interface self-test. The versioned Windows ZIP includes the official Codex runtime and its verified provenance. This check does not complete a real account OAuth login or make a live model request.
+## Historical builds
+
+Earlier results and bug reports remain in the [validation directory](validation/) and versioned release notes. The 0.2.0 native freeze exposed a gap in browser-only/startup testing; [0.2.1](RELEASE-0.2.1.md) added genuine native-window regression coverage. Historical limitations should not be mistaken for the status of a later tested build.

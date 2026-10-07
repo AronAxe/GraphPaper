@@ -1,0 +1,48 @@
+{
+  "header_sha256": "80bfe7844f469ef2c3d63dd7ca2321d6c24ebed7f5c56555d797227e81a7955e",
+  "header_preserved": true,
+  "documentation_pages": 18,
+  "markdown_files_checked": 21,
+  "local_link_targets_checked": 176,
+  "documentation_tests_passed": 12,
+  "badges": [
+    {
+      "url": "https://img.shields.io/github/v/release/AronAxe/GraphPaper?style=flat-square&color=79a87d",
+      "http_status": 200,
+      "svg": true,
+      "label": "release: v0.3.0"
+    },
+    {
+      "url": "https://img.shields.io/github/actions/workflow/status/AronAxe/GraphPaper/quality.yml?branch=main&style=flat-square&label=checks",
+      "http_status": 200,
+      "svg": true,
+      "label": "checks: failing"
+    },
+    {
+      "url": "https://img.shields.io/badge/desktop-Windows%20x64-557e98?style=flat-square",
+      "http_status": 200,
+      "svg": true,
+      "label": "desktop: Windows x64"
+    },
+    {
+      "url": "https://img.shields.io/badge/source-Python%203.11%2B-557e98?style=flat-square",
+      "http_status": 200,
+      "svg": true,
+      "label": "source: Python 3.11+"
+    },
+    {
+      "url": "https://img.shields.io/github/license/AronAxe/GraphPaper?style=flat-square&color=b29561",
+      "http_status": 200,
+      "svg": true,
+      "label": "license: MIT"
+    },
+    {
+      "url": "https://img.shields.io/badge/docs-Wiki-79a87d?style=flat-square",
+      "http_status": 200,
+      "svg": true,
+      "label": "docs: Wiki"
+    }
+  ],
+  "application_code_changed": false,
+  "application_release_unchanged": "v0.3.0"
+}

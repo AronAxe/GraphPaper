@@ -1,53 +1,48 @@
-# Windows guide
+# Windows installation and upgrades
 
-## The source edition: a graphical first run
+## Portable Windows release
 
-Extract the full folder. Double-click **Open GraphPaper.vbs**, then **Install and open**. The launcher uses windowed Python, so no console is part of the everyday workflow.
+Get the Windows x64 ZIP from [Releases](https://github.com/AronAxe/GraphPaper/releases/latest). Extract everything, then run `GraphPaper.exe` with its `_internal` directory beside it. Do not launch from inside the ZIP viewer or move the executable by itself.
 
-Prerequisites are Windows 10/11, Python 3.11+ with Tcl/Tk, and Edge WebView2 Runtime. Python 3.12/3.13 is recommended for the source edition; compatibility with every newer Python/dependency combination has not been tested. Obtain Python from https://www.python.org/downloads/windows/ and WebView2 from https://developer.microsoft.com/microsoft-edge/webview2/ .
+The package includes Python and the official Codex runtime. The native interface uses Microsoft Edge WebView2. Windows 10/11 x64 is the intended desktop target; recorded native validation was performed on Windows 11. The build is unsigned.
 
-The script discovers normal per-user Python installations and the Python launcher. A custom installation can open `GraphPaper.pyw` with `pythonw.exe` using Windows **Open with**. If your computer blocks VBScript by policy, use that `.pyw` route; do not disable security policy.
+Use the publisher’s official sources for prerequisites:
 
-Setup downloads dependencies into `%LOCALAPPDATA%/GraphPaper/runtime/pyXY`. It does not change the global Python environment. The requirements fingerprint is saved so unchanged dependencies are not reinstalled every launch. Internet is needed for first setup. Provider access is a separate configuration step.
+- [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)
+- [GitHub release assets and SHA256SUMS](https://github.com/AronAxe/GraphPaper/releases/latest)
 
-## Inside the app
+A SmartScreen warning about an unsigned binary is not a validation result. Check the repository, release asset and checksum rather than disabling security software. The checksum verifies the downloaded bytes match the release record; it is not a code-signing certificate.
 
-**Connections & settings** is where API keys and models belong. Choose OpenRouter, paste the key, load its model list and choose the writer. An optional editorial model can be different from the writer. The extraction model should be good at structured JSON and precise quotation.
+## Upgrade without resetting your work
 
-For JEV, Auto uses the OpenRouter key when available, then direct TypeSafe. Enter the TypeSafe key for that fallback, or choose the direct route explicitly. Use the connection tests before a substantial run; these tests can make billable requests.
+1. Close the running GraphPaper instance. If an old faulty version is hung, end only its process in Task Manager.
+2. Extract the new ZIP into a **new folder**. Do not mix `_internal` files from different versions.
+3. Open the new `GraphPaper.exe`.
 
-Cloud calls stay disabled until you enable them. An OpenAI-compatible localhost model can be used without cloud permission; choose its base URL and model explicitly.
+The executable folder is separate from the normal data directory, `%LOCALAPPDATA%\GraphPaper`. Existing projects, revisions, settings and credentials are not overwritten by extracting a new application. Back up important work before upgrading.
 
-## Files and recovery
+The native bridge and save-on-close corrections introduced in 0.2.1 remain in 0.3.0. Use the latest release rather than the affected 0.2.0 executable.
 
-The application directory can live anywhere writable; your work is separate:
+## Source edition
 
-- `%LOCALAPPDATA%/GraphPaper/studio.sqlite3`: projects, source text, settings, extraction cache, revision history.
-- `credentials.dpapi`: encrypted keys tied to the Windows account/machine.
-- `setup.log` and `desktop.log`: local diagnostics, not included in project exports.
+The source ZIP is intended for people who want the code or need to run it directly. It requires **Python 3.11+ with Tcl/Tk**; Python 3.12 or 3.13 is the conservative choice for the desktop dependency set.
 
-Use **Export → Project backup** to move a current project. It includes its source text, graph, angle, outline and current draft, but not credentials or the entire revision database. For a full history backup, close GraphPaper and copy its local data folder. Do not move a Windows-encrypted credentials file expecting it to decrypt under a different account.
+Extract the complete repository and double-click **Open GraphPaper.vbs**. The first-run setup window offers **Install and open**. It downloads dependencies into a private environment under `%LOCALAPPDATA%\GraphPaper\runtime`, rather than modifying the global Python installation.
 
-`Ctrl+S` saves the editor. Normal typing autosaves. Closing the native window asks the interface to finish saving first. Revisions are kept; a concurrent edit conflict does not silently overwrite the new text. Cancelling a model job retains completed draft checkpoints in version history.
+If Windows policy blocks VBScript, open `GraphPaper.pyw` with a trusted `pythonw.exe` installation instead. Do not disable your organization’s security policy. Python is available from the [official Windows downloads page](https://www.python.org/downloads/windows/).
 
-## Portable executable build
+Normal compiled-release users do not need the `.vbs` launcher, the optional publisher or Git.
 
-After the source is on GitHub's default branch, use **Actions → Windows desktop package → Run workflow**. When that job succeeds, download its `GraphPaper-Windows-x64` artifact. Extract the entire app folder and run `GraphPaper.exe`; its companion `_internal` directory must stay with it.
+## Where to look when startup fails
 
-The workflow bundles Python with PyInstaller, includes the interface, runs tests and probes the frozen backend/assets. It does **not** certify the visual WebView2 experience. Before public release, test launch, file dialogs, save/close and credentials on a real Windows computer. An unsigned build may trigger SmartScreen; do not treat an unverified binary as inherently trusted.
+| Symptom | First check |
+|---|---|
+| Executable cannot find bundled files | Re-extract the whole release; keep `_internal` beside it. |
+| WebView initialization error | Install or repair the official WebView2 Runtime. |
+| Source launcher does nothing | Check Python/Tcl-Tk, file association and `setup.log`; use `.pyw` if VBScript is blocked. |
+| Window freezes or will not close | Confirm the version, use the corrected release and inspect `desktop.log`. |
+| Updated application appears to have old behavior | Confirm you launched the new folder, not an old shortcut. |
 
-The original delivered archive is source, not a compiled artifact. Consult the actual Actions run for the build's status.
+The normal log directory is `%LOCALAPPDATA%\GraphPaper`. Logs may contain diagnostics; inspect them before sharing. Do not upload the full data directory or credential files to an issue.
 
-## Troubleshooting
-
-**Nothing opens:** verify Python/Tcl-Tk and use `.pyw` if VBScript is blocked. Check `setup.log`.
-
-**A WebView error:** install/repair Edge WebView2 Runtime and try again; inspect `desktop.log`.
-
-**Model not found:** refresh the model list or enter an ID supported by your selected provider. Model availability is not frozen in GraphPaper.
-
-**Context/output limit:** use a suitable long-context model, reduce the target length or adjust the explicit limits. Truncated output is treated as an error rather than silently installed as a complete article.
-
-**Cloud processing disabled:** enable it only after deciding the source material can be shared with the selected providers.
-
-**Source import has little text:** scanned/image-only PDFs need external transcription/OCR. This edition does not silently guess at unreadable images.
+For model, import and manuscript problems, continue with [Troubleshooting](TROUBLESHOOTING.md). For developer builds and native checks, see [Releases and packaging](PUBLISHING.md).
