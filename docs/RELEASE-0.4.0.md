@@ -29,3 +29,9 @@ Download **GraphPaper-v0.4.0-Windows-x64.zip**, extract the complete folder, and
 Regression tests cover intent and voice handoff at each stage, both opposing author positions, stale-context detection, existing-project preservation, polishing fidelity and source-reference export. Browser/native checks exercise the actual controls. Live Codex editorial examples use original synthetic documents and a synthetic voice sample, not private user articles; evidence for wiring is distinct from a universal prose-quality guarantee.
 
 See [Polemic and authorial intent](https://github.com/AronAxe/GraphPaper/blob/main/docs/POLEMIC.md) and the versioned validation reports for exact test counts, platform results and live-test scope. SHA256SUMS.txt identifies the downloadable archive.
+
+## Verified artifact
+
+252 automated Windows tests passed (1 permission-related skip), all 54 browser checks passed, and all 17 checks passed against the actual compiled executable. Live Codex editorial tests used original synthetic material; JEV input behavior was tested without live JEV spending.
+
+Windows ZIP: **187,529,591 bytes**. SHA-256: `c9fb03c6b293b8505b14ec427c7266aba1e3be8f0391be35ecead18a91399b53`.

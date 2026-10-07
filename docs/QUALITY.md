@@ -1,5 +1,15 @@
 # Validation and quality
 
+## Version 0.4.0 validation
+
+**252 automated Windows tests passed**; 1 permission-related test skipped. All **54 real-HTTP browser checks** passed, with no JavaScript page errors. The actual compiled Windows application passed **17 native checks**, including mode conversion, thesis/force controls, external Graphify, native Save As and pending-edit save before normal exit.
+
+The packaged Python code for the changed modules was compared with the final source as semantic code objects; all UI assets were compared byte-for-byte. The Windows package includes the previously verified public Graphify and official Codex runtimes. No installed user project was changed.
+
+A live Codex test generated argumentative angles from original synthetic evidence and voice samples, then drafted and reviewed a complete short argument. A separate opposing-position test confirmed the editorial policy does not choose which side the author should support. The first outline response was malformed JSON and was rejected; the successful continuation was a manually restarted test using the saved angles. No live JEV call or new user sign-in ceremony was performed. Deterministic tests inspect JEV voice/stance inputs separately.
+
+The tests validate behavior and handoff, not a universal promise of perfect style or zero caveats. Source, browser, native, package and live-test evidence is under [validation/v0.4.0](validation/v0.4.0/). Other-platform results, when available, are the actual hosted CI results rather than inferred Windows coverage. Earlier reports below are historical.
+
 ## Version 0.3.1 validation
 
 217 automated Windows tests passed (1 platform-permission skip). All 44 browser workflow checks passed, all 10 native-source checks passed, and all 15 checks against the actual compiled executable passed. The compiled-native checks include a real public Graphify worker with synthetic model transport, source provenance, native Save As and save-on-close.

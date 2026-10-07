@@ -93,7 +93,15 @@ def main():
                 page.screenshot(path=str(out/'graph.png'),full_page=True);check('Illustrative graph renders with 18 nodes')
                 page.locator('[data-node]').first.click();page.wait_for_selector('.evidence-card h3')
                 page.get_by_role('button',name='Pin idea',exact=True).click();page.wait_for_timeout(800)
-                assert len(client.get('/api/projects/'+sample_id).json()['brief']['pinned_nodes'])==1
+                # Autosave is debounced; await actual persistence rather than
+                # assuming a hosted browser+server completes it within 800 ms.
+                deadline=time.monotonic()+10
+                while time.monotonic()<deadline:
+                    if len(client.get('/api/projects/'+sample_id).json()['brief']['pinned_nodes'])==1:
+                        break
+                    page.wait_for_timeout(100)
+                else:
+                    raise AssertionError('Graph pin was not persisted by autosave')
                 check('Inspect graph node and persist pin')
                 page.get_by_role('button',name='Find a path',exact=True).click();page.get_by_role('button',name='Find path',exact=True).click();page.wait_for_selector('#graph-svg');check('Path query and highlight')
                 page.locator('.nav-link[data-tab="angles"]').click();page.wait_for_selector('.angle-card')

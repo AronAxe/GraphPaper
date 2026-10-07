@@ -1,0 +1,22 @@
+{
+  "version": "0.4.0",
+  "checked_at": "2026-10-07T22:28:46.008429+00:00",
+  "platform": "Windows x64",
+  "automated_tests": {
+    "passed": 252,
+    "skipped": 1,
+    "failed": 0
+  },
+  "browser_workflow_checks": 54,
+  "browser_page_errors": [],
+  "native_packaged_checks": 17,
+  "live_codex": true,
+  "live_jev": false,
+  "private_user_documents_used": false,
+  "installed_project_database_modified": false,
+  "archive": "GraphPaper-v0.4.0-Windows-x64.zip",
+  "size_bytes": 187529591,
+  "sha256": "c9fb03c6b293b8505b14ec427c7266aba1e3be8f0391be35ecead18a91399b53",
+  "compiled_source_matches_final_source": true,
+  "live_editorial_samples": "live-codex-editorial.json"
+}
