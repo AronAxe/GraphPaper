@@ -70,7 +70,7 @@ class Codex:
                 stdin=subprocess.PIPE,stdout=subprocess.PIPE,stderr=subprocess.DEVNULL,
                 text=True,encoding='utf-8',errors='strict',bufsize=1,creationflags=flags)
             threading.Thread(target=self._read,args=(self.proc,),daemon=True,name='graphpaper-codex-auth').start()
-        self.rpc('initialize',{'clientInfo':{'name':'graphpaper','title':'GraphPaper','version':'0.2.0'}})
+        self.rpc('initialize',{'clientInfo':{'name':'graphpaper','title':'GraphPaper','version':'0.3.0'}})
         self._send({'method':'initialized','params':{}})
 
     def _send(self, value):
@@ -147,12 +147,25 @@ class Codex:
 
     def models(self):
         self.start()
-        result = self.rpc('model/list',{'limit':100})
-        return [{'id':m.get('model',m.get('id','')),'name':m.get('displayName',m.get('model',''))} for m in result.get('data',[]) if m.get('model') or m.get('id')]
+        from .reasoning import normalize_model
+        rows = []; cursor = None
+        for _ in range(10):
+            params = {'limit':100}
+            if cursor: params['cursor'] = cursor
+            result = self.rpc('model/list',params)
+            rows.extend(normalize_model(m,'codex') for m in result.get('data',[]) if m.get('model') or m.get('id'))
+            cursor = result.get('nextCursor')
+            if not cursor: break
+        return rows
 
-    def complete(self, system, user, model, job=None, max_calls=80):
+    def complete(self, system, user, model, job=None, max_calls=80, reasoning_effort="default", timeout_seconds=600):
         if not self.status()['signed_in']:
             raise ProviderError('Sign in with ChatGPT in Connections before using the Codex provider. API-key sessions are not used by this option.')
+        if reasoning_effort != 'default':
+            from .reasoning import validate_effort
+            catalog = self.models()
+            info = next((m for m in catalog if m['id']==model),None) if model else next((m for m in catalog if m.get('is_default')),None)
+            validate_effort(reasoning_effort, info, 'codex')
         if job:
             job.before_call('Codex',max_calls)
         flags = subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
@@ -163,6 +176,8 @@ class Codex:
                     '-o',str(output),'-']
             if model:
                 args[-1:-1] = ['--model',model]
+            if reasoning_effort != 'default':
+                args[-1:-1] = ['-c','model_reasoning_effort='+json.dumps(reasoning_effort)]
             prompt = ('You are the prose/structured-output engine inside GraphPaper. This is a text transformation, not a coding task. '
                       'Do not use tools, inspect files, execute commands or access the network. Return only the requested answer.\n\n'
                       + system + '\n\n' + user)
@@ -174,8 +189,8 @@ class Codex:
                 while True:
                     if job:
                         job.check()
-                    if time.monotonic()-started > 600:
-                        raise ProviderError('Codex exceeded the ten-minute call limit; the previous document remains intact.')
+                    if time.monotonic()-started > timeout_seconds:
+                        raise ProviderError('Codex exceeded the configured request timeout; the previous document remains intact.')
                     try:
                         stdout, stderr = proc.communicate(input=prompt if first else None,timeout=.5)
                         break
@@ -191,6 +206,7 @@ class Codex:
                         continue
                 if job:
                     job.record_usage('Codex subscription',usage,model or 'Codex default')
+                    if job.receipts:job.receipts[-1]['reasoning_effort']=reasoning_effort
                 if proc.returncode or not output.exists():
                     raise ProviderError('Codex could not finish this request. Check sign-in, your subscription usage limit, model availability and the runtime version. No API fallback was attempted.')
                 if output.stat().st_size > 2_000_000:

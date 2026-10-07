@@ -306,7 +306,7 @@ def review_draft(p: Project, clients: Clients, job: Job, text=None) -> Review:
     review_schema = {"summary": "Short honest editorial assessment", "strengths": ["specific strength"], "issues": [{"severity": "critical|major|minor", "category": "evidence|logic|continuity|voice|structure|craft", "excerpt": "exact draft excerpt", "problem": "specific problem", "suggestion": "concrete repair", "source_ids": ["S1"]}], "suggestions": ["useful revision instruction"], "verdict": "Ready for author review / Needs revision / Needs evidence", "claims": [{"claim": "One load-bearing factual claim from the draft", "support": "supported|partial|unsupported|inference|opinion|unknown", "quotes": [{"source_id": "S1", "quote": "verbatim supporting passage supplied here"}]}]}
     raw = clients.complete(BOUNDARY, dumps({"task": "Act as a rigorous but not formulaic developmental editor. Identify consequential flaws, not busywork. For nonfiction check attribution, inference, invented numbers, quotations, strength of objections and cited-source support. Any unavailable evidence is unknown, not a pass. For fiction check character desire, agency, causality, canon/timeline, stakes, repetitive beats, emotional precision, prose and ending. Quote the actual draft for issues. Do not rate your own certainty numerically. Do not rewrite yet. Nonfiction: audit up to 12 load-bearing factual claims with exact source quotes. Do not label a claim supported unless the supplied quote actually entails it; distinguish opinion and inference. Fiction: return an empty claims array.", "mode": p.mode, "brief": p.brief.model_dump(), "draft": text, "sources": pack, "schema": review_schema}), role="editor", json_mode=True)
     review = Review(summary=str(raw.get("summary", "")), strengths=[str(x) for x in raw.get("strengths", [])[:10]], issues=[x for x in raw.get("issues", [])[:30] if isinstance(x, dict)], suggestions=[str(x) for x in raw.get("suggestions", [])[:10]], verdict=str(raw.get("verdict", "Needs author review")), citation_audit=citation_audit(p, text), draft_hash=digest(text))
-    if p.mode == "nonfiction":
+    if p.mode != "fiction":
         review.citation_audit.update(audit_claims(p, raw.get("claims", [])))
         for claim in review.citation_audit["sampled_claims"]:
             if claim["editor_judgment"] in {"unverified", "unsupported"}:
@@ -362,17 +362,17 @@ def write_draft(p: Project, clients: Clients, store: Store, job: Job):
         pack = source_pack(p, a.thesis + "\n" + section.purpose + "\n" + " ".join(section.beats), min(38000, clients.settings.context_chars // 2), section.source_ids)
         prompt = {"task": "Write only this section/scene, approximately its target_words. No title/heading, preamble, references list or summary of the whole piece. Nonfiction: cite factual claims using exactly [S1] etc, only evidence-role sources supplied here; preserve attribution and uncertainty. Do not cite inspiration or fictional canon as real-world evidence. Missing evidence must be avoided or explicitly attributed as unresolved. Include warranted counterarguments. Fiction: show consequential scenes, specific actions, subtext, varied rhythm; no citations and no mechanical explanation of the theme. Preserve canon; do not resolve later scenes prematurely. Avoid repeating the previous section or announcing the next one.", "mode": p.mode, "brief": p.brief.model_dump(), "angle": a.model_dump(), "whole_outline": [s.model_dump() for s in p.outline], "current_section": section.model_dump(), "previous_prose_for_continuity": "\n\n".join(draft_sections)[-9000:], "story_ledger": ledger, "source_passages": pack, "voice_references": voice_notes(p)}
         text = clients.complete(BOUNDARY, dumps(prompt))
-        draft_sections.append(("## " + section.title + "\n\n" if p.mode == "nonfiction" else "") + text)
+        draft_sections.append(("## " + section.title + "\n\n" if p.mode != "fiction" else "") + text)
         # Recoverable checkpoints never replace the current editor document.
         checkpoint = p.model_copy(deep=True)
-        checkpoint.draft = "# " + a.title + "\n\n" + ("\n\n" if p.mode == "nonfiction" else "\n\n* * *\n\n").join(draft_sections)
+        checkpoint.draft = "# " + a.title + "\n\n" + ("\n\n" if p.mode != "fiction" else "\n\n* * *\n\n").join(draft_sections)
         store.snapshot(checkpoint, f"Draft checkpoint {i + 1}/{len(p.outline)}")
         if p.mode == "fiction":
             ledger = clients.complete(BOUNDARY, dumps({"task": "Update a compact continuity ledger from this newly written scene. Record only what the text establishes; do not invent events, retcon canon or write the next scene. Preserve prior facts unless this scene explicitly changes them. Limit to 5,000 characters total. Return JSON with characters (name, location, wants, knowledge), chronology, objects, unresolved_threads, resolved_threads, and canon_conflicts (specific conflicts with author canon, if any).", "author_canon": p.brief.canon, "previous_ledger": ledger, "new_scene": text}), role="extraction", json_mode=True)
             if len(dumps(ledger)) > 10000:
                 raise ProviderError("Continuity ledger exceeded its size limit. Draft checkpoint saved; choose a more instruction-following extraction model.")
     p.story_state = ledger
-    p.draft = "# " + a.title + "\n\n" + ("\n\n" if p.mode == "nonfiction" else "\n\n* * *\n\n").join(draft_sections)
+    p.draft = "# " + a.title + "\n\n" + ("\n\n" if p.mode != "fiction" else "\n\n* * *\n\n").join(draft_sections)
     p.review = review_draft(p, clients, job)
     store.snapshot(p, "Complete first draft")
     if clients.settings.refine and p.review.scores.get("action", {}).get("choice") == "revise":
@@ -392,7 +392,7 @@ class Runner:
         return next((j for j in self.jobs.values() if j.project_id == project_id and j.state in {"queued", "running"}), None)
 
     def start(self, project_id, action, instruction=""):
-        if action not in {"graph", "angles", "outline", "draft", "review", "revise", "voice", "humanize", "deslop", "both"}:
+        if action not in {"graph", "angles", "outline", "draft", "review", "revise", "voice", "humanize", "deslop", "both", "science-plan", "science-search", "science-fulltext", "science-appraise", "science-outline", "science-draft", "science-review"}:
             raise ValueError("Unknown action")
         with self.lock:
             if self.active(project_id):
@@ -414,7 +414,16 @@ class Runner:
         clients = self.clients_factory(settings, self.vault, job)
         try:
             self.store.snapshot(p, "Before " + job.action)
-            if job.action == "voice":
+            if job.action.startswith('science-') or (p.mode == 'science' and job.action in {'outline','draft','review'}):
+                if p.mode != 'science': raise ValueError('Create a Science project for scholarly research.')
+                from . import science
+                task = job.action.removeprefix('science-')
+                if task == 'plan': science.plan_search(p, clients, job)
+                else:
+                    tasks = {'search':science.search_literature,'fulltext':science.fetch_fulltexts,'appraise':science.appraise,
+                             'outline':science.outline_science,'draft':science.draft_science,'review':science.review_science}
+                    tasks[task](p, clients, self.store, job)
+            elif job.action == "voice":
                 from .voice import learn_voice
                 learn_voice(p, clients, job)
             elif job.action in {"humanize", "deslop", "both"}:

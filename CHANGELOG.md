@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0
+
+- Provider-native, model-aware reasoning effort for writer/editor/extraction roles, with Codex catalog support and explicit thinking budgets.
+- Third Science workspace with real scholarly database searches, documented screening, open full text, evidence appraisal and scientific drafting.
+- APA 7 professional manuscripts, metadata-based references, research-package export and manuscript-specific author confirmation.
+- Retained the 0.2.1 private native bridge and nonblocking save-on-close fix; added native Science regression coverage.
+- Rendered export inspection fixed empty-page overflow and inherited heading-theme fonts.
+
+
 ## 0.2.1 ? 2026-10-06
 
 - Fix recursive native-window exposure in the JavaScript bridge.

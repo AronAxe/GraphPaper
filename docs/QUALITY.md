@@ -1,5 +1,18 @@
 # Quality, tests and known limits
 
+## Version 0.3.0 validation
+
+Validated on 7 October 2026 in an isolated native Windows build environment:
+
+- **172 automated tests passed; one symlink-permission test skipped.**
+- **39 real-HTTP browser workflow checks passed**, with no JavaScript page errors: 17 base, 9 author-voice/folder/prose-tool, and 13 Science/reasoning checks.
+- **10 native Windows source checks and 10 checks against the compiled executable passed.** These include a genuine Windows mouse interaction, Science protocol editing, bridge initialization, Connections, a native Save As dialog, and pending manuscript persistence before normal process exit.
+- Actual metadata queries succeeded for PubMed, arXiv, Crossref and Europe PMC. Anonymous Semantic Scholar returned HTTP 429; that limitation is recorded, and its optional API-key route remains available.
+- The APA exporter was rendered and visually inspected across four synthetic manuscript pages. Blank-page and inherited font-theme issues were fixed. This was a LibreOffice-rendered check of the same exporter source, not a Microsoft Word automation claim.
+- The release uses streaming ZIP packaging and archive CRC/checksum verification, avoiding the large in-memory buffer used by PowerShell compression. Three packaging regression tests are included.
+
+No real user OAuth ceremony or paid writing/JEV call was used in these tests. Model/database fixtures in UI tests are explicitly synthetic; live metadata connectivity is tested separately. Full reports are in [validation/v0.3.0](validation/v0.3.0/). Earlier version results below are historical.
+
 ## 0.2.1 native Windows correction ? 6 October 2026
 
 The reported interface freeze exposed a gap in the earlier validation: the

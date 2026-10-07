@@ -3,17 +3,28 @@
 ![GraphPaper — Graph-first AI writing studio](docs/images/graphpaper-header.svg)
 ### A studio for connected thought.
 
-**Windows fix: [v0.2.1](https://github.com/AronAxe/GraphPaper/releases/tag/v0.2.1)** fixes the native interface freeze and the save-on-close deadlock. Existing projects remain intact. See the [patch notes](docs/RELEASE-0.2.1.md).
+**Current release: [GraphPaper 0.3.0](https://github.com/AronAxe/GraphPaper/releases/latest)** adds model-specific reasoning controls and a dedicated Science workspace. The native Windows freeze and save-on-close fixes are retained. Existing projects remain intact.
 
 
 **Source material → knowledge graph → a distinctive angle → an editable outline → writing worth reading.**
 
-GraphPaper is a local-first, Windows-oriented writing studio for **nonfiction and fiction**. It is a graphical application, not a command-line writing tool. Bring your sources, see how their ideas connect, guide the interpretation, and keep authorship of the result.
+GraphPaper is a local-first, Windows-oriented writing studio for **nonfiction, fiction and scientific manuscripts**. It is a graphical application, not a command-line writing tool. Bring your sources, see how their ideas connect, guide the interpretation, and keep authorship of the result.
 
 ![GraphPaper's interactive graph studio](docs/images/graph.webp)
 *Actual app screenshot using the explicitly illustrative project included with the application.*
 
-## GraphPaper 0.2.0
+## New in 0.3.0
+
+[**Download GraphPaper for Windows**](https://github.com/AronAxe/GraphPaper/releases/latest) ? [Science and reasoning guide](docs/UPDATE-0.3.md)
+
+**Reasoning depth:** choose independently for the writer, editor and extractor. Codex supplies its supported levels through model discovery; other providers receive their native reasoning parameters. Defaults are preserved and unsupported levels are not silently substituted.
+
+**Science:** search PubMed, Semantic Scholar, arXiv, Crossref and Europe PMC; screen studies, retrieve available full text, inspect the evidence matrix, and draft a source-linked scientific manuscript. APA 7 Word export generates author-year citations and hanging references from retrieved metadata. A research package adds BibTeX, RIS, the protocol and the actual search log. Search limits and abstract-only evidence stay visible; author checks do not pretend to confer journal or ethics approval.
+
+![The Science research desk](docs/images/research-v0.3.webp)
+*Actual interface using clearly labelled synthetic workflow-test material.*
+
+## Author voice, folders and prose tools (retained from 0.2)
 
 [**Download the Windows release**](https://github.com/AronAxe/GraphPaper/releases/latest) · [What is new](docs/UPDATE-0.2.md)
 
@@ -28,12 +39,13 @@ Your own writing voice from uploads or article URLs; a project Inbox with automa
 
 There is no need to type commands. The native window uses Microsoft Edge WebView2. See [Windows setup and troubleshooting](docs/WINDOWS.md).
 
-**Executable packaging:** a Windows build script and GitHub Actions workflow are included. They generate a portable `GraphPaper.exe` folder/ZIP; this source package is not a prebuilt or signed Windows executable. Version 0.2 has native Windows automated tests and real-HTTP browser validation; see [validation scope](docs/QUALITY.md). Interactive native dialogs remain a separate check.
+**Executable packaging:** a Windows build script and GitHub Actions workflow are included. They generate a portable `GraphPaper.exe` folder/ZIP; this source package is not a prebuilt or signed Windows executable. The release workflow includes automated, real-HTTP browser and actual native Windows interaction checks; see [validation scope](docs/QUALITY.md). The compiled executable is checked separately from the source edition.
 
 ## A connected writing workflow
 
 | Stage | What you control |
 |---|---|
+| **Research (Science)** | Define the protocol, search scholarly databases, screen records and inspect evidence, full-text availability and the search log. |
 | **Sources** | Drag in PDF, DOCX, text, Markdown, CSV or HTML. Paste notes, import a public article URL, or import a saved project. Label material as evidence, fiction canon, inspiration or a voice sample. |
 | **Graph** | Build an evidence-linked graph, or import Graphify/NetworkX JSON. Pan, zoom, drag nodes, inspect quote anchors, highlight a path, and pin or exclude concepts. |
 | **Angles** | Discover distinct interpretations from contradictions, branches, convergences and cross-community connections. Edit the title/thesis, inspect the evidence gaps, or write your own angle. Nothing is selected for you. |
@@ -60,7 +72,7 @@ JEV/TypeSafe is used for **candidate screening, angle evaluation, evidence-gap s
 
 The preferred connection is **OpenRouter**, with a **direct TypeSafe route** available. Auto uses an available OpenRouter key first, then direct TypeSafe. You can select a route explicitly or switch JEV off; the app labels unscored results honestly. Scores are model judgments, not empirically calibrated probabilities of truth or writing quality.
 
-Writing providers: OpenRouter, OpenAI-compatible APIs including local endpoints, and direct Anthropic. Writer, extraction and editorial-review models can be set separately. No model name is hard-coded as a universal best choice.
+Writing providers: Codex / ChatGPT OAuth, OpenRouter, OpenAI-compatible APIs including local endpoints, and direct Anthropic. Writer, extraction and editorial-review models can be set separately. No model name is hard-coded as a universal best choice.
 
 ### Graphify without making setup painful
 

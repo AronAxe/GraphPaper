@@ -40,6 +40,9 @@ def simple_html(text):
 
 
 def export(p: Project, kind: str):
+    if p.mode == 'science' and kind not in {'json','graph'}:
+        from .science_export import export_science
+        return export_science(p,kind)
     if kind == "json":
         return p.model_dump_json(indent=2).encode(), "application/json", ".graphpaper.json"
     if kind == "graph":

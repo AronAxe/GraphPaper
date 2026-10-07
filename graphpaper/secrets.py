@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 class Vault:
-    NAMES = {"llm", "openrouter", "typesafe", "tavily"}
+    NAMES = {"llm", "openrouter", "typesafe", "tavily", "ncbi", "semantic_scholar"}
 
     def __init__(self, root: Path):
         self.path = root / "credentials.dpapi"
@@ -63,7 +63,7 @@ class Vault:
                     return v
             except Exception:
                 pass
-        env = {"llm": "OPENAI_API_KEY", "openrouter": "OPENROUTER_API_KEY", "typesafe": "TYPESAFE_API_KEY", "tavily": "TAVILY_API_KEY"}
+        env = {"llm": "OPENAI_API_KEY", "openrouter": "OPENROUTER_API_KEY", "typesafe": "TYPESAFE_API_KEY", "tavily": "TAVILY_API_KEY", "ncbi": "NCBI_API_KEY", "semantic_scholar": "SEMANTIC_SCHOLAR_API_KEY"}
         return os.getenv(env[name], "")
 
     def set(self, name: str, value: str, remember: bool):
