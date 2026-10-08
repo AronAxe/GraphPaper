@@ -1,0 +1,37 @@
+name: Probe hosted WebView2 startup
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/native-probe.yml']
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: windows-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q -r requirements-dev.txt -r requirements-desktop.txt
+      - shell: pwsh
+        run: ./scripts/prepare_ci_webview.ps1
+      - name: Exercise isolated source GUI with startup diagnostics
+        shell: pwsh
+        run: |
+          python -c "import importlib.metadata as m; print('pywebview',m.version('pywebview'))"
+          python scripts/native_smoke.py --science --polemic --voices --trace-source --out test-results/hosted-source
+      - name: Print this runner's isolated application diagnostics
+        if: always()
+        shell: pwsh
+        run: |
+          foreach ($name in @('native.log','desktop.log','report.json','thread-stacks.txt')) {
+            $path = "test-results/hosted-source/$name"
+            if (Test-Path $path) { Write-Host "=== $path ==="; Get-Content $path -Tail 120 }
+          }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: hosted-native-source
+          path: test-results/
