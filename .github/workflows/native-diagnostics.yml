@@ -1,0 +1,27 @@
+name: Inspect hosted native startup
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/native-diagnostics.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read the failed hosted test's own diagnostic artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/AronAxe/GraphPaper/actions/artifacts/11524672398/zip > diagnostics.zip
+          python - <<'PY'
+          import zipfile
+          with zipfile.ZipFile('diagnostics.zip') as archive:
+              for name in archive.namelist():
+                  if name.endswith(('native.log','desktop.log','report.json')):
+                      print('\n===== '+name+' =====\n')
+                      print(archive.read(name).decode('utf-8','replace')[-30000:])
+          PY
