@@ -8,21 +8,51 @@ permissions:
   contents: read
 concurrency:
   group: graphpaper-0.5-release
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
-  validate:
+  source:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.revision.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - id: revision
+        name: Record a source-only manifest without changing code or workflows
+        run: |
+          python scripts/prepare_assets.py --manifest
+          git add publish-manifest.json
+          git diff --cached --check
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Refresh verified v0.5 source publishing manifest'
+            git push origin HEAD:main
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  validate:
+    needs: source
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.sha }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
       - run: test "$(python -c 'from graphpaper import __version__; print(__version__)')" = '0.5.0'
       - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q --junitxml=test-results/linux.xml
       - run: python scripts/docs_tool.py check
-      - run: python -m playwright install --with-deps chromium
+      - name: Install the test browser on the hosted Ubuntu image
+        run: python -m playwright install chromium
       - run: python scripts/ui_smoke.py
       - run: python scripts/ui_studio_smoke.py
       - run: python scripts/ui_science_smoke.py
@@ -35,16 +65,19 @@ jobs:
           name: voices-linux-validation
           path: test-results/
   windows:
-    needs: validate
+    needs: [source, validate]
     runs-on: windows-latest
     timeout-minutes: 30
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.sha }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: pip
       - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q --junitxml=test-results/windows.xml
       - name: Verify the hosted Windows WebView2 prerequisite
@@ -61,7 +94,8 @@ jobs:
           path: |
             dist/GraphPaper-v0.5.0-Windows-x64.zip
             dist/SHA256SUMS.txt
-      - run: python scripts/native_smoke.py --science --graphify --polemic --voices --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
+      - name: Exercise the compiled native window, voice graphs, Graphify and save-on-close
+        run: python scripts/native_smoke.py --science --graphify --polemic --voices --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
       - name: Publish only the successfully tested artifact
         shell: pwsh
         env:
@@ -70,12 +104,16 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $tag = 'v0.5.0'
           $package = 'GraphPaper-v0.5.0-Windows-x64.zip'
+          $revision = (git rev-parse HEAD).Trim()
           $expected = ((Get-Content dist/SHA256SUMS.txt).Split(' ')[0]).Trim().ToLower()
           $actual = (Get-FileHash "dist/$package" -Algorithm SHA256).Hash.ToLower()
           if ($actual -ne $expected) { throw 'Archive checksum mismatch.' }
           gh release view $tag *> $null
           if ($LASTEXITCODE -eq 0) { throw 'Release already exists; refusing to overwrite it.' }
-          gh release create $tag "dist/$package" dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title 'GraphPaper 0.5.0 - Reusable voice graphs' --notes-file docs/RELEASE-0.5.0.md --draft
+          $notes = Get-Content docs/RELEASE-0.5.0.md -Raw
+          $notes += "`n`nBuilt and tested entirely on GitHub-hosted Linux and Windows runners. The compiled Windows application passed its native interaction and save-on-close checks. Validation run: https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID . Source revision: $revision . Archive SHA-256: $actual .`n"
+          $notes | Set-Content test-results/published-release-notes.md -Encoding utf8
+          gh release create $tag "dist/$package" dist/SHA256SUMS.txt --target $revision --title 'GraphPaper 0.5.0 - Reusable voice graphs' --notes-file test-results/published-release-notes.md --draft
           if ($LASTEXITCODE -ne 0) { throw 'Release upload failed.' }
           $releases = gh api "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" | ConvertFrom-Json
           $release = $releases | Where-Object { $_.tag_name -eq $tag }
