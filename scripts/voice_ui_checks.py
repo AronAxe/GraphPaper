@@ -3,6 +3,7 @@ from playwright.sync_api import expect
 
 
 def exercise(page,check,out,native=False):
+    original_id=page.evaluate('() => state.p.id')
     if page.locator('.step[data-tab="sources"]').count():page.locator('.step[data-tab="sources"]').click()
     page.get_by_role('button',name='Your writing voice',exact=True).click()
     page.locator('#voice-name').fill('Power and wit')
@@ -43,4 +44,8 @@ def exercise(page,check,out,native=False):
     expect(page.locator('svg[aria-label="Voice and evidence overlay"]')).to_be_visible()
     page.get_by_role('button',name='Close dialog',exact=True).click()
     check('Namespaced style/project overlay renders without changing stored evidence')
-    return {'voice_id':vid,'model_calls':0,'raw_samples_copied':0,'power_language_preserved':True}
+    if native:
+        # The caller's remaining native save/close assertions refer to this project.
+        page.evaluate('async id => await openProject(id)',original_id)
+        assert page.evaluate('() => state.p.id')==original_id
+    return {'model_calls':0,'raw_samples_copied':0,'power_language_preserved':True}

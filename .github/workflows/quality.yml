@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   tests:
-    if: ${{ !contains(github.event.head_commit.message, '[source-upload]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[source-upload]') && !contains(github.event.head_commit.message, '[prepare]') }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           cache: pip
-      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q --junitxml=test-results/results.xml
       - uses: actions/upload-artifact@v4
         if: always()
@@ -27,22 +27,24 @@ jobs:
           name: tests-${{ matrix.os }}-${{ matrix.python }}
           path: test-results/results.xml
   browser:
-    if: ${{ !contains(github.event.head_commit.message, '[source-upload]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[source-upload]') && !contains(github.event.head_commit.message, '[prepare]') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install -r requirements-dev.txt
+      - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m playwright install --with-deps chromium
       - run: python scripts/ui_smoke.py
       - run: python scripts/ui_studio_smoke.py
       - run: python scripts/ui_science_smoke.py
       - run: python scripts/ui_graphify_smoke.py
       - run: python scripts/ui_polemic_smoke.py
+      - run: python scripts/ui_voices_smoke.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: browser-screenshots
-          path: test-results/ui/
+          name: browser-workflows
+          path: test-results/

@@ -1,12 +1,11 @@
 """Named, reusable voice graphs. Training text is stored apart from project evidence."""
 from __future__ import annotations
 import json
-from pathlib import Path
 from typing import Any
 from pydantic import BaseModel,ConfigDict,Field
 from .models import VoiceProfile,Source,now,uid
 from .storage import Conflict
-from .style_graph import for_profile,StyleGraph
+from .style_graph import for_profile
 
 
 class SavedVoice(BaseModel):
@@ -18,6 +17,12 @@ class SavedVoice(BaseModel):
     usage:dict[str,Any]=Field(default_factory=dict)
     training_revision:int=0
     learned_revision:int=0
+
+
+def validate_samples(samples):
+    if len(samples)>24 or sum(len(s.text) for s in samples)>6000000:
+        raise ValueError('Use at most 24 selected training pieces and 6 million characters per saved voice. Original project samples remain untouched.')
+    if any(s.role!='voice' for s in samples):raise ValueError('Voice training records must have the voice role.')
 
 
 class VoiceLibrary:
@@ -44,9 +49,12 @@ class VoiceLibrary:
         profile=(profile or VoiceProfile()).model_copy(deep=True)
         profile.graph=for_profile(profile).model_dump()
         profile.library_id='';profile.library_version=0
-        v=SavedVoice(profile=profile)
         samples=[s.model_copy(deep=True) for s in (samples or [])]
         for i,s in enumerate(samples):s.id='S'+str(i+1);s.role='voice'
+        validate_samples(samples)
+        # Training is separate. A new voice with samples but no learned representation is stale.
+        v=SavedVoice(profile=profile,training_revision=1 if samples else 0,
+                     learned_revision=1 if samples and profile.graph.get('nodes') else 0)
         with self.store.lock,self.store.connect() as c:
             c.execute('INSERT INTO voices VALUES(?,?,?,?)',(v.id,0,v.model_dump_json(),json.dumps([s.model_dump() for s in samples],ensure_ascii=False)))
         return v
@@ -55,9 +63,7 @@ class VoiceLibrary:
         v=SavedVoice.model_validate(v.model_dump())
         v.profile.graph=for_profile(v.profile).model_dump()
         v.version=expected+1;v.updated=now()
-        if samples is not None:
-            if len(samples)>24 or sum(len(s.text) for s in samples)>6000000:raise ValueError('Use at most 24 training pieces and 6 million characters per voice.')
-            if any(s.role!='voice' for s in samples):raise ValueError('Voice training records must have the voice role.')
+        if samples is not None:validate_samples(samples)
         with self.store.lock,self.store.connect() as c:
             if samples is None:
                 changed=c.execute('UPDATE voices SET version=?,data=? WHERE id=? AND version=?',(v.version,v.model_dump_json(),v.id,expected))
@@ -77,6 +83,5 @@ class VoiceLibrary:
         if not profile.graph['nodes']:raise ValueError('Learn or define this voice graph first.')
         profile.library_id=voice.id;profile.library_version=voice.version
         profile.sample_ids=[];profile.sample_hash='';profile.enabled=True
-        # A project holds a compact snapshot. Library updates are explicit, never retroactive.
         project.voice_profile=profile
         return project

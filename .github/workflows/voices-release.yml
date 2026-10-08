@@ -2,7 +2,7 @@ name: GraphPaper 0.5 hosted Windows release
 on:
   push:
     branches: [main]
-    paths: ['graphpaper/__init__.py']
+    paths: ['graphpaper/__init__.py', '.github/workflows/voices-release.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -74,7 +74,9 @@ jobs:
           if ($LASTEXITCODE -eq 0) { throw 'Release already exists; refusing to overwrite it.' }
           gh release create $tag "dist/$package" dist/SHA256SUMS.txt --target $env:GITHUB_SHA --title 'GraphPaper 0.5.0 - Reusable voice graphs' --notes-file docs/RELEASE-0.5.0.md --draft
           if ($LASTEXITCODE -ne 0) { throw 'Release upload failed.' }
-          $release = gh api "repos/$env:GITHUB_REPOSITORY/releases/tags/$tag" | ConvertFrom-Json
+          $releases = gh api "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" | ConvertFrom-Json
+          $release = $releases | Where-Object { $_.tag_name -eq $tag }
+          if (-not $release) { throw 'The uploaded draft release could not be found.' }
           $asset = $release.assets | Where-Object { $_.name -eq $package }
           if ($asset.digest -ne "sha256:$actual") { throw 'Uploaded artifact does not match the tested ZIP.' }
           gh release edit $tag --draft=false --latest
