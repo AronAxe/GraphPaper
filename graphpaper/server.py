@@ -220,7 +220,7 @@ def create_app(root=None):
             raise ValueError("This text is already in the project.")
         n = max([int(s.id[1:]) for s in p.sources if re.fullmatch(r"S\d+", s.id)] + [0]) + 1
         p.sources.append(Source(id=f"S{n}", title=title[:300], text=text, kind=kind, role=role, url=url, warnings=warnings or [], digest=fingerprint, author=author[:300], published=published[:100]))
-        if p.graph.nodes:
+        if p.graph.nodes and role != "voice":
             p.graph.warnings = list(dict.fromkeys(p.graph.warnings + ["Sources changed after the last graph build. Rebuild before relying on coverage."]))
         p = store.save(p, p.version)
         app.state.folders.original(p, p.sources[-1])
@@ -263,7 +263,8 @@ def create_app(root=None):
             raise KeyError(sid)
         new = Source.model_validate(s.model_dump() | raw)
         p.sources[p.sources.index(s)] = new
-        p.graph.warnings = list(dict.fromkeys(p.graph.warnings + ["Sources changed after the last graph build. Rebuild before relying on coverage."]))
+        if s.role != "voice" or new.role != "voice":
+            p.graph.warnings = list(dict.fromkeys(p.graph.warnings + ["Sources changed after the last graph build. Rebuild before relying on coverage."]))
         return store.save(p, p.version)
 
     @app.post("/api/projects/{pid}/graph/import")
@@ -351,6 +352,8 @@ def create_app(root=None):
 
     from .studio_routes import install
     install(app, store, vault, runner, settings)
+    from .voice_routes import install as install_voices
+    install_voices(app, store, vault, runner, settings)
     from .editorial_routes import install as install_editorial
     install_editorial(app,store,runner)
     from .science_routes import install as install_science

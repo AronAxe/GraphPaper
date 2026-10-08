@@ -75,11 +75,12 @@ def plan(state,questions,model):
     output=[]
     for scoped,qs in groups:
         current={}
+        threshold=MAX_BYTES if wire_bytes({'state':scoped})>TARGET_BYTES*0.75 else TARGET_BYTES
         for key,question in qs.items():
             proposed={**current,key:question}
             payload={'model':model,'state':scoped,'questions':proposed}
             size=wire_bytes(payload)
-            if current and (size>TARGET_BYTES or len(proposed)>MAX_QUESTIONS):
+            if current and (size>threshold or len(proposed)>MAX_QUESTIONS):
                 output.append(Batch(scoped,current));current={key:question}
             else:current=proposed
             if wire_bytes({'model':model,'state':scoped,'questions':current})>MAX_BYTES:

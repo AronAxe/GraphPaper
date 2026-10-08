@@ -166,33 +166,8 @@ class Clients:
         return route
 
     def decide(self, state: dict | str, questions: dict) -> dict | None:
-        route = self.jev_route()
-        if route == "off":
-            return None
-        if not questions or len(questions) > 100:
-            raise ValueError("JEV batches must have 1–100 questions.")
-        # This conservative character limit is not advertised as an exact token count.
-        if len(json.dumps(state, ensure_ascii=False)) + len(json.dumps(questions)) > 60000:
-            raise ProviderError("JEV state exceeds the conservative 60,000-character request limit. Reduce the batch.")
-        bare = self.settings.jev_model.removeprefix("~typesafe/").removeprefix("typesafe/")
-        if route == "openrouter":
-            url = "https://openrouter.ai/api/alpha/decisions"
-            model = "~typesafe/jev-latest" if bare == "jev-latest" else "typesafe/" + bare
-        else:
-            url, model = "https://api.typesafe.ai/v1/systemone", bare
-        data = self.post(url, {"model": model, "state": state, "questions": questions}, (self.vault.get(route) or (self.llm_key() if route == "openrouter" and self.settings.provider == "openrouter" else "")), "JEV")
-        answers = data.get("answers", {})
-        for name, q in questions.items():
-            answer = answers.get(name, {})
-            if answer.get("type") != q["type"]:
-                raise ProviderError(f"JEV returned an invalid answer type for {name}.")
-            if q["type"] == "noul":
-                v = answer.get("noul")
-                if isinstance(v, bool) or not isinstance(v, (int, float)) or not math.isfinite(v) or not 0 <= v <= 1:
-                    raise ProviderError("JEV returned an invalid probability.")
-            elif q["type"] == "choice" and answer.get("choice") not in q["criteria"]:
-                raise ProviderError("JEV returned a choice outside the declared options.")
-        return answers
+        from .jev_budget import dispatch
+        return dispatch(self,state,questions)
 
     def discover_models(self):
         if self._model_cache is not None:

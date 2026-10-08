@@ -89,7 +89,15 @@ def test_library_api_reuse_export_and_conflict(client,app):
 
 
 def test_new_training_is_not_project_evidence_and_learns_once(client,app):
-    app.state.runner.clients_factory=ScriptedClients
+    class VoiceClients(ScriptedClients):
+        def complete(self,system,user,**kwargs):
+            data=json.loads(user)
+            if data.get('task','').startswith('Build an editable author voice profile'):
+                self._record('extraction')
+                assert 'samples' in data and 'Original writing' in str(data['samples'])
+                return {'name':'Reusable fixture','instructions':'Preserve incisive phrasing, varied rhythm and the author\'s forceful conclusion.','observations':['Synthetic material only.']}
+            return super().complete(system,user,**kwargs)
+    app.state.runner.clients_factory=VoiceClients
     app.state.store.set_settings(Settings(model='fixture',allow_cloud=True).model_dump())
     v=client.post('/api/voices',json={'name':'Reusable'}).json()
     v=client.post('/api/voices/'+v['id']+'/samples/text',json={'title':'Training','text':'Original writing with rhythm and wit. '*40}).json()
@@ -99,7 +107,7 @@ def test_new_training_is_not_project_evidence_and_learns_once(client,app):
         status=client.get('/api/jobs/'+j['id']).json()
         if status['state'] not in {'queued','running'}:break
         time.sleep(.02)
-    assert status['state']=='completed',status
+    assert status['state']=='completed',status.get('error',status)
     saved=client.get('/api/voices/'+v['id']).json()
     assert saved['graph']['nodes'] and status['usage']['calls']==1
     assert not client.get('/api/bootstrap').json()['projects']

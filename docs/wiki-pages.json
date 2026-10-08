@@ -1,6 +1,6 @@
 {
   "repository": "AronAxe/GraphPaper",
-  "docs_version": "0.4.0",
+  "docs_version": "0.5.0",
   "pages": [
     {
       "title": "Home",
@@ -96,6 +96,11 @@
       "title": "Releases-and-Packaging",
       "source": "docs/PUBLISHING.md",
       "section": "Reference"
+    },
+    {
+      "title": "Reusable-Voice-Graphs",
+      "source": "docs/VOICE-GRAPHS.md",
+      "section": "Studio guides"
     }
   ]
 }

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Any, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, field_validator
 from .science_models import ResearchWorkspace, ScholarlyMeta
 
 
@@ -136,6 +136,17 @@ class Review(Model):
 
 
 class VoiceProfile(Model):
+    graph: dict[str, Any] = Field(default_factory=dict)
+    library_id: str = Field('', pattern=r'^(?:v_[a-f0-9]{12})?$')
+    library_version: int = Field(0, ge=0)
+
+    @field_validator('graph')
+    @classmethod
+    def validate_voice_graph(cls,value):
+        if not value:return {}
+        from .style_graph import StyleGraph
+        return StyleGraph.model_validate(value).model_dump()
+
     enabled: bool = True
     strength: int = Field(75, ge=0, le=100)
     name: str = Field('My writing voice', max_length=160)
