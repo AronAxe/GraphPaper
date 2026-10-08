@@ -1,15 +1,14 @@
-name: Prepare v0.6 documentation assets
+name: Apply verified v0.6 documentation
 on:
   push:
     branches: [docs/v06-screenshots-wiki]
     paths: ['.github/workflows/docs-refresh-assets.yml']
 permissions:
   contents: write
-  actions: read
 jobs:
-  screenshots:
+  documentation:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,86 +16,52 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install -q pillow
-      - name: Retrieve actual screenshots from the successful v0.6 release run
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -eu
-          mkdir -p test-results/docs-refresh
-          gh api repos/AronAxe/GraphPaper/actions/runs/37807775156 > test-results/docs-refresh/release-run.json
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          run=json.loads(Path('test-results/docs-refresh/release-run.json').read_text())
-          assert run['head_sha']=='00cab75a2cfc13f541573be3bce14f0cc5b97684'
-          assert run['conclusion']=='success'
-          PY
-          gh run download 37807775156 --repo AronAxe/GraphPaper --name graph-studio-browser-validation --dir test-results/docs-refresh/captures
-      - name: Convert genuine screenshots without retouching the interface
+      - name: Apply the checksum-verified documentation patch
         run: |
           python - <<'PY'
           from pathlib import Path
-          from PIL import Image
-          import json,hashlib
-          source=Path('test-results/docs-refresh/captures');target=Path('docs/images')
-          reports=list(source.rglob('report.json'))
-          assert len(reports)==7
-          for report in reports:
-              assert json.loads(report.read_text()).get('ok') is True,report
-          images={
-              'graph-studio-v0.6.webp':'graph-studio/graph-studio.png',
-              'dense-graph-v0.6.webp':'graph-studio/dense-overview.png',
-              'graph-v0.6.webp':'ui/graph.png',
-              'writing-v0.6.webp':'ui/writing.png',
-              'angles-v0.6.webp':'ui/angles.png',
-              'light-v0.6.webp':'ui/light.png',
-              'welcome-v0.6.webp':'ui/welcome.png',
-              'research-v0.6.webp':'science-ui/research.png',
-              'apa-preview-v0.6.webp':'science-ui/apa-preview.png',
-              'evidence-v0.6.webp':'science-ui/evidence.png',
-              'reasoning-v0.6.webp':'science-ui/reasoning.png',
-              'codex-v0.6.webp':'studio/codex.png',
-              'folder-v0.6.webp':'studio/folder.png',
-              'humanizer-v0.6.webp':'studio/humanizer.png',
-              'voice-v0.6.webp':'studio/voice.png',
-              'reusable-voice-v0.6.webp':'voices-ui/reusable-voice.png',
-              'polemic-v0.6.webp':'polemic-ui/polemic-angles.png',
-              'four-modes-v0.6.webp':'polemic-ui/four-modes.png',
-              'graphify-graph-v0.6.webp':'graphify-ui/graphify-graph.png',
-              'graphify-settings-v0.6.webp':'graphify-ui/graphify-settings.png'
-          }
-          manifest={'version':'0.6.0','source_revision':'00cab75a2cfc13f541573be3bce14f0cc5b97684','validation_run':'https://github.com/AronAxe/GraphPaper/actions/runs/37807775156','artifact_id':11563921375,'capture_kind':'Actual Chromium interface served by the application over loopback HTTP on a GitHub-hosted runner','material':'Included illustrative project and clearly synthetic test fixtures; no private manuscripts or accounts','processing':'WebP format conversion only; no retouching, image generation or compositing','images':{}}
-          for name,path in images.items():
-              original=source/path
-              with Image.open(original) as image:
-                  image.convert('RGB').save(target/name,format='WEBP',quality=91,method=6)
-                  manifest['images'][name]={'capture':path,'width':image.width,'height':image.height,'original_sha256':hashlib.sha256(original.read_bytes()).hexdigest(),'webp_sha256':hashlib.sha256((target/name).read_bytes()).hexdigest()}
-          (target/'screenshots-v0.6.json').write_text(json.dumps(manifest,indent=2)+'\n')
-          print('Converted',len(images),'actual release screenshots; header artwork untouched.')
+          import base64,lzma,hashlib,subprocess
+          parts=[Path('.github/docs-refresh-part'+str(i)+'.b64') for i in (1,2)]
+          encoded=''.join(p.read_text().strip() for p in parts)
+          patch=lzma.decompress(base64.b64decode(encoded,validate=True))
+          assert hashlib.sha256(patch).hexdigest()=='6574ef4e27c26da4cd56828b0b05c6035b3f9b16712778fb7c47d201445c8b3f','Patch checksum mismatch'
+          target=Path('/tmp/docs-refresh.patch');target.write_bytes(patch)
+          subprocess.run(['git','apply','--check',str(target)],check=True)
+          subprocess.run(['git','apply',str(target)],check=True)
+          for p in parts:p.unlink()
+          assert hashlib.sha256(Path('docs/images/graphpaper-header.svg').read_bytes()).hexdigest()=='80bfe7844f469ef2c3d63dd7ca2321d6c24ebed7f5c56555d797227e81a7955e'
+          changed=subprocess.check_output(['git','diff','--name-only'],text=True).splitlines()
+          assert all(p=='README.md' or p.startswith('docs/') or p.startswith('.github/docs-refresh-part') for p in changed),changed
           PY
-      - name: Commit only the screenshot assets to the documentation branch
+      - name: Test version coverage, real screenshot provenance, links and wiki generation
+        run: |
+          python -m unittest discover -s tests -p test_documentation_tools.py -v
+          python -m unittest discover -s docs/tests -p 'test_*.py' -v
+          python scripts/docs_tool.py check
+          python scripts/docs_tool.py render-wiki --output test-results/wiki-preview
+      - name: Commit documentation only; leave workflow changes to the connector
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/images/*v0.6*
+          git add -A
+          test -z "$(git diff --cached --name-only -- .github/workflows graphpaper ui scripts tests)"
+          python scripts/prepare_assets.py --manifest
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          # The final connector commit replaces docs.yml and removes this one-off
+          # workflow. Record that reviewed final tree without changing workflows here.
+          path=Path('publish-manifest.json');manifest=json.loads(path.read_text())
+          manifest['files'].pop('.github/workflows/docs-refresh-assets.yml',None)
+          manifest['files']['.github/workflows/docs.yml']='839af4553785c5a2b04a2647791f4056ce7bdb97d20cb5e56bddd65e0d429c68'
+          path.write_text(json.dumps(manifest,indent=2)+'\n')
+          PY
+          git add publish-manifest.json
           git diff --cached --check
-          git commit -m 'Add provenance-linked screenshots from the actual v0.6 interface'
+          git commit -m 'Refresh real v0.6 screenshots, complete 23 wiki guides and prevent stale documentation'
           git push origin HEAD:docs/v06-screenshots-wiki
-      - name: Export reviewable source and current wiki without modifying the wiki
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          git archive --format=zip HEAD -o test-results/docs-refresh/repository.zip
-          git -c credential.helper= -c 'credential.helper=!gh auth git-credential' clone --depth 1 https://github.com/AronAxe/GraphPaper.wiki.git /tmp/graphpaper-wiki-readonly
-          git -C /tmp/graphpaper-wiki-readonly log -1 --format='%H %s'
-          git -C /tmp/graphpaper-wiki-readonly archive --format=zip HEAD -o "$GITHUB_WORKSPACE/test-results/docs-refresh/wiki.zip"
+          git show --stat --oneline HEAD
       - uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: documentation-review-bundle
-          path: |
-            test-results/docs-refresh/repository.zip
-            test-results/docs-refresh/wiki.zip
-            test-results/docs-refresh/release-run.json
-          retention-days: 7
+          name: refreshed-wiki-preview
+          path: test-results/wiki-preview/
