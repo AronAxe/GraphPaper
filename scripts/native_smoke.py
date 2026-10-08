@@ -22,6 +22,7 @@ def main():
     parser.add_argument('--science',action='store_true',help='Exercise the Science workspace in the actual native shell')
     parser.add_argument('--graphify',action='store_true',help='Verify the actual external Graphify action using a synthetic loopback model')
     parser.add_argument('--polemic',action='store_true',help='Verify mode conversion and authorial controls in the native shell')
+    parser.add_argument('--voices',action='store_true',help='Exercise saved voice graphs without model calls')
     parser.add_argument('--out',type=Path,default=ROOT/'test-results/native')
     args=parser.parse_args()
     if sys.platform!='win32':raise SystemExit('This regression requires a native Windows desktop.')
@@ -146,6 +147,10 @@ def main():
                 assert page.evaluate('() => state.p.brief.rhetorical_force')==95
                 check('Native Polemic thesis and rhetorical force controls save correctly')
                 page.screenshot(path=str(out/'polemic.png'),full_page=True)
+            if args.voices:
+                from voice_ui_checks import exercise
+                report['voice_library']=exercise(page,check,out,native=True)
+                responsive(hwnd)
             page.locator('[data-action="settings"]').click();page.wait_for_selector('#s-provider')
             expect(page.locator('#s-reasoning_effort')).to_have_count(1)
             page.get_by_role('button',name='Close dialog',exact=True).click();responsive(hwnd)

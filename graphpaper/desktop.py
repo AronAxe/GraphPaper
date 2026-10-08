@@ -86,11 +86,21 @@ class DesktopBridge:
     def save_export(self, project_id: str, kind: str):
         try:
             import webview
-            if kind not in {"md", "docx", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission"}:
+            if kind not in {"md", "docx", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission", "voice"}:
                 return {"error": "Unknown export type"}
-            p = self._store.get(project_id)
-            data, _, ext = export(p, kind)
-            stem = re.sub(r'[^\w\s.-]', '', p.title).strip()[:80] or "GraphPaper"
+            if kind == 'voice':
+                from .voice_library import VoiceLibrary
+                import json
+                v,_ = VoiceLibrary(self._store).get(project_id)
+                profile=v.profile.model_copy(deep=True)
+                profile.sample_ids=[];profile.sample_hash='';profile.library_id='';profile.library_version=0
+                data=json.dumps({'format':'graphpaper-voice-1','profile':profile.model_dump()},ensure_ascii=False,indent=2).encode()
+                ext='.json';title=v.profile.name
+            else:
+                p = self._store.get(project_id)
+                data, _, ext = export(p, kind)
+                title=p.title
+            stem = re.sub(r'[^\w\s.-]', '', title).strip()[:80] or "GraphPaper"
             result = self._window.create_file_dialog(
                 webview.FileDialog.SAVE, save_filename=stem + ext,
                 file_types=(f"{kind.upper()} files (*{ext})", "All files (*.*)"),

@@ -1,0 +1,26 @@
+name: Refresh verified voice release manifest
+on:
+  push:
+    branches: ['fix/jev-voice-graphs-v0.5']
+permissions:
+  contents: write
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Refresh code-only manifest; never change application source or workflows
+        run: |
+          python scripts/prepare_assets.py --manifest
+          git add publish-manifest.json
+          git diff --cached --check
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Refresh source-only publishing manifest'
+            git push origin HEAD:fix/jev-voice-graphs-v0.5
+          fi

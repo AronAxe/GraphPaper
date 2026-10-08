@@ -43,7 +43,7 @@ def contract(project):
     detail=('Lean evidence presentation: establish indispensable factual premises and directly relevant limits, without an ornamental limitations tour.' if rigor<35 else
             'Focused evidence presentation: explain the basis of material claims and limitations that actually affect this argument.' if rigor<75 else
             'Detailed evidence presentation: trace important factual claims to sources and address concrete contrary evidence. Greater evidence detail is NOT a request for ideological balance, softened moral judgments or repetitive caveats.')
-    return {'policy_version':'authorial-intent-v1','mode':project.mode,'purpose':purpose,
+    return {'policy_version':'authorial-intent-v2', 'voice_precedence':'The current author brief overrides saved voice habits. Power language is allowed; saved preferences do not cap force, vocabulary or profanity.','mode':project.mode,'purpose':purpose,
             'thesis':brief.thesis.strip() or brief.direction,'direction':brief.direction,
             'stance_policy':stance,'rhetorical_force':force,'delivery':delivery,
             'evidence_detail':rigor,'evidence_instruction':detail,
@@ -52,9 +52,14 @@ def contract(project):
 
 
 def context(project,compact=False,include_selection=True):
-    voice=voice_context(project,1800 if compact else 6500)
-    if compact and voice.get('instructions'):
-        voice={**voice,'instructions':voice['instructions'][:2600], 'scope':'Compact voice context for candidate evaluation; full saved profile is retained.'}
+    if compact:
+        from .style_graph import voice_decision
+        profile=project.voice_profile
+        if not profile.library_id and profile.sample_hash and profile.sample_hash!=voice_fingerprint(project):
+            profile=profile.model_copy(update={'instructions':'','graph':{}})
+        voice=voice_decision(profile)
+    else:
+        voice=voice_context(project,6500)
     selected=next((a for a in project.angles if a.id==project.selected_angle),None) if include_selection else None
     return {'editorial_contract':contract(project),'author_voice':voice,
             'selected_argument':{'title':selected.title,'thesis':selected.thesis,'hook':selected.hook} if selected else None}
@@ -65,7 +70,7 @@ def system(project,stage):
 
 
 def fingerprint(project):
-    value={'mode':project.mode,'brief':project.brief.model_dump(),'voice':project.voice_profile.model_dump(),'voice_sources':voice_fingerprint(project)}
+    value={'mode':project.mode,'brief':project.brief.model_dump(),'voice':project.voice_profile.model_dump(),'voice_sources':('saved:'+project.voice_profile.library_id if project.voice_profile.library_id else voice_fingerprint(project))}
     return hashlib.sha256(json.dumps(value,ensure_ascii=False,sort_keys=True).encode()).hexdigest()
 
 

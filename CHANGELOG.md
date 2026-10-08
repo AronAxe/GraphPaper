@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0
+
+- Bound and automatically batch JEV requests by actual serialized UTF-8 size; remove voice-training prose from decision payloads.
+- Add named, reusable voice graphs with independent training, graph editing, import/export and explicit application across projects.
+- Compose namespaced style/evidence overlays without altering the research graph; current author instructions override saved style preferences.
+- Keep unrepresentable optional decisions honestly unscored instead of aborting completed writing.
+- Implement and validate the update using GitHub-hosted runners only.
+
+
 ## 0.4.0
 
 - Add Polemic and a reversible writing-mode switch for existing projects.

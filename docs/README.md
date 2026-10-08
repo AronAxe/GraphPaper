@@ -2,7 +2,7 @@
 
 **A studio for connected thought.** GraphPaper brings source material, graph exploration and a writing desk into one local-first Windows application.
 
-These guides describe **GraphPaper 0.4.0**. The [release page](https://github.com/AronAxe/GraphPaper/releases/latest) provides the current Windows download; [CHANGELOG](../CHANGELOG.md) records version history. The same guides are published in the [GitHub wiki](https://github.com/AronAxe/GraphPaper/wiki).
+These guides describe **GraphPaper 0.5.0**. The [release page](https://github.com/AronAxe/GraphPaper/releases/latest) provides the current Windows download; [CHANGELOG](../CHANGELOG.md) records version history. The same guides are published in the [GitHub wiki](https://github.com/AronAxe/GraphPaper/wiki).
 
 ## Start here
 
@@ -46,3 +46,7 @@ These guides describe **GraphPaper 0.4.0**. The [release page](https://github.co
 ## Documentation maintenance
 
 These Markdown files are the maintained source. [The documentation tooling](DEVELOPMENT.md#maintaining-the-documentation) validates links and renders the wiki with consistent navigation; screenshots are shared rather than copied into every page. Historical release notes stay available, but they are not the current setup guide.
+
+## Reusable voices and bounded JEV decisions
+
+[Save a voice graph once and reuse it across projects](VOICE-GRAPHS.md). Training pieces are separate from article evidence; current author instructions override saved preferences.

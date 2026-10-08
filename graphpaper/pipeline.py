@@ -186,7 +186,7 @@ def make_angles(p: Project, clients: Clients, job: Job):
                 c["priority"] = sc["valuable"] * 0.4 + sc["fit"] * 0.3 + sc["grounded"] * 0.2 + (1 - sc["spurious"]) * 0.1
             else:
                 c["priority"] = c["structural_rank"]
-        job.note(f"{'JEV inspected' if answers else 'Structurally explored (JEV off)'} {min(offset + 4, len(candidates))}/{len(candidates)} motifs.", 15 + int(45 * (offset + len(batch)) / len(candidates)))
+        job.note(f"{'JEV inspected' if answers else 'Structurally explored (unscored)'} {min(offset + 4, len(candidates))}/{len(candidates)} motifs.", 15 + int(45 * (offset + len(batch)) / len(candidates)))
     ranked = sorted(candidates, key=lambda x: x["priority"], reverse=True)
     selected = []
     counts = defaultdict(int)

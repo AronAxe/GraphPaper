@@ -49,6 +49,8 @@ Science adds a **Research** desk for scholarly search, screening and evidence ap
 
 The portable build needs Microsoft Edge WebView2 and is currently unsigned. Existing projects live separately from the executable. [Windows setup and upgrades →](docs/WINDOWS.md)
 
+**New: reusable voice graphs.** Save a voice once, select it in any project, and keep its training pieces separate. JEV receives compact graph context with automatic request sizing—not the article pile. [Voice graphs and author control](docs/VOICE-GRAPHS.md)
+
 ## What makes it useful
 
 - **Explore before committing.** Inspect source-linked concepts and relationships, follow paths, pin ideas and compare competing angles. Edit a suggested thesis or write your own.
