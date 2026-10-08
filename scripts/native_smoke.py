@@ -43,14 +43,18 @@ def main():
     with socket.socket() as s:s.bind(('127.0.0.1',0));port=s.getsockname()[1]
     data=Path(tempfile.mkdtemp(prefix='GraphPaper-native-test-'))
     env=dict(os.environ,GRAPHPAPER_DATA_DIR=str(data),WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=f'--remote-debugging-port={port}')
-    if args.executable:command=[str(args.executable.resolve())]
+    hosted=env.get('GITHUB_ACTIONS')=='true' and env.get('RUNNER_ENVIRONMENT')=='github-hosted'
+    debug_args=['--ci-devtools-port',str(port)] if hosted else []
+    if args.executable:command=[str(args.executable.resolve()),*debug_args]
     else:
-        # Avoid Windows venv's redirector process so proc.pid owns the window.
-        command=[str(Path(sys.base_prefix)/'python.exe'),'-m','graphpaper.desktop']
+        # Use the actual entry point and avoid Windows venv's PID redirector.
+        entry=str(ROOT/'scripts/desktop_entry.py')
+        command=[str(Path(sys.base_prefix)/'python.exe'),entry,*debug_args]
         if args.trace_source:
-            trace_code="import runpy,faulthandler;f=open("+repr(str(out/'thread-stacks.txt'))+",'w');faulthandler.dump_traceback_later(25,repeat=True,file=f);runpy.run_module('graphpaper.desktop',run_name='__main__')"
+            trace_code="import runpy,faulthandler,sys;f=open("+repr(str(out/'thread-stacks.txt'))+",'w');faulthandler.dump_traceback_later(25,repeat=True,file=f);sys.argv="+repr([entry,*debug_args])+";runpy.run_path("+repr(entry)+",run_name='__main__')"
             command=[str(Path(sys.base_prefix)/'python.exe'),'-c',trace_code]
         env['PYTHONPATH']=os.pathsep.join([str(ROOT),*sys.path])
+    report['debugger_configuration']='explicit isolated hosted test option' if hosted else 'WebView2 environment'
     log=(out/'native.log').open('w',encoding='utf-8')
     proc=subprocess.Popen(command,cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT)
     def windows(parent=None):
@@ -101,7 +105,6 @@ def main():
             assert result is True,result;check('Native bridge initializes with only four explicit methods and resolves its promise')
             response=page.request.get(page.url)
             assert "'unsafe-eval'" not in response.headers['content-security-policy'];check('Strict application CSP remains enabled')
-            # Dispatch genuine Win32 mouse messages to the WebView input surface.
             children=windows(hwnd);report['native_child_classes']=sorted(set(w['class'] for w in children))
             target=next((w for w in children if w['class']=='Chrome_RenderWidgetHostHWND'),None)
             assert target,'WebView2 native input surface was not found'
@@ -158,8 +161,6 @@ def main():
             page.locator('.nav-link[data-tab="write"]').click();page.wait_for_selector('#manuscript')
             page.locator('#manuscript').fill('# Native test\n\nA saved line.')
             page.evaluate('() => flush()')
-            # Invoke a real native Save As dialog through the actual JS bridge;
-            # cancel it using the OS close button message, not a mocked return.
             page.evaluate("id => {window.__saveTest=null;window.pywebview.api.save_export(id,'md').then(r=>window.__saveTest=r).catch(e=>window.__saveTest={error:String(e)});}",pid)
             def export_dialog_ready():
                 result=page.evaluate('() => window.__saveTest')
@@ -175,7 +176,6 @@ def main():
             assert result=={'saved':False},result;responsive(hwnd)
             check('Native Save As dialog opens, cancels and returns without blocking the interface')
             page.screenshot(path=str(out/'native-writing.png'))
-            # Trigger close before the 650 ms autosave debounce can fire.
             draft='# Native test\n\nThis pending edit must survive the native close button.'
             page.locator('#manuscript').fill(draft)
             assert page.evaluate('() => Object.keys(pending).length')>0
@@ -203,10 +203,9 @@ def main():
         report['recursion_errors']='maximum recursion depth' in (out/'native.log').read_text(encoding='utf-8',errors='replace')
         if report['recursion_errors']:report['ok']=False
         (out/'report.json').write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
-        # Test data alone; never clear the user's GraphPaper directory.
         import shutil
         shutil.rmtree(data,ignore_errors=True)
     print(json.dumps(report,indent=2))
-    if not report["ok"]:raise SystemExit(1)
+    if not report['ok']:raise SystemExit(1)
 
 if __name__=='__main__':main()
