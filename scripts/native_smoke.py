@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--graphify',action='store_true',help='Verify the actual external Graphify action using a synthetic loopback model')
     parser.add_argument('--polemic',action='store_true',help='Verify mode conversion and authorial controls in the native shell')
     parser.add_argument('--voices',action='store_true',help='Exercise saved voice graphs without model calls')
+    parser.add_argument('--graph-studio',action='store_true',help='Exercise the spatial graph and real node/edge editing controls')
     parser.add_argument('--out',type=Path,default=ROOT/'test-results/native')
     args=parser.parse_args()
     if sys.platform!='win32':raise SystemExit('This regression requires a native Windows desktop.')
@@ -131,6 +132,10 @@ def main():
             if args.graphify:
                 from graphify_ui_checks import exercise
                 report['external_graphify']=exercise(page,check,out)
+                responsive(hwnd)
+            if args.graph_studio:
+                from graph_studio_ui_checks import exercise
+                report['graph_studio']=exercise(page,check,out,dense=False)
                 responsive(hwnd)
             if args.polemic:
                 before=page.evaluate('() => ({sources:state.p.sources, graph:state.p.graph, draft:state.p.draft, voice:state.p.voice_profile})')

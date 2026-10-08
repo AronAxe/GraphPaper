@@ -21,6 +21,7 @@ jobs:
           cache: pip
       - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q --junitxml=test-results/results.xml
+      - run: node --test tests/graph_math.test.cjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -36,13 +37,14 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -q -r requirements-dev.txt
-      - run: python -m playwright install --with-deps chromium
+      - run: python -m playwright install chromium
       - run: python scripts/ui_smoke.py
       - run: python scripts/ui_studio_smoke.py
       - run: python scripts/ui_science_smoke.py
       - run: python scripts/ui_graphify_smoke.py
       - run: python scripts/ui_polemic_smoke.py
       - run: python scripts/ui_voices_smoke.py
+      - run: python scripts/ui_graph_studio_smoke.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

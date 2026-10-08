@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0
+
+- Replace the green wash with ink-blue/charcoal surfaces and a licensed scan of real graph paper in the sidebar.
+- Add spatial XYZ/SVG graph navigation, 2D switching, focus/filter/display budgets, adaptive labels and distinct directed relationship styles.
+- Add persistent manual node/edge editing, creation, connection, confirmed deletion and graph-only undo without rewriting manuscripts or losing provenance.
+- Add synthetic dense-graph browser checks, geometry tests and native compiled graph-editor release checks.
+
+
 ## 0.5.0
 
 - Bound and automatically batch JEV requests by actual serialized UTF-8 size; remove voice-training prose from decision payloads.

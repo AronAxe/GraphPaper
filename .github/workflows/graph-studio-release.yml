@@ -1,0 +1,139 @@
+name: GraphPaper 0.6 graph studio release
+on:
+  push:
+    branches: [main, feat/graph-studio-v0.6]
+    paths:
+      - 'graphpaper/**'
+      - 'ui/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'docs/RELEASE-0.6.0.md'
+      - '.github/workflows/graph-studio-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: graph-studio-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    outputs:
+      revision: ${{ steps.source.outputs.revision }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refresh the source manifest without changing application code or workflows
+        id: source
+        env:
+          TARGET_BRANCH: ${{ github.ref_name }}
+        run: |
+          python scripts/prepare_assets.py --manifest
+          git add publish-manifest.json
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Refresh graph studio source publishing manifest'
+            git push origin "HEAD:$TARGET_BRANCH"
+          fi
+          echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  browser:
+    needs: source
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.revision }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -q -r requirements-dev.txt
+      - run: python -m pytest -q --junitxml=test-results/linux.xml
+      - run: node --test tests/graph_math.test.cjs
+      - run: python scripts/docs_tool.py check
+      - run: python -m playwright install chromium
+      - run: python scripts/ui_smoke.py
+      - run: python scripts/ui_studio_smoke.py
+      - run: python scripts/ui_science_smoke.py
+      - run: python scripts/ui_graphify_smoke.py
+      - run: python scripts/ui_polemic_smoke.py
+      - run: python scripts/ui_voices_smoke.py
+      - run: python scripts/ui_graph_studio_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: graph-studio-browser-validation
+          path: test-results/
+  windows:
+    needs: [source, browser]
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.revision }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -q -r requirements-dev.txt -r requirements-desktop.txt
+      - run: python -m pytest -q --junitxml=test-results/windows.xml
+      - run: node --test tests/graph_math.test.cjs
+      - name: Verify hosted WebView2 prerequisite
+        shell: pwsh
+        run: ./scripts/prepare_ci_webview.ps1
+      - name: Build Windows package with public Graphify and official Codex
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./scripts/build_release.ps1
+      - name: Exercise the actual compiled spatial graph editor and existing workspaces
+        run: python scripts/native_smoke.py --science --graphify --graph-studio --polemic --voices --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GraphPaper-0.6-tested-Windows
+          path: |
+            dist/GraphPaper-v0.6.0-Windows-x64.zip
+            dist/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: graph-studio-native-validation
+          path: test-results/
+  publish:
+    needs: [source, browser, windows]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.source.outputs.revision }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: GraphPaper-0.6-tested-Windows
+          path: release-package
+      - name: Publish the same tested archive, never overwrite an existing release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          cd release-package
+          sha256sum --check SHA256SUMS.txt
+          cd ..
+          if gh release view v0.6.0 >/dev/null 2>&1; then echo 'Release already exists; refusing overwrite.'; exit 1; fi
+          cp docs/RELEASE-0.6.0.md release-package/notes.md
+          revision=$(git rev-parse HEAD)
+          digest=$(sha256sum release-package/GraphPaper-v0.6.0-Windows-x64.zip | cut -d' ' -f1)
+          printf '\n\nCompiled Windows graph editing and native save-on-close checks passed. Validation: https://github.com/%s/actions/runs/%s . Source: %s . Archive SHA-256: %s .\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$revision" "$digest" >> release-package/notes.md
+          gh release create v0.6.0 release-package/GraphPaper-v0.6.0-Windows-x64.zip release-package/SHA256SUMS.txt --target "$revision" --title 'GraphPaper 0.6.0 — Ink, paper & spatial graph editing' --notes-file release-package/notes.md --draft
+          release_id=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]|select(.tag_name=="v0.6.0")|.id')
+          uploaded=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id/assets" --jq '.[]|select(.name=="GraphPaper-v0.6.0-Windows-x64.zip")|.digest')
+          test "$uploaded" = "sha256:$digest"
+          gh release edit v0.6.0 --draft=false --latest
