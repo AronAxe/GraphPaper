@@ -17,18 +17,15 @@ jobs:
       - run: python -m pip install -q -r requirements-dev.txt -r requirements-desktop.txt
       - shell: pwsh
         run: ./scripts/prepare_ci_webview.ps1
-      - name: Inspect actual debugger endpoints, not application-content assertions
-        run: python scripts/probe_ci_cdp.py
-      - name: Exercise isolated source GUI with startup diagnostics
-        shell: pwsh
-        run: |
-          python -c "import importlib.metadata as m; print('pywebview',m.version('pywebview'))"
-          python scripts/native_smoke.py --science --polemic --voices --trace-source --out test-results/hosted-source
+      - name: Test the explicit CI-only debugger guard
+        run: python -m pytest -q tests/test_native_test_gate.py
+      - name: Exercise the actual isolated native UI with saved voice reuse
+        run: python scripts/native_smoke.py --science --polemic --voices --out test-results/hosted-source
       - name: Print this runner's isolated application diagnostics
         if: always()
         shell: pwsh
         run: |
-          foreach ($name in @('native.log','desktop.log','report.json','thread-stacks.txt')) {
+          foreach ($name in @('native.log','desktop.log','report.json')) {
             $path = "test-results/hosted-source/$name"
             if (Test-Path $path) { Write-Host "=== $path ==="; Get-Content $path -Tail 120 }
           }
