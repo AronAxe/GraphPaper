@@ -1,5 +1,22 @@
 # Validation and quality
 
+## Version 0.6.0 validation
+
+The published v0.6.0 build corresponds to source `00cab75a2cfc13f541573be3bce14f0cc5b97684`. Its [GitHub-hosted release validation](https://github.com/AronAxe/GraphPaper/actions/runs/37807775156) completed successfully before publication.
+
+| Check | Recorded result |
+|---|---|
+| Windows Python regression suite | 299 passed |
+| Graph geometry tests | 6 passed |
+| Real-HTTP browser workflows | All 7 suites passed |
+| Compiled Windows native checks | 28 passed, including graph editing/undo, voice reuse, dialogs and save-on-close |
+
+Provider and JEV responses were controlled synthetic fixtures; the results test routing, UI and storage rather than live editorial quality. No private project, model account or user computer was used. The [release](https://github.com/AronAxe/GraphPaper/releases/tag/v0.6.0) records the archive checksum. The [visual tour](VISUAL-TOUR.md) uses actual captures from this exact release run, with a [per-image provenance manifest](images/screenshots-v0.6.json).
+
+## Historical validation
+
+The following versioned reports describe earlier releases, not the current screenshot set or current documentation version.
+
 ## Version 0.4.0 validation
 
 **252 automated Windows tests passed**; 1 permission-related test skipped. All **54 real-HTTP browser checks** passed, with no JavaScript page errors. The actual compiled Windows application passed **17 native checks**, including mode conversion, thesis/force controls, external Graphify, native Save As and pending-edit save before normal exit.

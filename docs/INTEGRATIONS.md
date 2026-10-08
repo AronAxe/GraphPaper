@@ -1,6 +1,6 @@
 # Integration reference
 
-This page describes the interfaces implemented in GraphPaper 0.3.1. User-facing setup is in [Models and reasoning](CONNECTIONS.md). External endpoints, model IDs and capability vocabularies can change independently; consult the linked primary documentation and test a connection before a large job.
+This page describes the interfaces implemented in GraphPaper 0.6.0. User-facing setup is in [Models and reasoning](CONNECTIONS.md). External endpoints, model IDs and capability vocabularies can change independently; consult the linked primary documentation and test a connection before a large job.
 
 ## Writing providers
 
@@ -27,6 +27,8 @@ Primary references: [Codex authentication](https://developers.openai.com/codex/a
 Requests include `model`, `state` and typed `questions`, with bearer authorization. The application uses bounded numeric estimates (`noul`) and `choice` responses with explicit criteria. Parsing validates answer types, numeric range and declared choices.
 
 Auto prefers available OpenRouter credentials, then direct TypeSafe; it does not silently fail over after a rejected paid request. No connection means no fabricated JEV score. The application’s combined editorial score is not a calibration result.
+
+The `model`/`state`/`questions` envelope is sized in UTF-8 bytes before sending. Candidate/question batching and compact style-graph context prevent the former oversized-state failure. Original question keys are retained when answers are combined; unscored optional decisions are distinct from API or typed-answer errors. [Voice graphs and request sizing](VOICE-GRAPHS.md).
 
 Primary references: [OpenRouter JEV guide](https://openrouter.ai/docs/guides/community/jev-tutorial), [TypeSafe quickstart](https://docs.typesafe.ai/introduction/quickstart), [TypeSafe SDK constants](https://docs.typesafe.ai/sdk/python/api/constants).
 
@@ -60,6 +62,6 @@ Primary references: [public Graphify distribution](https://pypi.org/project/grap
 
 ## Local API and desktop bridge
 
-The local API is a session-protected implementation interface, not a public multi-tenant service. Routes cover projects, sources, graph operations, jobs, settings, prose proposals, scientific research and exports. Inspect [server.py](../graphpaper/server.py), [studio_routes.py](../graphpaper/studio_routes.py) and [science_routes.py](../graphpaper/science_routes.py) for current schemas.
+The local API is a session-protected implementation interface, not a public multi-tenant service. Routes cover projects, sources, graph operations, jobs, settings, prose proposals, scientific research and exports. Inspect [server.py](../graphpaper/server.py), [studio_routes.py](../graphpaper/studio_routes.py) and [science_routes.py](../graphpaper/science_routes.py) for the base schemas; [graph editing routes](../graphpaper/graph_editing.py) and [voice library routes](../graphpaper/voice_routes.py) cover the current graph/voice extensions.
 
 The native bridge is intentionally narrow; its four methods are `notify_ready`, `save_export`, `request_close` and `cancel_close`. Do not attach public native/store objects to it. [pywebview API](https://pywebview.flowrl.com/api/) provides the underlying desktop contract.

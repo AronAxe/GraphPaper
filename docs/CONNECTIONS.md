@@ -53,6 +53,8 @@ Higher effort can increase latency and token consumption. It does not set the ma
 
 JEV has its own **Auto, OpenRouter, TypeSafe or Off** selector. Auto prefers an available OpenRouter credential, then direct TypeSafe. It does not silently switch routes after a failed paid request.
 
+The application preflights serialized request size and automatically batches decisions. Voice training articles are excluded from those requests; optional decisions that cannot fit stay unscored. [Request-sizing behavior](VOICE-GRAPHS.md#why-jev-no-longer-receives-the-whole-heap).
+
 Without JEV, writing remains available and graph candidates are explicitly unscored. Codex OAuth does not include a JEV connection. [JEV’s role in the workflow →](GRAPH-AND-JEV.md)
 
 ## Scholarly database keys
@@ -67,6 +69,6 @@ Advanced settings include maximum requests per job, output-token cap, context bu
 
 Never put keys into prompts, screenshots, issue reports or project documents. [Credential storage and privacy →](SECURITY.md)
 
-## External Graphify in 0.3.1
+## External Graphify
 
 Choose **Graphify (external process)** under Advanced limits & Graphify. Leave the custom path blank for the included Windows runtime. **Check Graphify runtime** does not call a model. The external action now uses this same provider connection, including Codex OAuth, with the extraction-role model and reasoning setting. [Detailed setup and distribution](UPDATE-0.3.1.md).

@@ -1,5 +1,8 @@
 # Reusable voice graphs and compact JEV decisions
 
+![Actual v0.6 voice library with a synthetic style example.](images/reusable-voice-v0.6.webp)
+*Actual v0.6 voice library with a synthetic style example. [Capture details](VISUAL-TOUR.md).*
+
 Create a voice once, name it, and apply it in any project. You do not need to upload or analyze the same writing repeatedly.
 
 ## Save the voice you already made
