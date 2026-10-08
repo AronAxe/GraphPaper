@@ -11,6 +11,12 @@ if __name__ == '__main__':
 if len(sys.argv) > 1 and sys.argv[1] == '--graphify-worker':
     from graphpaper.graphify_worker import main as graphify_main
     raise SystemExit(graphify_main(sys.argv[2:]))
+if '--ci-devtools-port' in sys.argv:
+    index=sys.argv.index('--ci-devtools-port')
+    if index+1>=len(sys.argv):raise SystemExit('Missing isolated CI debugger port.')
+    from graphpaper.native_test import configure
+    configure(sys.argv[index+1])
+    del sys.argv[index:index+2]
 try:
     from graphpaper.desktop import main
     main()
