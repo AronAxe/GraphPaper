@@ -1,0 +1,107 @@
+name: Graph Atlas hosted Windows release
+on:
+  push:
+    branches: [main]
+    paths: ['graphpaper/__init__.py', '.github/workflows/atlas-release.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: graphpaper-atlas-release
+  cancel-in-progress: false
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: test "$(python -c 'from graphpaper import __version__; print(__version__)')" = '0.6.0'
+      - run: python -m pip install -q -r requirements-dev.txt
+      - run: python -m pytest -q --junitxml=test-results/linux.xml
+      - run: node scripts/test_graph_scene.cjs
+      - run: python scripts/docs_tool.py check
+      - run: python -m playwright install chromium
+      - name: Seven browser suites against the real local server
+        run: |
+          python scripts/ui_smoke.py
+          python scripts/ui_studio_smoke.py
+          python scripts/ui_science_smoke.py
+          python scripts/ui_graphify_smoke.py
+          python scripts/ui_polemic_smoke.py
+          python scripts/ui_voices_smoke.py
+          python scripts/ui_atlas_smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: atlas-linux-validation
+          path: test-results/
+  windows:
+    needs: validate
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -q -r requirements-dev.txt -r requirements-desktop.txt
+      - run: python -m pytest -q --junitxml=test-results/windows.xml
+      - run: node scripts/test_graph_scene.cjs
+      - name: Verify the hosted WebView2 prerequisite
+        shell: pwsh
+        run: ./scripts/prepare_ci_webview.ps1
+      - name: Build with public Graphify and official Codex
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: ./scripts/build_release.ps1
+      - name: Exercise the compiled native window and graph editing
+        run: python scripts/native_smoke.py --science --graphify --polemic --voices --atlas --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GraphPaper-v0.6.0-Windows-x64
+          path: |
+            dist/GraphPaper-v0.6.0-Windows-x64.zip
+            dist/SHA256SUMS.txt
+      - name: Publish only the tested archive
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $tag = 'v0.6.0'
+          $package = 'GraphPaper-v0.6.0-Windows-x64.zip'
+          $revision = (git rev-parse HEAD).Trim()
+          $expected = ((Get-Content dist/SHA256SUMS.txt).Split(' ')[0]).Trim().ToLower()
+          $actual = (Get-FileHash "dist/$package" -Algorithm SHA256).Hash.ToLower()
+          if ($actual -ne $expected) { throw 'Archive checksum mismatch.' }
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) { throw 'Release already exists; refusing to overwrite it.' }
+          $notes = Get-Content docs/RELEASE-0.6.0.md -Raw
+          $notes += "`n`nValidation: https://github.com/$env:GITHUB_REPOSITORY/actions/runs/$env:GITHUB_RUN_ID . Source: $revision . Archive SHA-256: $actual .`n"
+          $notes | Set-Content test-results/published-release-notes.md -Encoding utf8
+          gh release create $tag "dist/$package" dist/SHA256SUMS.txt --target $revision --title 'GraphPaper 0.6.0 - Graph Atlas' --notes-file test-results/published-release-notes.md --draft
+          if ($LASTEXITCODE -ne 0) { throw 'Release upload failed.' }
+          $releases = gh api "repos/$env:GITHUB_REPOSITORY/releases?per_page=100" | ConvertFrom-Json
+          $release = $releases | Where-Object { $_.tag_name -eq $tag }
+          $asset = $release.assets | Where-Object { $_.name -eq $package }
+          if ($asset.digest -ne "sha256:$actual") { throw 'Uploaded archive differs from the tested package.' }
+          gh release edit $tag --draft=false --latest
+          if ($LASTEXITCODE -ne 0) { throw 'Release publication failed.' }
+      - name: Print native report
+        if: always()
+        shell: pwsh
+        run: |
+          if (Test-Path test-results/native-package/report.json) { Get-Content test-results/native-package/report.json }
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: atlas-windows-validation
+          path: test-results/

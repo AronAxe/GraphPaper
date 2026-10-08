@@ -1,0 +1,54 @@
+name: Integrate and validate Graph Atlas
+on:
+  push:
+    branches: [design/graph-atlas-v0.6]
+    paths: ['.atlas/**', '.github/workflows/atlas-assembly.yml']
+permissions:
+  contents: write
+jobs:
+  integrate:
+    if: contains(github.event.head_commit.message, '[atlas assemble]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - run: python -m pip install -q -r requirements-dev.txt pillow
+      - name: Integrate reviewed source and the licensed paper scan
+        run: |
+          python .atlas/apply.py
+          rm -rf .atlas
+          node --check ui/graph-atlas.js
+          node scripts/test_graph_scene.cjs
+          python -m pytest -q --junitxml=test-results/atlas-unit.xml
+          python scripts/docs_tool.py check
+      - run: python -m playwright install chromium
+      - name: Test existing writing and the new graph editor
+        run: |
+          python scripts/ui_smoke.py
+          python scripts/ui_studio_smoke.py
+          python scripts/ui_science_smoke.py
+          python scripts/ui_graphify_smoke.py
+          python scripts/ui_polemic_smoke.py
+          python scripts/ui_voices_smoke.py
+          python scripts/ui_atlas_smoke.py
+      - name: Commit only ordinary verified source and assets
+        run: |
+          git add -A -- .atlas graphpaper ui scripts tests docs README.md CHANGELOG.md pyproject.toml
+          python scripts/prepare_assets.py --manifest
+          git add publish-manifest.json
+          git diff --cached --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Integrate Graph Atlas and verified squared-paper asset'
+          git push origin HEAD:design/graph-atlas-v0.6
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: atlas-integration-validation
+          path: |
+            test-results/
+            ui/graph-paper.jpg

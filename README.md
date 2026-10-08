@@ -90,3 +90,8 @@ A graph suggests connections; it does not prove them. Science keeps capped searc
 For implementation details, tests and builds, see the [developer guide](docs/DEVELOPMENT.md) and [architecture](docs/ARCHITECTURE.md). Recorded release validation is separate from the live CI badge: [test reports and scope](docs/QUALITY.md).
 
 **[MIT licensed](LICENSE) · Created by Aron Bijl.** External runtimes and services retain their own licenses and terms.
+
+
+## Graph Atlas
+
+The new [editable spatial graph](docs/GRAPH-ATLAS.md) adds orbit, focus, clusters and colored relationships. The light sidebar uses [real scanned graph paper](docs/ASSET-CREDITS.md), not a generated mockup.
