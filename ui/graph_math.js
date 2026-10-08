@@ -26,7 +26,7 @@
   const communities=new Set(sorted.map(n=>n.community||0)),useCommunity=communities.size>1;
   const groups=new Map();for(const n of sorted){const key=useCommunity?'c'+(n.community||0):kind(n.kind);if(!groups.has(key))groups.set(key,[]);groups.get(key).push(n);}
   const keys=[...groups.keys()].sort(),centers={},ring=keys.length>1?Math.max(180,Math.sqrt(nodes.length)*36):0;
-  keys.forEach((key,j)=>{const theta=j*2*Math.PI/keys.length-.5;centers[key]={x:Math.cos(theta)*ring*1.2,y:Math.sin(theta)*ring*.85,z:(j-(keys.length-1)/2)*65};groups.get(key).forEach((n,i)=>{const t=i*2.399963,r=55*Math.sqrt(i+1),c=centers[key];positions[n.id]={x:c.x+Math.cos(t)*r,y:c.y+Math.sin(t)*r,z:c.z+Math.sin(t*1.31)*70};});});
+  keys.forEach((key,j)=>{const many=keys.length>8,theta=many?j*2.399963:j*2*Math.PI/keys.length-.5,radius=many?ring*Math.sqrt((j+.5)/keys.length):ring;centers[key]={x:Math.cos(theta)*radius*1.35,y:Math.sin(theta)*radius*.9,z:Math.sin(theta)*90};groups.get(key).forEach((n,i)=>{const t=i*2.399963,r=55*Math.sqrt(i+1),c=centers[key];positions[n.id]={x:c.x+Math.cos(t)*r,y:c.y+Math.sin(t)*r,z:c.z+Math.sin(t*1.31)*70};});});
   for(let step=0;step<64;step++){
    const forces=Object.create(null);for(const n of sorted)forces[n.id]={x:-positions[n.id].x*.002,y:-positions[n.id].y*.002};
    for(let i=0;i<sorted.length;i++)for(let j=i+1;j<sorted.length;j++){const a=positions[sorted[i].id],b=positions[sorted[j].id];let dx=a.x-b.x,dy=a.y-b.y,d=Math.max(20,Math.hypot(dx,dy));if(!dx&&!dy)dx=1;const f=Math.min(16,12500/(d*d));forces[sorted[i].id].x+=dx/d*f;forces[sorted[i].id].y+=dy/d*f;forces[sorted[j].id].x-=dx/d*f;forces[sorted[j].id].y-=dy/d*f;}
