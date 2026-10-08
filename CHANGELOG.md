@@ -1,3 +1,7 @@
+# 0.6.0 — Graph Atlas
+
+Real squared-paper sidebar, ink palette, orbitable graph with typed lines, dense-graph clusters, neighborhood focus, persistent node/edge editing and atomic one-step undo. Existing writing, sources and voices are preserved.
+
 # Changelog
 
 ## 0.5.0

@@ -50,3 +50,6 @@ These Markdown files are the maintained source. [The documentation tooling](DEVE
 ## Reusable voices and bounded JEV decisions
 
 [Save a voice graph once and reuse it across projects](VOICE-GRAPHS.md). Training pieces are separate from article evidence; current author instructions override saved preferences.
+
+
+[Graph Atlas: spatial navigation and click-to-edit](GRAPH-ATLAS.md) · [Interface asset credits](ASSET-CREDITS.md)

@@ -358,5 +358,7 @@ def create_app(root=None):
     install_editorial(app,store,runner)
     from .science_routes import install as install_science
     install_science(app, store, vault, runner, settings)
+    from .graph_editor import register as register_graph_editor
+    register_graph_editor(app, store, runner)
     app.mount("/static", StaticFiles(directory=asset_directory()), name="static")
     return app
