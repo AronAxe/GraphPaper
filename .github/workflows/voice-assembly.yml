@@ -19,6 +19,7 @@ jobs:
         run: |
           python _change/apply.py
           python _change/finish.py
+          python _change/corrections.py
           rm -rf _change
           python -m compileall -q graphpaper scripts tests
           node --check ui/voices.js
