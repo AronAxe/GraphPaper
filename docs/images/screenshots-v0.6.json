@@ -1,0 +1,151 @@
+{
+  "version": "0.6.0",
+  "source_revision": "00cab75a2cfc13f541573be3bce14f0cc5b97684",
+  "validation_run": "https://github.com/AronAxe/GraphPaper/actions/runs/37807775156",
+  "artifact_id": 11563921375,
+  "capture_kind": "Actual Chromium interface served by the application over loopback HTTP on a GitHub-hosted runner",
+  "material": "Included illustrative project and clearly synthetic test fixtures; no private manuscripts or accounts",
+  "processing": "WebP format conversion only; no retouching, image generation or compositing",
+  "images": {
+    "graph-studio-v0.6.webp": {
+      "capture": "graph-studio/graph-studio.png",
+      "width": 1580,
+      "height": 1318,
+      "original_sha256": "41c39d07b1e39b6c566eb9d098b4659084892c59dcfd35215a0c8d98f8147bc5",
+      "webp_sha256": "8808a0d352fb6d038f3b70682b01b3076b3188fead79ca30bef041e15060573c"
+    },
+    "dense-graph-v0.6.webp": {
+      "capture": "graph-studio/dense-overview.png",
+      "width": 1580,
+      "height": 1372,
+      "original_sha256": "bd33730a50d4a047cd8b55bda6e0aae77a18e2801c8b57219726015b8abff9f2",
+      "webp_sha256": "bf7f7a0a294b91c1ae18cdd08d93f61f46400ddd98d7c2f0c53dde7b1a483b69"
+    },
+    "graph-v0.6.webp": {
+      "capture": "ui/graph.png",
+      "width": 1440,
+      "height": 1318,
+      "original_sha256": "eaf2391230a3f70340be3344b6c119cecc8afa516378431af0e910c95ef823b4",
+      "webp_sha256": "85fa7dd72c6483b5c9a8bf97910356c052b09727bd26507714ab6c4dd149ec2e"
+    },
+    "writing-v0.6.webp": {
+      "capture": "ui/writing.png",
+      "width": 1440,
+      "height": 1532,
+      "original_sha256": "4ecabf229c9ea2236e56a9b6cd60f9da1dbe6384d9b9eb2689bb683daa19bc9c",
+      "webp_sha256": "1e0bfd2e13a1e08321b9c63bbd0cfbd008e7a5d300f41661e984ec43f45c1ea7"
+    },
+    "angles-v0.6.webp": {
+      "capture": "ui/angles.png",
+      "width": 1440,
+      "height": 1418,
+      "original_sha256": "716f38410f7c9da5ad6c104978e1eb79adfdab40f7997da211f1307d019620e7",
+      "webp_sha256": "e0ac8d73f231cc9baa3733eb9ac192b603357408cc6a5271ee8cd45b6f259755"
+    },
+    "light-v0.6.webp": {
+      "capture": "ui/light.png",
+      "width": 1440,
+      "height": 1318,
+      "original_sha256": "09d7690f81fe9fb8c9dcfb72fac5fedd6fafa3871943d47a1bd77a7bc558e7a4",
+      "webp_sha256": "ad7442c3d11b0f2ed0d21f221ed09fa052bc1128108055be43bc680e5ee32d56"
+    },
+    "welcome-v0.6.webp": {
+      "capture": "ui/welcome.png",
+      "width": 1440,
+      "height": 1069,
+      "original_sha256": "6a49ed449b620e8056946b10f10e19c6df1bdbaefad07abb6afb9c2af683e0f5",
+      "webp_sha256": "3ebc72ac8bbeddf59307aa7a630c3a7d967f57bdba82e2724d0ac471359c052e"
+    },
+    "research-v0.6.webp": {
+      "capture": "science-ui/research.png",
+      "width": 1440,
+      "height": 1083,
+      "original_sha256": "80757e22bb4112f7a50f18779589119fdc60d87001dbb7ec9f69d8d1436f90be",
+      "webp_sha256": "02440dffef22cb076c95d0a4eccc09f3da3af91ee6fffd45cae7a9ab19f96e25"
+    },
+    "apa-preview-v0.6.webp": {
+      "capture": "science-ui/apa-preview.png",
+      "width": 1440,
+      "height": 1659,
+      "original_sha256": "505076b1e36430c0d2522e91ecc48041d50dc391c65f0b3bccbc95ab882572a7",
+      "webp_sha256": "fea0dbb0a4eb0e1b62a2c9882c4c85716f83fec971b5302b39de6ecf0df71f96"
+    },
+    "evidence-v0.6.webp": {
+      "capture": "science-ui/evidence.png",
+      "width": 1440,
+      "height": 1040,
+      "original_sha256": "71bea34a7a68063d2d49c549f862b4726775f5748e1d616a26a41c029c3445c4",
+      "webp_sha256": "38576350bd49a8e024b276efe41961b6e30505d2a077e361b6992f9ae4577297"
+    },
+    "reasoning-v0.6.webp": {
+      "capture": "science-ui/reasoning.png",
+      "width": 1440,
+      "height": 1040,
+      "original_sha256": "522680e51795d2f188c12cddbdd1fc587eb642185190b76a2c329a7ed5c2c144",
+      "webp_sha256": "1ffcefd08ef2ab70c255c26c9eb74a1ddd9f4901e422b59f64088d1b9956d8b3"
+    },
+    "codex-v0.6.webp": {
+      "capture": "studio/codex.png",
+      "width": 1440,
+      "height": 1180,
+      "original_sha256": "3fd3df46791fb40a5d185b368d94c0a6dbec314e54ec9df59087f8dad7e96a8f",
+      "webp_sha256": "7c020ed24bc61518a9aa7012160f2ad31edb97a0eb29602e5088a0af0d6e9e6f"
+    },
+    "folder-v0.6.webp": {
+      "capture": "studio/folder.png",
+      "width": 1440,
+      "height": 1000,
+      "original_sha256": "c33b8e7428c44b88baf877958b99c8fc4038bfc999bff31ad278f265b34047af",
+      "webp_sha256": "e7bf273ba474f13573ba485f9c05c6e660d839058517d634f7f12cb6abfdbeea"
+    },
+    "humanizer-v0.6.webp": {
+      "capture": "studio/humanizer.png",
+      "width": 1440,
+      "height": 1232,
+      "original_sha256": "4e5a9dedd3b659ef1f3a3217e00441cbbb614df352353fda259f3fd555c69bb1",
+      "webp_sha256": "9dd81d8633ab5ef7f55b36e30998ec89b08f075e5564af7f189cd84cc124348f"
+    },
+    "voice-v0.6.webp": {
+      "capture": "studio/voice.png",
+      "width": 1440,
+      "height": 1000,
+      "original_sha256": "3542a17c5897ae2bab9310b046e5419e0ba8f5d5bad19325000cba7281ae74d8",
+      "webp_sha256": "683f718d57d6918c31bb1208123ee87b00308b0926f66a7a3755ce726c85c82e"
+    },
+    "reusable-voice-v0.6.webp": {
+      "capture": "voices-ui/reusable-voice.png",
+      "width": 1440,
+      "height": 1000,
+      "original_sha256": "30981cf081a043b28f049a6c0ab76f948bceab1a2340aa5e6980f445ca267d86",
+      "webp_sha256": "4b6b572c97206a3395f0e9f39df3d0260456d88ee6010c3822adfce45c771ce1"
+    },
+    "polemic-v0.6.webp": {
+      "capture": "polemic-ui/polemic-angles.png",
+      "width": 1440,
+      "height": 1296,
+      "original_sha256": "fe379d86a7df60560fab5b639fc52291d9c410f45b4c10052900c0540d343996",
+      "webp_sha256": "80f454df710158c2e812bc8e5d5f447f43e823f61307263394bf8716a03b3061"
+    },
+    "four-modes-v0.6.webp": {
+      "capture": "polemic-ui/four-modes.png",
+      "width": 1440,
+      "height": 1069,
+      "original_sha256": "f6f865fddb79dab31bf0ee5a8afc28f1f715b786a727b896d4a3f36ce8f005f5",
+      "webp_sha256": "7011323172353ec001acc652ad773eca3bea44fe4079bc9189e43958304542f3"
+    },
+    "graphify-graph-v0.6.webp": {
+      "capture": "graphify-ui/graphify-graph.png",
+      "width": 1440,
+      "height": 1040,
+      "original_sha256": "540d340b1621abe7c23e10b66866ae6da8f9490ef79b99de4a2fe8078ac1d357",
+      "webp_sha256": "eb7896085ced347f4d3b31c1df8ce21d8c0267f67fcb1ab9702f05b99c2dbc44"
+    },
+    "graphify-settings-v0.6.webp": {
+      "capture": "graphify-ui/graphify-settings.png",
+      "width": 1440,
+      "height": 1040,
+      "original_sha256": "e4097e27f4f1bd18da25131a812ea7a08f637eed6f752fa9cfef266bc01fdd5f",
+      "webp_sha256": "e9cd2cba342bf9603f5fe43a124f5cb584ef32b6a57b9f9f650b9fa25295bc09"
+    }
+  }
+}
