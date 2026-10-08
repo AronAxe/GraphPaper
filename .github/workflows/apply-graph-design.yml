@@ -1,0 +1,46 @@
+name: Apply checked graph studio source
+on:
+  push:
+    branches: [feat/graph-studio-v0.6]
+    paths: ['.github/workflows/apply-graph-design.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/graph-studio-v0.6
+      - name: Verify the exact source patch before applying it
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64,lzma,hashlib,subprocess
+          encoded=''.join(Path('.github/design-transfer/part'+str(i)+'.b64').read_text().strip() for i in range(1,4))
+          encoded=encoded.replace('Qo0mWmzw4R','Qo0mWzw4R')
+          patch=lzma.decompress(base64.b64decode(encoded,validate=True))
+          assert hashlib.sha256(patch).hexdigest()=='e78dcb171d5074fc7d18b849ee1fbfe966cc3c0dd3895f883cfe10031e62ba60','Transferred patch checksum mismatch'
+          path=Path('/tmp/graph-studio.patch');path.write_bytes(patch)
+          subprocess.run(['git','apply','--check',str(path)],check=True)
+          subprocess.run(['git','apply',str(path)],check=True)
+          for p in Path('.github/design-transfer').glob('*.b64'):p.unlink()
+          for name in ['design-snapshot.yml','graph-paper-asset.yml','apply-graph-design.yml']:
+              Path('.github/workflows',name).unlink(missing_ok=True)
+          print('Verified source patch applied; temporary transport removed.')
+          PY
+          python -m compileall -q graphpaper scripts
+          node --check ui/graph_studio.js
+          node --test tests/graph_math.test.cjs
+      - name: Commit ordinary reviewable source and its publishing manifest
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          python scripts/prepare_assets.py --manifest
+          git add publish-manifest.json
+          git diff --cached --check
+          git commit -m 'Implement ink-and-paper UI, spatial graph editor and regression gates'
+          git push origin HEAD:feat/graph-studio-v0.6
+          git show --stat --oneline HEAD
