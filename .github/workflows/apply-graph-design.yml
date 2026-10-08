@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: feat/graph-studio-v0.6
-      - name: Verify the exact source patch before applying it
+      - name: Verify the exact source patch and leave workflow permissions separate
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -23,12 +23,10 @@ jobs:
           patch=lzma.decompress(base64.b64decode(encoded,validate=True))
           assert hashlib.sha256(patch).hexdigest()=='e78dcb171d5074fc7d18b849ee1fbfe966cc3c0dd3895f883cfe10031e62ba60','Transferred patch checksum mismatch'
           path=Path('/tmp/graph-studio.patch');path.write_bytes(patch)
-          subprocess.run(['git','apply','--check',str(path)],check=True)
-          subprocess.run(['git','apply',str(path)],check=True)
+          subprocess.run(['git','apply','--exclude=.github/workflows/*','--check',str(path)],check=True)
+          subprocess.run(['git','apply','--exclude=.github/workflows/*',str(path)],check=True)
           for p in Path('.github/design-transfer').glob('*.b64'):p.unlink()
-          for name in ['design-snapshot.yml','graph-paper-asset.yml','apply-graph-design.yml']:
-              Path('.github/workflows',name).unlink(missing_ok=True)
-          print('Verified source patch applied; temporary transport removed.')
+          print('Verified ordinary source applied. Workflow changes are deliberately excluded.')
           PY
           python -m compileall -q graphpaper scripts
           node --check ui/graph_studio.js
@@ -40,7 +38,8 @@ jobs:
           git add -A
           python scripts/prepare_assets.py --manifest
           git add publish-manifest.json
+          test -z "$(git diff --cached --name-only -- .github/workflows)"
           git diff --cached --check
-          git commit -m 'Implement ink-and-paper UI, spatial graph editor and regression gates'
+          git commit -m 'Implement ink-and-paper UI and spatial graph editor with regression tests'
           git push origin HEAD:feat/graph-studio-v0.6
           git show --stat --oneline HEAD
