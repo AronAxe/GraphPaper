@@ -1,10 +1,15 @@
 {
   "repository": "AronAxe/GraphPaper",
-  "docs_version": "0.5.0",
+  "docs_version": "0.6.0",
   "pages": [
     {
       "title": "Home",
       "source": "docs/README.md",
+      "section": "Start here"
+    },
+    {
+      "title": "Visual-Tour",
+      "source": "docs/VISUAL-TOUR.md",
       "section": "Start here"
     },
     {
@@ -20,6 +25,11 @@
     {
       "title": "Models-and-Reasoning",
       "source": "docs/CONNECTIONS.md",
+      "section": "Start here"
+    },
+    {
+      "title": "Frequently-Asked-Questions",
+      "source": "docs/FAQ.md",
       "section": "Start here"
     },
     {
@@ -48,8 +58,18 @@
       "section": "Studio guides"
     },
     {
+      "title": "Spatial-Graph-Studio",
+      "source": "docs/GRAPH-STUDIO.md",
+      "section": "Studio guides"
+    },
+    {
       "title": "Graph-Exploration-and-JEV",
       "source": "docs/GRAPH-AND-JEV.md",
+      "section": "Studio guides"
+    },
+    {
+      "title": "Reusable-Voice-Graphs",
+      "source": "docs/VOICE-GRAPHS.md",
       "section": "Studio guides"
     },
     {
@@ -96,11 +116,6 @@
       "title": "Releases-and-Packaging",
       "source": "docs/PUBLISHING.md",
       "section": "Reference"
-    },
-    {
-      "title": "Reusable-Voice-Graphs",
-      "source": "docs/VOICE-GRAPHS.md",
-      "section": "Studio guides"
     }
   ]
 }

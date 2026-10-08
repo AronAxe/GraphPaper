@@ -28,10 +28,11 @@ Leave reasoning at **Provider default** initially, or load the model catalog and
 Give it a working title, a target length and a direction. Choose a mode deliberately:
 
 - **Nonfiction:** source-linked articles and essays.
+- **Polemic:** argument, satire and opinion that preserve your stated position.
 - **Fiction:** stories, character decisions, scenes and canon.
 - **Science:** scholarly searching, evidence appraisal and academic manuscripts.
 
-Mode is chosen at project creation; the interface does not provide a conversion button for an existing project. A title can be changed without changing the project’s identity or folder.
+For an existing project, choose **current mode · Change**, select the mode and apply it. Sources, graph, voice, angles, outline and manuscript remain stored. Check the Creative brief and refresh affected generated work afterward; changing modes does not silently rewrite it. A title can be changed without changing the project’s identity or folder.
 
 ## 4. Add useful material
 
@@ -39,11 +40,13 @@ In **Sources**, upload supported documents, paste text or import a public articl
 
 For fiction, a premise and canon in the **Creative brief** can be enough to begin. Science starts at the **Research** desk; include retrieved papers to turn them into project evidence sources.
 
+For a reusable style, open **My voices** from the voice controls and use a saved voice, or add training pieces there and learn one. Existing learned profiles can be saved through **Your writing voice → Save as reusable voice** without retraining. [Voice graphs](VOICE-GRAPHS.md).
+
 The **Project folder** button opens the workspace in Explorer. Files dropped into its Inbox are imported while the project is open and idle; that import alone does not run an AI task. [Sources and folders →](PROJECTS-AND-SOURCES.md)
 
 ## 5. Explore, choose and structure
 
-For nonfiction or fiction, build the graph. Select concepts and relationships to inspect their source anchors. Pin ideas you want to emphasize; exclude distractions. Then **Discover angles**.
+For nonfiction, fiction or polemic, build the graph once from your material. An existing graph needs no rebuild just to use the v0.6 interface. Drag the background to orbit, Shift-drag to pan and scroll to zoom, or choose **2D**. Select a node or line to inspect and edit it; **Focus here** reduces clutter. Pin ideas you want to emphasize; exclude distractions. Then **Discover angles**. [Graph navigation, editing and undo](GRAPH-STUDIO.md).
 
 Choose a suggested direction, edit its thesis or write your own. Develop an outline and review each section’s purpose, source assignments and word allocation before generating a full draft.
 

@@ -13,6 +13,10 @@ A project brings together its brief, sources, graph, angles, outline, draft and 
 
 Open a source to read the extracted text and change its role. Excluding a source from use does not erase its saved text. Changes to the material can invalidate graph coverage, voice profiles or scientific appraisals; the relevant stage should be refreshed.
 
+## Reusable voices are separate
+
+Prefer the **My voices** library for style training. Its articles are not mixed into the evidence cards or copied into each project that uses the voice. Older project-role Voice sources remain readable and can seed a reusable profile without deletion. **Save as reusable voice** copies their training material into the library, while applying the saved graph copies only its compact snapshot. [Voice library](VOICE-GRAPHS.md).
+
 ## Add material through the interface
 
 **Upload:** PDF, DOCX, TXT, Markdown, CSV or HTML. The per-file upload limit is 20 MB; extracted source text is limited to two million characters. CSV is imported as text, not silently converted into a statistical analysis.
@@ -52,7 +56,7 @@ The normal Windows data directory is `%LOCALAPPDATA%\GraphPaper`. The applicatio
 
 | Item | Purpose |
 |---|---|
-| `studio.sqlite3` | Projects, source text, current drafts, revisions, settings and cache |
+| `studio.sqlite3` | Projects, source text, drafts, revisions, graph-edit undo history, saved voices and training pieces, settings and cache |
 | Project workspaces | Inbox imports, preserved uploads and author-managed exports |
 | `credentials.dpapi` | API credentials encrypted for the Windows user context |
 | `codex-account/` | Separate Codex-managed account state |
@@ -64,6 +68,8 @@ Do not upload the full data directory to a public issue. It can contain unpublis
 
 **Export → Project backup** creates a portable JSON copy of the current project. It includes source text and the current graph, outline, manuscript and associated project fields, but not provider keys or the complete historical revision database. Importing a backup creates a separate project copy rather than overwriting the existing one.
 
-For a **full-history backup**, close GraphPaper and copy the complete data directory. Protect that copy as confidential. Windows-encrypted credentials may not decrypt under another user or computer; plan to sign in or re-enter keys there.
+A project backup contains its applied compact voice snapshot, not the global voice library or its training pieces. **Export voice** exports a reusable compact graph separately. Camera and manually arranged graph positions are local view settings and are not currently included in the project JSON.
+
+For a **full-history backup**, including the full voice library, close GraphPaper and copy the complete data directory. Protect that copy as confidential. Windows-encrypted credentials may not decrypt under another user or computer; plan to sign in or re-enter keys there.
 
 Versions provide earlier drafts and generated checkpoints. Restoring a version preserves the draft it replaces. After restoration, rerun reviews that no longer describe the current text, and recheck fiction ledgers or scientific confirmations where relevant.

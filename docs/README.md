@@ -1,56 +1,57 @@
 # GraphPaper documentation
 
-**A studio for connected thought.** GraphPaper brings source material, graph exploration and a writing desk into one local-first Windows application.
+**Connect your sources. Find your angle. Write in your own voice.**
 
-These guides describe **GraphPaper 0.5.0**. The [release page](https://github.com/AronAxe/GraphPaper/releases/latest) provides the current Windows download; [CHANGELOG](../CHANGELOG.md) records version history. The same guides are published in the [GitHub wiki](https://github.com/AronAxe/GraphPaper/wiki).
+These guides cover **GraphPaper 0.6.0**: the ink-blue studio, real graph-paper sidebar, spatial graph editor, four writing modes and reusable voice graphs. [Download for Windows](https://github.com/AronAxe/GraphPaper/releases/latest) · [See the interface](VISUAL-TOUR.md) · [Version history](../CHANGELOG.md).
 
 ## Start here
 
 | You want to… | Read |
 |---|---|
-| Install and finish a first project | [Getting started](GETTING-STARTED.md) |
-| Upgrade Windows or use the source edition | [Windows installation](WINDOWS.md) |
-| Use ChatGPT sign-in, API models or deeper reasoning | [Models and reasoning](CONNECTIONS.md) |
-| Write an essay or researched article | [Nonfiction workflow](NONFICTION.md) |
-| Make a forceful argument without forced neutrality | [Polemic and authorial intent](POLEMIC.md) |
-| Develop a story and preserve its canon | [Fiction workflow](FICTION.md) |
-| Search scholarly literature and write a manuscript | [Science workflow](SCIENCE.md) |
+| See the real application before installing | [Visual tour](VISUAL-TOUR.md) |
+| Finish a first project | [Getting started](GETTING-STARTED.md) |
+| Install or upgrade without losing work | [Windows installation](WINDOWS.md) |
+| Choose models, Codex sign-in and reasoning depth | [Models and reasoning](CONNECTIONS.md) |
+| Get a quick answer about graphs, voices or costs | [Frequently asked questions](FAQ.md) |
+
+## Choose your writing workflow
+
+| Mode | Purpose | Guide |
+|---|---|---|
+| Nonfiction | Develop a source-linked article or essay; argue a case or investigate a question | [Nonfiction workflow](NONFICTION.md) |
+| Polemic | Defend your thesis with conviction, wit and your chosen rhetorical force | [Polemic and authorial intent](POLEMIC.md) |
+| Fiction | Build characters, scenes and consequences while preserving canon | [Fiction workflow](FICTION.md) |
+| Science | Search scholarly databases, screen evidence and prepare an APA manuscript | [Science workflow](SCIENCE.md) |
+
+**Sources → Graph → Angles → Outline → Write.** Science adds a Research desk. In an existing project, **current mode · Change** switches writing mode without deleting the sources, graph, voice or manuscript. Review the brief and refresh affected generated work afterward.
 
 ## Work with your material
 
 | Guide | Covers |
 |---|---|
-| [Projects and sources](PROJECTS-AND-SOURCES.md) | Source roles, project Inbox, file formats, updates and backups |
-| [Graph exploration and JEV](GRAPH-AND-JEV.md) | Relationship status, paths, pins, candidate evaluation and Graphify |
-| [Author voice and prose tools](VOICE-AND-PROSE.md) | Style samples, author URLs, Humanize, Deslop and reversible edits |
-| [Exports and APA](EXPORTS-AND-APA.md) | Word/Markdown/HTML, bibliography formats and research packages |
+| [Projects and sources](PROJECTS-AND-SOURCES.md) | Uploads, source roles, project Inbox, local storage and backups |
+| [Spatial graph studio](GRAPH-STUDIO.md) | 3D/2D, orbit/pan/zoom, density, connection styles, node/edge editing and undo |
+| [Graph exploration and JEV](GRAPH-AND-JEV.md) | Extraction, Graphify, evidence status, paths, pins and bounded typed decisions |
+| [Reusable voice graphs](VOICE-GRAPHS.md) | Save a voice once, train separately, edit its graph, reuse it and inspect overlays |
+| [Author voice and prose tools](VOICE-AND-PROSE.md) | Style direction, Humanize, Deslop, comparison and explicit acceptance |
+| [Exports and APA](EXPORTS-AND-APA.md) | Word, Markdown, HTML, project backups and scientific export packages |
 
-## Understand and maintain the app
+## Try it without model calls
 
-[Privacy and security](SECURITY.md) · [Troubleshooting](TROUBLESHOOTING.md) · [Architecture](ARCHITECTURE.md) · [Integration reference](INTEGRATIONS.md) · [Development](DEVELOPMENT.md) · [Validation](QUALITY.md) · [Releases and packaging](PUBLISHING.md)
+Open **The city after dark**, the included illustrative example. Explore the Graph tab: drag the background to orbit, Shift-drag to pan, and scroll to zoom. Click a node or connection to inspect and edit it. Try **Focus here**, then **Reset filters**. Manual graph editing does not call a model.
 
-## A few distinctions worth keeping
+Next, open Angles, edit a thesis and explore Outline and Write. These are your editorial decisions. Model calls start only when you explicitly run a generation or analysis action.
 
-**Local storage is not offline inference.** Sources and drafts remain in the local project database; choosing a cloud provider sends the material needed for the requested action to that provider.
+For an existing learned voice, use **Your writing voice → Save as reusable voice**. In another project, choose it in **My voices → Use in this project**. Saving the existing profile and applying it require no retraining or model request.
 
-**A source match is not a truth certificate.** Exact quotations help locate evidence. They do not establish whether a paper is valid or whether a conclusion follows.
+## Upgrade notes for existing projects
 
-**A proposal is not publication.** You choose the angle, review the draft and accept prose edits. Scientific submission checks require author verification; they do not represent a review board.
+The visual redesign does **not** require rebuilding graphs or re-uploading sources. Saved voices are independent of the article evidence. Your current instructions override saved style defaults; rhetorical force is separate from evidence detail.
 
-## Suggested first sessions
+Source changes may require a graph rebuild. Brief, mode or voice changes instead call for refreshing affected angles or outlines using the existing graph. [Recovery and common problems](TROUBLESHOOTING.md).
 
-**For a writer:** open the illustrative nonfiction example, select a graph node, inspect its source, edit the chosen angle, then explore the outline and writing desk. This requires no model request until you explicitly generate something.
+## Reference and maintenance
 
-**For a researcher:** create a Science project with one focused question and one or two databases. Search, inspect the log and screen a small set before spending model calls on appraisal or drafting. Expand only after checking what the first pass retrieved.
+[Privacy and security](SECURITY.md) · [Troubleshooting](TROUBLESHOOTING.md) · [Architecture](ARCHITECTURE.md) · [Integration reference](INTEGRATIONS.md) · [Development](DEVELOPMENT.md) · [Validation](QUALITY.md) · [Releases and packaging](PUBLISHING.md).
 
-## Documentation maintenance
-
-These Markdown files are the maintained source. [The documentation tooling](DEVELOPMENT.md#maintaining-the-documentation) validates links and renders the wiki with consistent navigation; screenshots are shared rather than copied into every page. Historical release notes stay available, but they are not the current setup guide.
-
-## Reusable voices and bounded JEV decisions
-
-[Save a voice graph once and reuse it across projects](VOICE-GRAPHS.md). Training pieces are separate from article evidence; current author instructions override saved preferences.
-
-## Spatial graph studio
-
-[3D/2D navigation, decluttering, node/connection editing and undo](GRAPH-STUDIO.md) · [0.6.0 release](RELEASE-0.6.0.md)
+The repository's `docs/` files are the maintained source for this wiki. Navigation, internal links and images are rendered from the same content. The publishing process checks for independent wiki edits rather than silently replacing them. Historical release notes remain available and are labelled by version.

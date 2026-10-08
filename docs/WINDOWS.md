@@ -21,7 +21,11 @@ A SmartScreen warning about an unsigned binary is not a validation result. Check
 
 The executable folder is separate from the normal data directory, `%LOCALAPPDATA%\GraphPaper`. Existing projects, revisions, settings and credentials are not overwritten by extracting a new application. Back up important work before upgrading.
 
-The native bridge and save-on-close corrections introduced in 0.2.1 remain in 0.3.0. Use the latest release rather than the affected 0.2.0 executable.
+The native bridge and save-on-close corrections introduced in 0.2.1 remain in 0.6.0. Use the latest release rather than the affected 0.2.0 executable.
+
+## Existing graphs and voices in v0.6
+
+Open the same project data directory; the redesign does not require re-extraction or re-uploading sources. The new Graph tab supplies 3D/2D navigation and manual editing. Save an existing learned voice as a reusable graph without another model call. Project files and the global voice library remain separate from the extracted application folder. [Graph studio](GRAPH-STUDIO.md) · [Reusable voices](VOICE-GRAPHS.md).
 
 ## Source edition
 
@@ -47,6 +51,6 @@ The normal log directory is `%LOCALAPPDATA%\GraphPaper`. Logs may contain diagno
 
 For model, import and manuscript problems, continue with [Troubleshooting](TROUBLESHOOTING.md). For developer builds and native checks, see [Releases and packaging](PUBLISHING.md).
 
-## External Graphify in 0.3.1
+## External Graphify
 
-The 0.3.1 Windows package includes the public Graphify runtime and its dependencies. No separate Graphify installation is required. Clear an old custom executable path to select the included runtime; custom paths are never silently overridden. [Detailed setup and distribution](UPDATE-0.3.1.md).
+The current Windows package includes the public Graphify runtime and its dependencies. No separate Graphify installation is required. Clear an old custom executable path to select the included runtime; custom paths are never silently overridden. [Detailed setup and distribution](UPDATE-0.3.1.md).

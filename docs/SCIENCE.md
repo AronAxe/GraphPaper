@@ -1,5 +1,8 @@
 # Science: from literature search to manuscript
 
+![Actual v0.6 research desk; these records are synthetic test fixtures.](images/research-v0.6.webp)
+*Actual v0.6 research desk; these records are synthetic test fixtures. [Capture details](VISUAL-TOUR.md).*
+
 Science is a separate project mode for scholarly discovery, documented screening, evidence appraisal and academic writing. The default output is an **evidence-led narrative review**: real secondary research, not a fabricated new experiment.
 
 ![Science research desk](images/research-v0.3.webp)

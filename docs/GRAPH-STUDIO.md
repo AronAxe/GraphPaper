@@ -1,5 +1,8 @@
 # The graph studio: ink, paper and space
 
+![Actual v0.6 graph workspace using the included illustrative example.](images/graph-studio-v0.6.webp)
+*Actual v0.6 graph workspace using the included illustrative example. [Capture details](VISUAL-TOUR.md).*
+
 GraphPaper 0.6 replaces the green-on-green interface with charcoal/ink-blue surfaces, colored graph semantics and a **real scanned sheet of graph paper** in the sidebar. The sidebar asset is bundled locally; viewing it does not call an image service or require an internet connection. Attribution appears at the bottom of the sidebar and in the package's `ASSET-CREDITS.md`.
 
 ## Navigate without losing the thread

@@ -1,6 +1,15 @@
 # Author voice, Humanize and Deslop
 
+![Actual v0.6 original/proposed edit comparison with synthetic test prose.](images/humanizer-v0.6.webp)
+*Actual v0.6 original/proposed edit comparison with synthetic test prose. [Capture details](VISUAL-TOUR.md).*
+
 GraphPaper can use your own writing as a style reference and offer reversible prose-editing passes. These features guide generation; they do not fine-tune model weights or promise perfect imitation.
+
+## Save a voice once and reuse it
+
+The **My voices** library stores named, editable voice graphs independently of article evidence. For an already learned profile, use **Your writing voice → Save as reusable voice**. In another project, select it and choose **Use in this project**. Saving an existing profile and applying it require no model call or copied training articles. Each project keeps an applied snapshot; later library changes take effect only when explicitly reapplied. [Complete library and overlay guide](VOICE-GRAPHS.md).
+
+For a new reusable voice, choose **New voice**, add files, pasted text or article URLs under **Training pieces**, then **Learn / rebuild graph**. The source pieces are stored in the separate voice library.
 
 ## Add your writing
 
@@ -16,7 +25,7 @@ Voice sources guide cadence, diction and structure. They do not become factual e
 
 Useful instructions are specific: “Keep the short opening sentences and occasional dry aside; preserve technical qualifications.” Less useful instructions demand a vague personality while contradicting the examples.
 
-If samples change, a learned profile can become stale. Refresh it; the old derived profile is not treated as a fresh analysis of the new material. Explicitly edited instructions are author direction. Profiles are part of the project state, not a trained global personalization model.
+If samples change, a learned profile can become stale. Refresh it; the old derived profile is not treated as a fresh analysis of the new material. Explicitly edited instructions are author direction. Projects retain their applied profile snapshot. A saved reusable graph also lives in the separate local voice library; neither is a fine-tuned model or a remote personalization service.
 
 ## Choose the right prose action
 
@@ -41,6 +50,8 @@ If you edit the manuscript after a proposal was created, that proposal is stale 
 
 For nonfiction, look for unnecessary framing that delays the argument. For fiction, check whether an edit flattens subtext or removes a character’s distinctive speech. For Science, preserve methodological qualifications, reported uncertainty and terminology even when they sound less conversational.
 
+A saved voice is not a politeness filter. Strong language, sarcasm, indignation and a decisive conclusion are valid author choices; explicit current instructions override saved defaults.
+
 A lower cue count is not a quality score. The goal is a better passage with the same intended meaning—not the absence of every pattern on a list.
 
 ## Design references
@@ -49,4 +60,4 @@ The independent implementation was informed by the writing-focused approaches in
 
 ## Voice before the prose
 
-Since 0.4, voice samples and the authorial contract are supplied to angle generation, JEV evaluation, outlining and the initial reviewer as well as drafting and prose edits. Rhetorical stance, humor and willingness to conclude are part of authorial style, not merely punctuation. Moral judgments are distinct from factual claims. See [Polemic and argumentative writing](POLEMIC.md).
+Voice context and the authorial contract guide angle generation, outlining, the initial reviewer, drafting and prose edits. JEV receives the compact graph/profile view, not the raw voice-training articles. Rhetorical stance, humor and willingness to conclude are part of authorial style, not merely punctuation. Moral judgments are distinct from factual claims. See [Polemic and argumentative writing](POLEMIC.md).

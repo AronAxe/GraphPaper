@@ -24,13 +24,13 @@ External Graphify nodes also retain source-file links. These pointers support re
 
 ## Navigate and guide discovery
 
-Select nodes or relationships to inspect descriptions and evidence. Drag nodes, pan, zoom or fit the view. Search by label to find relevant concepts in a large graph.
+Select nodes or relationships to inspect descriptions and evidence, or edit their wording. In 3D, drag the background to orbit, Shift-drag to pan, and scroll to zoom; 2D gives a flat pannable view. Search the whole graph by titles, notes or relationship names. **Focus here**, type filters and connection filters reduce clutter. [Full graph controls, editing and undo](GRAPH-STUDIO.md).
 
 **Pin** concepts to emphasize them. **Exclude** distractions from candidate discovery. Edit the direction and the exploration/evidence-discipline settings beside the graph. These controls influence exploration; they do not permit unsupported reasoning.
 
 **Find a path** highlights an undirected conceptual connection between two nodes. The highlighted sequence is not a causal proof. A graph can connect two concepts through a vague intermediate node while contributing little to a defensible article.
 
-For responsiveness, the view displays at most 180 nodes at a time; the complete graph remains in the project. Imports are bounded to 5,000 nodes and 20,000 edges. The interface shows when it is displaying only part of a large graph.
+The default overview displays 60 nodes; **Show** offers 40, 60, 100 or 180. At most 360 links are drawn. These are view limits: the complete stored graph remains available to search and downstream work. Imports are bounded to 5,000 nodes and 20,000 edges. The footer reports displayed versus stored data.
 
 ## How angles are discovered
 
@@ -51,6 +51,10 @@ This is more than a score attached to a finished article. It helps decide which 
 
 With JEV off, structural exploration still works and results are not given fabricated scores. With the optional automatic refinement enabled, an unconfirmed revision can be retained as a candidate version rather than replacing the original. A recommendation to research is a workflow signal; in ordinary nonfiction it does not mean a web search has secretly run.
 
+## Request sizing and voice context
+
+JEV receives compact style-graph context and relevant decision material, not raw voice-training articles. The complete serialized UTF-8 envelope is checked before sending; candidates and questions are automatically batched while preserving their IDs. The 60 KB limit is an application transport budget, not a general JEV capability limit. An indivisible oversized optional decision stays explicitly unscored; it does not abort completed writing or approve a revision by default. [Details](VOICE-GRAPHS.md#why-jev-no-longer-receives-the-whole-heap).
+
 ## When to rebuild
 
 After adding, changing, excluding or reclassifying sources, rebuild before relying on graph coverage. Scientific screening can change the enabled evidence set as well. Inspect important connections again when their underlying material changes.
@@ -59,4 +63,4 @@ A stronger graph is useful only if it leads to a better argument or story. The [
 
 ## Argument-led angle discovery
 
-Polemic generates alternative routes into your thesis, not alternative opinions on whether you may hold it. JEV now receives the author voice and editorial contract and scores stance/voice fidelity explicitly. Counterarguments are optional and must be directly consequential. Brief or voice changes mark old angles as stale; refresh them without re-running Graphify. [Authorial-intent controls](POLEMIC.md).
+Polemic generates alternative routes into your thesis, not alternative opinions on whether you may hold it. JEV receives compact author-voice context and the editorial contract and scores stance/voice fidelity explicitly. Counterarguments are optional and must be directly consequential. Brief or voice changes mark old angles as stale; refresh them without re-running Graphify. [Authorial-intent controls](POLEMIC.md).

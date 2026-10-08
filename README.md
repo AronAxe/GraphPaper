@@ -55,8 +55,8 @@ The portable build needs Microsoft Edge WebView2 and is currently unsigned. Exis
 
 ## What makes it useful
 
-- **Explore before committing.** Inspect source-linked concepts and relationships, follow paths, pin ideas and compare competing angles. Edit a suggested thesis or write your own.
-- **Keep your voice.** Learn an editable style profile from your writing samples or selected articles at an author URL. Adjust its influence rather than accepting a generic house style.
+- **Explore before committing.** Orbit or flatten the graph, filter and focus its neighborhoods, and edit nodes and connections directly. Follow source links, pin ideas, undo graph edits and choose your own angle.
+- **Keep your voice.** Save a reusable voice graph from your writing samples or selected articles, then apply it across projects without retraining. Edit its habits and influence; your current instructions remain in charge.
 - **Improve prose without losing the original.** Humanize and Deslop offer separate or combined passes, protected factual spans, side-by-side proposals and explicit acceptance.
 - **Work from a project folder.** Drop documents into a project’s Inbox. Role-specific subfolders distinguish evidence, canon, inspiration and voice samples; idle-time imports do not trigger paid model calls.
 - **Choose where reasoning happens.** Configure writer, editor and extraction models separately, with provider-native reasoning controls. Optional JEV evaluates graph candidates, evidence gaps and revision decisions.
@@ -64,16 +64,19 @@ The portable build needs Microsoft Edge WebView2 and is currently unsigned. Exis
 
 ## Inside GraphPaper
 
-![Graph exploration in GraphPaper](docs/images/graph.webp)
-*The graph workspace, using the included illustrative project.*
+![GraphPaper 0.6 spatial graph studio with real graph-paper sidebar](docs/images/graph-studio-v0.6.webp)
+*Actual v0.6 interface: the included illustrative project, spatial graph controls and colored connections. [Visual tour and capture provenance](docs/VISUAL-TOUR.md).*
 
 <details>
-<summary><strong>Science research desk and writing workspace</strong></summary>
+<summary><strong>Science, writing and reusable voice graphs — v0.6 screenshots</strong></summary>
 
-![Science research desk](docs/images/research-v0.3.webp)
+![GraphPaper 0.6 Science research desk](docs/images/research-v0.6.webp)
 *Actual interface with clearly labelled synthetic workflow-test material.*
 
-![Writing workspace](docs/images/writing.webp)
+![GraphPaper 0.6 writing workspace](docs/images/writing-v0.6.webp)
+
+![GraphPaper 0.6 reusable voice library](docs/images/reusable-voice-v0.6.webp)
+*The editable voice mini-graph, with a synthetic style example. Save once, reuse across projects.*
 
 </details>
 
