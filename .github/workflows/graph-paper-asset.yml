@@ -1,0 +1,48 @@
+name: Bundle real graph paper
+on:
+  push:
+    branches: ['feat/graph-studio-v0.6']
+    paths: ['.github/workflows/graph-paper-asset.yml']
+permissions:
+  contents: write
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feat/graph-studio-v0.6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -q pillow
+      - name: Download the licensed original scan and bundle an optimized copy
+        run: |
+          mkdir -p ui/assets
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 100 --user-agent 'GraphPaper/0.6 (https://github.com/AronAxe/GraphPaper; asset attribution)' 'https://upload.wikimedia.org/wikipedia/commons/4/4d/Graph_paper_notepad_%284562203394%29.jpg' -o /tmp/graph-paper-original.jpg
+          python - <<'PY'
+          from PIL import Image,ImageOps
+          from pathlib import Path
+          import hashlib,json
+          original=Path('/tmp/graph-paper-original.jpg').read_bytes()
+          image=ImageOps.exif_transpose(Image.open('/tmp/graph-paper-original.jpg')).convert('RGB')
+          assert image.width>=2000 and image.height>=3000
+          image.thumbnail((1000,1600))
+          image.save('ui/assets/graph-paper.webp',quality=88)
+          metadata={'title':'Graph paper notepad (4562203394)','author':'Calsidyrose','source':'https://commons.wikimedia.org/wiki/File:Graph_paper_notepad_(4562203394).jpg','license':'CC BY 2.0','license_url':'https://creativecommons.org/licenses/by/2.0/','changes':'Resized and converted to WebP; the image is a scan of real vintage graph paper, not AI-generated.','original_sha256':hashlib.sha256(original).hexdigest(),'bundled_sha256':hashlib.sha256(Path('ui/assets/graph-paper.webp').read_bytes()).hexdigest()}
+          Path('ui/assets/graph-paper.json').write_text(json.dumps(metadata,indent=2)+'\n')
+          Path('ui/assets/CREDITS.md').write_text('# Sidebar photograph / scan\n\nGraph paper notepad (4562203394), by **Calsidyrose**, is a direct scan of real vintage graph paper. Source: https://commons.wikimedia.org/wiki/File:Graph_paper_notepad_(4562203394).jpg . Licensed under **Creative Commons Attribution 2.0**: https://creativecommons.org/licenses/by/2.0/ . Resized and converted to WebP for offline display. No endorsement is implied. The application includes a visible attribution link.\n')
+          print(json.dumps(metadata,indent=2))
+          PY
+      - name: Commit the actual image and attribution to the feature branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add ui/assets
+          git commit -m 'Add licensed real graph-paper scan and provenance' || test -z "$(git status --porcelain)"
+          git push origin HEAD:feat/graph-studio-v0.6
+      - uses: actions/upload-artifact@v4
+        with:
+          name: real-graph-paper
+          path: ui/assets/
+          retention-days: 3
