@@ -47,18 +47,21 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q --junitxml=test-results/windows.xml
+      - name: Verify the hosted Windows WebView2 prerequisite
+        shell: pwsh
+        run: ./scripts/prepare_ci_webview.ps1
       - name: Build with public Graphify and official Codex
         shell: pwsh
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: ./scripts/build_release.ps1
-      - run: python scripts/native_smoke.py --science --graphify --polemic --voices --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
       - uses: actions/upload-artifact@v4
         with:
-          name: GraphPaper-v0.5.0-Windows-x64
+          name: GraphPaper-v0.5.0-Windows-candidate
           path: |
             dist/GraphPaper-v0.5.0-Windows-x64.zip
             dist/SHA256SUMS.txt
+      - run: python scripts/native_smoke.py --science --graphify --polemic --voices --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
       - name: Publish only the successfully tested artifact
         shell: pwsh
         env:
@@ -81,6 +84,14 @@ jobs:
           if ($asset.digest -ne "sha256:$actual") { throw 'Uploaded artifact does not match the tested ZIP.' }
           gh release edit $tag --draft=false --latest
           if ($LASTEXITCODE -ne 0) { throw 'Release publication failed.' }
+      - name: Retain native startup diagnostics from this runner only
+        if: always()
+        shell: pwsh
+        run: |
+          foreach ($name in @('native.log','desktop.log','report.json')) {
+            $path = "test-results/native-package/$name"
+            if (Test-Path $path) { Write-Host "=== $path ==="; Get-Content $path -Tail 80 }
+          }
       - uses: actions/upload-artifact@v4
         if: always()
         with:
