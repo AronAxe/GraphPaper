@@ -50,3 +50,7 @@ These Markdown files are the maintained source. [The documentation tooling](DEVE
 ## Reusable voices and bounded JEV decisions
 
 [Save a voice graph once and reuse it across projects](VOICE-GRAPHS.md). Training pieces are separate from article evidence; current author instructions override saved preferences.
+
+## Spatial graph studio
+
+[3D/2D navigation, decluttering, node/connection editing and undo](GRAPH-STUDIO.md) · [0.6.0 release](RELEASE-0.6.0.md)

@@ -91,6 +91,8 @@ class Store:
         with self.lock, self.connect() as c:
             c.execute("DELETE FROM projects WHERE id=?", (project_id,))
             c.execute("DELETE FROM revisions WHERE project_id=?", (project_id,))
+            if c.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='graph_history'").fetchone():
+                c.execute("DELETE FROM graph_history WHERE project_id=?", (project_id,))
 
     def snapshot(self, project: Project, label: str):
         if not project.draft.strip():

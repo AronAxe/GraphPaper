@@ -27,6 +27,8 @@ Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argum
 
 **External Graphify now supports Codex sign-in and per-model reasoning.** The Windows release includes the public runtime; there is no extra API-key requirement or duplicate Native pass. [Graphify setup and distribution](docs/UPDATE-0.3.1.md)
 
+**New in 0.6: the spatial graph studio.** Orbit or flatten your graph, focus its neighborhoods, and edit nodes and connections directly. Ink-blue surfaces and a real scanned graph-paper sidebar. [Explore the graph controls](docs/GRAPH-STUDIO.md).
+
 ## Four ways to write
 
 | Mode | Start with | Build toward |
