@@ -37,6 +37,7 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m unittest discover -s tests -p test_documentation_tools.py -v
+      - run: python -m unittest discover -s docs/tests -p 'test_*.py' -v
       - run: python scripts/docs_tool.py check
       - run: python scripts/docs_tool.py render-wiki --output test-results/wiki-preview
       - uses: actions/upload-artifact@v4
@@ -61,3 +62,32 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/docs_tool.py publish-wiki
+      - name: Verify the published wiki against the checked documentation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          git -c credential.helper= -c 'credential.helper=!gh auth git-credential' clone --depth 1 https://github.com/AronAxe/GraphPaper.wiki.git /tmp/graphpaper-wiki-verify
+          python - <<'PYVERIFY'
+          from pathlib import Path
+          import hashlib,json,subprocess
+          from scripts.docs_tool import render
+          root=Path.cwd();wiki=Path('/tmp/graphpaper-wiki-verify')
+          conf,pages=render(root)
+          for name,expected in pages.items():
+              actual=(wiki/name).read_text(encoding='utf-8')
+              assert actual==expected,'Published wiki differs: '+name
+          manifest=json.loads((wiki/'.graphpaper-wiki.json').read_text())
+          assert manifest['docs_version']==conf['docs_version']
+          for name,expected in pages.items():
+              assert manifest['files'][name]==hashlib.sha256(expected.encode()).hexdigest()
+          report={'ok':True,'docs_version':conf['docs_version'],'source_revision':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),'wiki_revision':subprocess.check_output(['git','-C',str(wiki),'rev-parse','HEAD'],text=True).strip(),'guides':len(conf['pages']),'navigation_files':2,'verified_files':sorted(pages)}
+          output=root/'test-results/wiki-publication';output.mkdir(parents=True,exist_ok=True)
+          (output/'report.json').write_text(json.dumps(report,indent=2)+'\n')
+          for name in pages:(output/name).write_bytes((wiki/name).read_bytes())
+          print(json.dumps(report,indent=2))
+          PYVERIFY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: published-wiki-verification
+          path: test-results/wiki-publication/
