@@ -1,0 +1,90 @@
+name: Assemble approved README artwork
+on:
+  push:
+    branches: [docs/paper-header-workflow]
+    paths: ['.github/workflows/publish-readme-artwork.yml']
+permissions:
+  contents: write
+jobs:
+  artwork:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs/paper-header-workflow
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Assemble the approved header and schematic; preserve the rest of the README
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64,hashlib,json,lzma,subprocess,xml.etree.ElementTree as ET
+          def blob(sha):
+              result=json.loads(subprocess.check_output(['gh','api','repos/AronAxe/GraphPaper/git/blobs/'+sha],text=True))
+              assert result['encoding']=='base64'
+              data=base64.b64decode(result['content'])
+              assert hashlib.sha1(b'blob '+str(len(data)).encode()+b'\0'+data).hexdigest()==sha
+              return data
+          chunks=['2e6f4240b6183b4c1c203e773f0f408a5f321293','b4b9ec6abe1a76d2c1311143d83fc70380c8d6ab','2bde23403a3000a2c5b59c038396de3b08509d46','721afd86d58abd06902171b8c8f44bfd058f5681','823e906f7285e78264edb5813bded1a55b5ab9ad','3f8f0cf625eac021a75febb823e35c2fc47e7b21','72ac647912c9cc5240ad591434103f4f6d654e49','d64d9e8508d9970e4cd6e9f2fd6f0ca44acbdac8','0075a0d5ff5aa866b1883a33c8fdea759f45d54d','7cbaaf398a6388801ebfd562ed08163a0b63b4d8','a39938c2906e581ac77d210b7ea35be9c4896262']
+          header=b''.join(blob(sha) for sha in chunks)
+          assert len(header)==63758
+          assert hashlib.sha256(header).hexdigest()=='538b9dddba7c6ae102d3a2f4fc254e00348b7457e6e1a863422b9b45100a7cda'
+          assert header[:4]==b'RIFF' and header[8:12]==b'WEBP'
+          svg=lzma.decompress(blob('bce8077dc286e201c33201f9f9f3e97612f28183'))
+          assert hashlib.sha256(svg).hexdigest()=='862f855a6c658d17aae0732deb7390a1e15814d6aa8c742524ad6567f57c8442'
+          root=ET.fromstring(svg)
+          assert root.tag=='{http://www.w3.org/2000/svg}svg'
+          assert not any(x.tag.split('}')[-1] in {'script','foreignObject'} for x in root.iter())
+          images=Path('docs/images');images.mkdir(exist_ok=True)
+          (images/'graphpaper-header-paper.webp').write_bytes(header)
+          (images/'graphpaper-workflow.svg').write_bytes(svg)
+          readme=Path('README.md');original=readme.read_bytes()
+          assert hashlib.sha1(b'blob '+str(len(original)).encode()+b'\0'+original).hexdigest()=='71164d27cd48d03e20fa014d0452dc9c9d850aad','README changed; reconcile rather than overwrite'
+          old='![GraphPaper — Graph-first AI writing studio](docs/images/graphpaper-header.svg)'
+          new='<img src="docs/images/graphpaper-header-paper.webp" alt="GraphPaper — Graph-first AI writing studio" width="1280">'
+          section='## How GraphPaper works\n\n![GraphPaper workflow: sources to graph, angles, outline, draft, review and export, guided by your brief and reusable voice with optional Science research and JEV decision support](docs/images/graphpaper-workflow.svg)\n\nSources become a navigable graph, then an angle you choose, an outline you can edit and a draft you control. Your brief and saved voice guide the writing, while optional JEV helps evaluate candidates and editorial decisions.\n\n'
+          text=original.decode()
+          assert text.count(old)==1 and text.count('## Four ways to write')==1
+          text=text.replace(old,new,1).replace('## Four ways to write',section+'## Four ways to write',1)
+          readme.write_text(text,encoding='utf-8')
+          assert hashlib.sha256(readme.read_bytes()).hexdigest()=='867ddf3ff4f7cab54e7c7252dfc01d19172f3e6226c0524cbd73825e5576b270'
+          report={'header_bytes':len(header),'header_sha256':hashlib.sha256(header).hexdigest(),'schematic_sha256':hashlib.sha256(svg).hexdigest(),'readme_sha256':hashlib.sha256(readme.read_bytes()).hexdigest(),'only_changes':'Approved web-optimized banner and workflow schematic; screenshots and existing copy preserved.'}
+          Path('test-results').mkdir(exist_ok=True)
+          Path('test-results/readme-artwork.json').write_text(json.dumps(report,indent=2)+'\n')
+          print(json.dumps(report,indent=2))
+          PY
+      - name: Check documentation, image targets and existing screenshot provenance
+        run: |
+          python -m unittest discover -s tests -p test_documentation_tools.py -v
+          python -m unittest discover -s docs/tests -p 'test_*.py' -v
+          python scripts/docs_tool.py check
+          git diff --check
+      - name: Commit only the approved artwork, README and derived publishing manifest
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add README.md docs/images/graphpaper-header-paper.webp docs/images/graphpaper-workflow.svg
+          python scripts/prepare_assets.py --manifest
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          path=Path('publish-manifest.json');data=json.loads(path.read_text())
+          # The connector removes this one-off workflow before merge.
+          data['files'].pop('.github/workflows/publish-readme-artwork.yml',None)
+          path.write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')
+          PY
+          git add publish-manifest.json
+          test -z "$(git diff --cached --name-only -- .github/workflows graphpaper ui scripts tests)"
+          git diff --cached --check
+          git commit -m 'Use approved graph-paper header and add the GraphPaper workflow schematic'
+          git push origin HEAD:docs/paper-header-workflow
+          git show --stat --oneline HEAD
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: readme-artwork-verification
+          path: test-results/readme-artwork.json
