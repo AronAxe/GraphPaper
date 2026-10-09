@@ -1,6 +1,6 @@
 # GraphPaper
 
-![GraphPaper — Graph-first AI writing studio](docs/images/graphpaper-header.svg)
+<img src="docs/images/graphpaper-header-paper.webp" alt="GraphPaper — Graph-first AI writing studio" width="1280">
 
 <p align="center"><strong>Connect your sources. Find your angle. Write in your own voice.</strong></p>
 
@@ -28,6 +28,12 @@ Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argum
 **External Graphify now supports Codex sign-in and per-model reasoning.** The Windows release includes the public runtime; there is no extra API-key requirement or duplicate Native pass. [Graphify setup and distribution](docs/UPDATE-0.3.1.md)
 
 **New in 0.6: the spatial graph studio.** Orbit or flatten your graph, focus its neighborhoods, and edit nodes and connections directly. Ink-blue surfaces and a real scanned graph-paper sidebar. [Explore the graph controls](docs/GRAPH-STUDIO.md).
+
+## How GraphPaper works
+
+![GraphPaper workflow: sources to graph, angles, outline, draft, review and export, guided by your brief and reusable voice with optional Science research and JEV decision support](docs/images/graphpaper-workflow.svg)
+
+Sources become a navigable graph, then an angle you choose, an outline you can edit and a draft you control. Your brief and saved voice guide the writing, while optional JEV helps evaluate candidates and editorial decisions.
 
 ## Four ways to write
 

@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1080" viewBox="0 0 1600 1080" role="img" aria-labelledby="title description">
+<title id="title">How GraphPaper works</title>
+<desc id="description">Sources become a knowledge graph using Graphify, Native extraction or an imported graph. The graph supplies paths and motifs for angles. The author chooses an angle, edits the outline and writes a draft. The brief and a reusable voice graph guide writing. Science mode can add screened papers. Optional JEV evaluates candidates, fit, gaps and editorial decisions using compact, batched context. Review and optional Humanize or Deslop passes lead to author approval and export. Projects and writing history are saved locally.</desc>
+<defs>
+<pattern id="paper-grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#d4e0e9" stroke-width=".7"/></pattern>
+<pattern id="paper-major" width="160" height="160" patternUnits="userSpaceOnUse"><rect width="160" height="160" fill="url(#paper-grid)"/><path d="M160 0H0V160" fill="none" stroke="#bdd0de" stroke-width=".9"/></pattern>
+<linearGradient id="title-gradient"><stop stop-color="#008fa6"/><stop offset="1" stop-color="#2677cb"/></linearGradient>
+
+<marker id="arrow-main" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L11 6L1 11Z" fill="#246fc0"/></marker>
+<marker id="arrow-science" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L11 6L1 11Z" fill="#246fc0"/></marker>
+<marker id="arrow-brief" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L11 6L1 11Z" fill="#ae681e"/></marker>
+<marker id="arrow-voice" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L11 6L1 11Z" fill="#7952b7"/></marker>
+<marker id="arrow-jev" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L11 6L1 11Z" fill="#008fa6"/></marker>
+<marker id="arrow-review" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M1 1L11 6L1 11Z" fill="#b33b75"/></marker>
+</defs>
+<rect width="1600" height="1080" rx="22" fill="#f8f7f2"/>
+<rect width="1600" height="1080" rx="22" fill="url(#paper-major)" opacity=".7"/>
+<g font-family="DejaVu Sans, Arial, sans-serif">
+<text x="64" y="64" font-size="15" font-weight="700" fill="#246fc0" text-anchor="start" letter-spacing="2.0">GRAPHPAPER  /  THE WORKFLOW</text>
+<text x="64" y="118" font-size="40" font-weight="700" fill="#11263d" text-anchor="start">From connected ideas to your finished piece.</text>
+<text x="64" y="154" font-size="21" font-weight="400" fill="#51657b" text-anchor="start">Your sources. Your angle. Your voice. You stay in control.</text>
+<rect x="64" y="204" width="450" height="165" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="64" y="199" width="450" height="165" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M82 199H496" fill="none" stroke="#246fc0" stroke-width="4" stroke-linecap="round"/>
+<text x="88" y="233" font-size="15" font-weight="700" fill="#246fc0" text-anchor="start" letter-spacing="1.3">SCIENCE MODE</text>
+<text x="88" y="270" font-size="27" font-weight="700" fill="#11263d" text-anchor="start">Search, screen, include</text>
+<text x="88" y="303" font-size="19" font-weight="400" fill="#51657b" text-anchor="start">PubMed · Semantic Scholar · arXiv</text>
+<text x="88" y="331" font-size="19" font-weight="400" fill="#51657b" text-anchor="start">Crossref · Europe PMC</text>
+<rect x="538" y="204" width="450" height="165" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="538" y="199" width="450" height="165" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M556 199H970" fill="none" stroke="#ae681e" stroke-width="4" stroke-linecap="round"/>
+<text x="562" y="233" font-size="15" font-weight="700" fill="#ae681e" text-anchor="start" letter-spacing="1.3">YOUR CREATIVE BRIEF</text>
+<text x="562" y="270" font-size="27" font-weight="700" fill="#11263d" text-anchor="start">Set the direction</text>
+<text x="562" y="303" font-size="18.5" font-weight="400" fill="#51657b" text-anchor="start">Thesis · audience · rhetorical force</text>
+<text x="562" y="331" font-size="18.5" font-weight="400" fill="#51657b" text-anchor="start">Nonfiction · Fiction · Polemic · Science</text>
+<rect x="1012" y="204" width="524" height="165" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="1012" y="199" width="524" height="165" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M1030 199H1518" fill="none" stroke="#7952b7" stroke-width="4" stroke-linecap="round"/>
+<text x="1036" y="233" font-size="15" font-weight="700" fill="#7952b7" text-anchor="start" letter-spacing="1.3">REUSABLE VOICE GRAPH</text>
+<text x="1036" y="270" font-size="25" font-weight="700" fill="#11263d" text-anchor="start">Learn once. Write in your voice.</text>
+<text x="1036" y="303" font-size="18.5" font-weight="400" fill="#51657b" text-anchor="start">Your samples → learn once → reusable mini-graph</text>
+<text x="1036" y="331" font-size="18.5" font-weight="400" fill="#51657b" text-anchor="start">Guides angles, outlines, drafts and review</text>
+<path d="M194 364V440" fill="none" stroke="#246fc0" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-science)" opacity="1"/>
+<text x="215" y="410" font-size="17" font-weight="400" fill="#246fc0" text-anchor="start">Included papers</text>
+<path d="M800 364V440" fill="none" stroke="#ae681e" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-brief)" stroke-dasharray="7 7" opacity="1"/>
+<text x="820" y="410" font-size="17" font-weight="400" fill="#ae681e" text-anchor="start">Guides writing</text>
+<path d="M1406 364V440" fill="none" stroke="#7952b7" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-voice)" stroke-dasharray="7 7" opacity="1"/>
+<text x="1238" y="410" font-size="16" font-weight="400" fill="#7952b7" text-anchor="middle">Voice throughout writing</text>
+<rect x="64" y="452" width="260" height="216" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="64" y="447" width="260" height="216" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M82 447H306" fill="none" stroke="#246fc0" stroke-width="4" stroke-linecap="round"/>
+<circle cx="96" cy="485" r="17" fill="#246fc0" opacity=".11"/>
+<text x="96" y="491" font-size="14" font-weight="700" fill="#246fc0" text-anchor="middle">01</text>
+<text x="124" y="493" font-size="29" font-weight="700" fill="#11263d" text-anchor="start">Sources</text>
+<text x="86" y="533" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Files · URLs · pasted text</text>
+<text x="86" y="561" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Project-folder imports</text>
+<path d="M86 574H302" stroke="#e0e7ee"/>
+<text x="86" y="606" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">Evidence, canon</text>
+<text x="86" y="633" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">and inspiration</text>
+<path d="M330 551H359" fill="none" stroke="#246fc0" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-main)" opacity="1"/>
+<rect x="367" y="452" width="260" height="216" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="367" y="447" width="260" height="216" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M385 447H609" fill="none" stroke="#008fa6" stroke-width="4" stroke-linecap="round"/>
+<circle cx="399" cy="485" r="17" fill="#008fa6" opacity=".11"/>
+<text x="399" y="491" font-size="14" font-weight="700" fill="#008fa6" text-anchor="middle">02</text>
+<text x="427" y="493" font-size="29" font-weight="700" fill="#11263d" text-anchor="start">Graph</text>
+<text x="389" y="533" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Graphify / Native / import</text>
+<text x="389" y="561" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Source-linked concepts</text>
+<path d="M389 574H605" stroke="#e0e7ee"/>
+<text x="389" y="606" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">Orbit, focus, edit</text>
+<text x="389" y="633" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">nodes and connections</text>
+<path d="M633 551H662" fill="none" stroke="#246fc0" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-main)" opacity="1"/>
+<rect x="670" y="452" width="260" height="216" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="670" y="447" width="260" height="216" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M688 447H912" fill="none" stroke="#7952b7" stroke-width="4" stroke-linecap="round"/>
+<circle cx="702" cy="485" r="17" fill="#7952b7" opacity=".11"/>
+<text x="702" y="491" font-size="14" font-weight="700" fill="#7952b7" text-anchor="middle">03</text>
+<text x="730" y="493" font-size="29" font-weight="700" fill="#11263d" text-anchor="start">Angles</text>
+<text x="692" y="533" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Paths, motifs and bridges</text>
+<text x="692" y="561" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Proposed ways into a piece</text>
+<path d="M692 574H908" stroke="#e0e7ee"/>
+<text x="692" y="606" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">Choose, edit or replace</text>
+<text x="692" y="633" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">the thesis or premise</text>
+<path d="M936 551H965" fill="none" stroke="#246fc0" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-main)" opacity="1"/>
+<rect x="973" y="452" width="260" height="216" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="973" y="447" width="260" height="216" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M991 447H1215" fill="none" stroke="#ae681e" stroke-width="4" stroke-linecap="round"/>
+<circle cx="1005" cy="485" r="17" fill="#ae681e" opacity=".11"/>
+<text x="1005" y="491" font-size="14" font-weight="700" fill="#ae681e" text-anchor="middle">04</text>
+<text x="1033" y="493" font-size="29" font-weight="700" fill="#11263d" text-anchor="start">Outline</text>
+<text x="995" y="533" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Sections, beats, sources</text>
+<text x="995" y="561" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">An editable structure</text>
+<path d="M995 574H1211" stroke="#e0e7ee"/>
+<text x="995" y="606" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">Change the sequence</text>
+<text x="995" y="633" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">and emphasis</text>
+<path d="M1239 551H1268" fill="none" stroke="#246fc0" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-main)" opacity="1"/>
+<rect x="1276" y="452" width="260" height="216" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="1276" y="447" width="260" height="216" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M1294 447H1518" fill="none" stroke="#b33b75" stroke-width="4" stroke-linecap="round"/>
+<circle cx="1308" cy="485" r="17" fill="#b33b75" opacity=".11"/>
+<text x="1308" y="491" font-size="14" font-weight="700" fill="#b33b75" text-anchor="middle">05</text>
+<text x="1336" y="493" font-size="29" font-weight="700" fill="#11263d" text-anchor="start">Draft</text>
+<text x="1298" y="533" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Your model + passages</text>
+<text x="1298" y="561" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">The chosen mode and voice</text>
+<path d="M1298 574H1514" stroke="#e0e7ee"/>
+<text x="1298" y="606" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">Build the manuscript</text>
+<text x="1298" y="633" font-size="17" font-weight="400" fill="#11263d" text-anchor="start">with relevant context</text>
+<path d="M466 762V710H497V672" fill="none" stroke="#008fa6" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-jev)" stroke-dasharray="7 7" opacity="1"/>
+<path d="M466 710H800V672" fill="none" stroke="#008fa6" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-jev)" stroke-dasharray="7 7" opacity="1"/>
+<text x="88" y="715" font-size="15" font-weight="700" fill="#008fa6" text-anchor="start" letter-spacing="1">OPTIONAL DECISION SUPPORT</text>
+<rect x="64" y="775" width="804" height="231" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="64" y="770" width="804" height="231" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M82 770H850" fill="none" stroke="#008fa6" stroke-width="4" stroke-linecap="round"/>
+<text x="90" y="804" font-size="15" font-weight="700" fill="#008fa6" text-anchor="start" letter-spacing="1.3">JEV  /  TYPED JUDGMENTS</text>
+<text x="90" y="843" font-size="29" font-weight="700" fill="#11263d" text-anchor="start">Spend reasoning where it matters.</text>
+<text x="90" y="879" font-size="20" font-weight="400" fill="#51657b" text-anchor="start">Graph candidates · angle and voice fit · evidence gaps</text>
+<text x="90" y="910" font-size="20" font-weight="400" fill="#51657b" text-anchor="start">Next-step recommendations · revision acceptance checks</text>
+<text x="90" y="967" font-size="18" font-weight="600" fill="#008fa6" text-anchor="start">Compact context. Automatic batching. No raw voice-training pile.</text>
+<path d="M1406 663V762" fill="none" stroke="#b33b75" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-review)" opacity="1"/>
+<text x="1428" y="717" font-size="17" font-weight="400" fill="#b33b75" text-anchor="start">Review</text>
+<path d="M870 875H892" fill="none" stroke="#008fa6" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-jev)" stroke-dasharray="7 7" opacity="1"/>
+<rect x="900" y="775" width="636" height="231" rx="17" fill="#172c43" opacity=".05"/>
+<rect x="900" y="770" width="636" height="231" rx="17" fill="#ffffff" stroke="#cbd7e2" stroke-width="1.4"/>
+<path d="M918 770H1518" fill="none" stroke="#b33b75" stroke-width="4" stroke-linecap="round"/>
+<text x="926" y="804" font-size="15" font-weight="700" fill="#b33b75" text-anchor="start" letter-spacing="1.3">REVIEW, REFINE &amp; APPROVE</text>
+<text x="926" y="843" font-size="29" font-weight="700" fill="#11263d" text-anchor="start">You decide what goes out.</text>
+<text x="926" y="879" font-size="18.5" font-weight="400" fill="#51657b" text-anchor="start">Review · revise · optional Humanize / Deslop</text>
+<text x="926" y="909" font-size="18.5" font-weight="400" fill="#51657b" text-anchor="start">Inspect proposed changes; accept or keep the original</text>
+<text x="926" y="950" font-size="16" font-weight="700" fill="#b33b75" text-anchor="start" letter-spacing="1">APPROVE</text>
+<path d="M1035 944H1091" fill="none" stroke="#b33b75" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow-review)" opacity="1"/>
+<text x="1110" y="952" font-size="25" font-weight="700" fill="#11263d" text-anchor="start">Export</text>
+<text x="926" y="981" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Word · Markdown · HTML · graphs · Science / APA package</text>
+<text x="64" y="1046" font-size="15" font-weight="700" fill="#246fc0" text-anchor="start" letter-spacing="1.2">LOCAL WORKSPACE</text>
+<text x="264" y="1046" font-size="17" font-weight="400" fill="#51657b" text-anchor="start">Sources, graphs, voices, manuscripts and history stay saved in your project environment.</text>
+</g>
+</svg>
