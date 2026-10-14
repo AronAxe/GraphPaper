@@ -3,11 +3,24 @@ import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import subprocess
 import sys
 import tempfile
 import zipfile
+
+
+def extract_archive(archive: Path, target: Path) -> Path:
+    # Windows TEMP may use an 8.3 alias (RUNNER~1). Compare canonical paths on both sides.
+    target = target.resolve()
+    with zipfile.ZipFile(archive) as bundle:
+        for entry in bundle.infolist():
+            name = entry.filename
+            if (PureWindowsPath(name).drive or name.startswith('/') or '\\' in name
+                    or not (target / name).resolve().is_relative_to(target)):
+                raise ValueError('Unsafe ZIP entry: ' + name)
+        bundle.extractall(target)
+    return target
 
 
 def main():
@@ -20,11 +33,7 @@ def main():
     archive=args.archive.resolve();out=args.out.resolve();out.mkdir(parents=True,exist_ok=True)
     with archive.open('rb') as stream:digest=hashlib.file_digest(stream,'sha256').hexdigest()
     with tempfile.TemporaryDirectory(prefix='GraphPaper-downloaded-') as temporary:
-        target=Path(temporary)
-        with zipfile.ZipFile(archive) as bundle:
-            for entry in bundle.infolist():
-                if not (target/entry.filename).resolve().is_relative_to(target):raise ValueError('Unsafe ZIP entry')
-            bundle.extractall(target)
+        target=extract_archive(archive,Path(temporary))
         executable=target/'GraphPaper/GraphPaper.exe'
         assert executable.is_file()
         subprocess.run([sys.executable,str(Path(__file__).with_name('native_smoke.py')),
