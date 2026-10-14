@@ -25,9 +25,11 @@ GraphPaper is a **local-first writing studio for nonfiction, fiction, polemic an
 
 Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argument, the evidence and the final words. **Polemic and argument-led nonfiction preserve your thesis and voice across angle selection, outlining and review.** [Continue an existing project in Polemic](docs/POLEMIC.md).
 
-**External Graphify now supports Codex sign-in and per-model reasoning.** The Windows release includes the public runtime; there is no extra API-key requirement or duplicate Native pass. [Graphify setup and distribution](docs/UPDATE-0.3.1.md)
+**New in 0.7: the System One decision studio.** JEV now guides source selection, graph exploration, targeted intent repair, edit checks and research triage. Inspect its questions, distributions and resulting actions; save reusable corrections and train a local preference ranker on your own feedback. Optional model routing uses only alternatives you approve. [System One controls and validation scope](docs/SYSTEM-ONE.md).
 
-**New in 0.6: the spatial graph studio.** Orbit or flatten your graph, focus its neighborhoods, and edit nodes and connections directly. Ink-blue surfaces and a real scanned graph-paper sidebar. [Explore the graph controls](docs/GRAPH-STUDIO.md).
+**External Graphify supports Codex sign-in and per-model reasoning.** The Windows release includes the public runtime; there is no extra API-key requirement or duplicate Native pass. [Graphify setup and distribution](docs/UPDATE-0.3.1.md)
+
+**The spatial graph studio.** Orbit or flatten your graph, focus its neighborhoods, and edit nodes and connections directly. Ink-blue surfaces and a real scanned graph-paper sidebar. [Explore the graph controls](docs/GRAPH-STUDIO.md).
 
 ## How GraphPaper works
 
@@ -46,7 +48,7 @@ Sources become a navigable graph, then an angle you choose, an outline you can e
 
 **Sources → Graph → Angles → Outline → Write**
 
-Science adds a **Research** desk for scholarly search, screening and evidence appraisal. [Explore the workflows →](docs/README.md)
+Science adds a **Research** desk for scholarly search, screening and evidence appraisal. **System One** makes the decision layer visible across the workflow. [Explore the workflows →](docs/README.md)
 
 ## Open the studio
 
@@ -57,7 +59,7 @@ Science adds a **Research** desk for scholarly search, screening and evidence ap
 
 The portable build needs Microsoft Edge WebView2 and is currently unsigned. Existing projects live separately from the executable. [Windows setup and upgrades →](docs/WINDOWS.md)
 
-**New: reusable voice graphs.** Save a voice once, select it in any project, and keep its training pieces separate. JEV receives compact graph context with automatic request sizing—not the article pile. [Voice graphs and author control](docs/VOICE-GRAPHS.md)
+**Reusable voice graphs.** Save a voice once, select it in any project, and keep its training pieces separate. JEV receives compact graph context with automatic request sizing—not the article pile. [Voice graphs and author control](docs/VOICE-GRAPHS.md)
 
 ## What makes it useful
 
@@ -71,7 +73,7 @@ The portable build needs Microsoft Edge WebView2 and is currently unsigned. Exis
 ## Inside GraphPaper
 
 ![GraphPaper 0.6 spatial graph studio with real graph-paper sidebar](docs/images/graph-studio-v0.6.webp)
-*Actual v0.6 interface: the included illustrative project, spatial graph controls and colored connections. [Visual tour and capture provenance](docs/VISUAL-TOUR.md).*
+*Actual v0.6 capture of the spatial graph workspace retained in v0.7. [Visual tour and capture provenance](docs/VISUAL-TOUR.md).*
 
 <details>
 <summary><strong>Science, writing and reusable voice graphs — v0.6 screenshots</strong></summary>
@@ -96,7 +98,7 @@ A graph suggests connections; it does not prove them. Science keeps capped searc
 
 ## Documentation and development
 
-[Getting started](docs/GETTING-STARTED.md) · [Project folders](docs/PROJECTS-AND-SOURCES.md) · [Author voice](docs/VOICE-AND-PROSE.md) · [Graph and JEV](docs/GRAPH-AND-JEV.md) · [Exports and APA](docs/EXPORTS-AND-APA.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)
+[Getting started](docs/GETTING-STARTED.md) · [System One](docs/SYSTEM-ONE.md) · [Project folders](docs/PROJECTS-AND-SOURCES.md) · [Author voice](docs/VOICE-AND-PROSE.md) · [Graph and JEV](docs/GRAPH-AND-JEV.md) · [Exports and APA](docs/EXPORTS-AND-APA.md) · [Troubleshooting](docs/TROUBLESHOOTING.md)
 
 For implementation details, tests and builds, see the [developer guide](docs/DEVELOPMENT.md) and [architecture](docs/ARCHITECTURE.md). Recorded release validation is separate from the live CI badge: [test reports and scope](docs/QUALITY.md).
 

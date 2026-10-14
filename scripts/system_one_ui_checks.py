@@ -20,10 +20,12 @@ def exercise(page,check,out,native=False):
             'angle_policies':{'a1':{'eligible':True,'action':'ready','reasons':['The proposal preserves the requested argument.']}}}}
     pid=page.evaluate('async (data) => {const p=await api("/import",data);await setProject(p);return p.id;}',fixture)
     page.locator('[data-action="s1-open"]').click();page.wait_for_selector('.s1-desk')
+    expect(page.get_by_role('heading',name='Fast judgments. Your decisions.',exact=True)).to_be_visible()
     expect(page.get_by_text('96% yes',exact=True)).to_be_visible();expect(page.get_by_text('synthetic fixture — not live JEV',exact=True)).to_be_visible()
     check('System One desk renders typed probabilities and identifies synthetic test material')
     page.locator('[data-action="s1-reject"]').click();page.locator('#s1-correction').fill('Keep my categorical conclusion and comic timing.')
     page.locator('[data-action="s1-save-feedback"]').click();expect(page.locator('.modal')).to_have_count(0)
+    expect(page.locator('.s1-stats > div').nth(3).locator('b')).to_have_text('1')
     assert page.evaluate('() => s1UI.data.feedback[0].label')==0
     assert 'categorical' in page.evaluate('() => s1UI.data.feedback[0].correction')
     check('An explicit author correction persists without rewriting the manuscript')

@@ -25,38 +25,19 @@ jobs:
       revision: ${{ steps.source.outputs.revision }}
     steps:
       - uses: actions/checkout@v4
-      - name: Apply reviewed integration delta and record the exact release source
+      - name: Refresh the source manifest without changing application code or workflows
         id: source
         env:
           TARGET_BRANCH: ${{ github.ref_name }}
         run: |
           set -eu
-          python - <<'PY'
-          from pathlib import Path
-          import hashlib,json,subprocess,os
-          patch=Path('.github/system-one-integration.patch')
-          if patch.exists():
-              assert os.environ['TARGET_BRANCH']=='feat/system-one-v0.7'
-              manifest=Path('.github/system-one-source.json')
-              expected=json.loads(manifest.read_text())
-              assert hashlib.sha256(patch.read_bytes()).hexdigest()==expected['patch_sha256'],'Integration patch transfer mismatch'
-              for name,digest in expected['before'].items():
-                  assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==digest,'Baseline changed: '+name
-              subprocess.run(['git','apply','--unidiff-zero','--check',str(patch)],check=True)
-              subprocess.run(['git','apply','--unidiff-zero',str(patch)],check=True)
-              for name,digest in expected['after'].items():
-                  assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==digest,'Integrated source mismatch: '+name
-              patch.unlink();manifest.unlink()
-              print('All integrated source files match the locally tested implementation.')
-          PY
-          git add graphpaper ui scripts tests docs pyproject.toml .github/system-one-* 2>/dev/null || git add -u
           python scripts/prepare_assets.py --manifest
           git add publish-manifest.json
           if ! git diff --cached --quiet; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git diff --cached --check
-            git commit -m 'Integrate verified System One source and refresh publishing manifest'
+            git commit -m 'Refresh System One source publishing manifest'
             git push origin "HEAD:$TARGET_BRANCH"
           fi
           echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
