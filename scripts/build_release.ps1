@@ -10,7 +10,7 @@ python scripts/prepare_graphify.py
 if ($LASTEXITCODE -ne 0) { throw 'Public Graphify runtime verification failed.' }
 python scripts/runtime_manifest.py
 if ($LASTEXITCODE -ne 0) { throw 'Runtime manifest generation failed.' }
-python -m PyInstaller --noconfirm --clean --windowed --onedir --name GraphPaper --paths . --additional-hooks-dir scripts/hooks --icon ui/graphpaper.ico --add-data 'ui;ui' --add-data 'vendor;vendor' --collect-all webview --collect-all pythonnet --collect-all clr_loader scripts/desktop_entry.py
+python -m PyInstaller --noconfirm --clean --noupx --windowed --onedir --name GraphPaper --paths . --additional-hooks-dir scripts/hooks --icon ui/graphpaper.ico --add-data 'ui;ui' --add-data 'vendor;vendor' --collect-all webview --collect-all pythonnet --collect-all clr_loader scripts/desktop_entry.py
 if ($LASTEXITCODE -ne 0) { throw 'Windows desktop build failed.' }
 python scripts/runtime_manifest.py --verify dist/GraphPaper/_internal
 if ($LASTEXITCODE -ne 0) { throw 'Frozen runtime checksum verification failed.' }
