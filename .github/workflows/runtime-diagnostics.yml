@@ -1,0 +1,46 @@
+name: Diagnose downloaded Windows runtime
+on:
+  push:
+    branches: [fix/windows-runtime-v0.7.1]
+    paths: ['.github/workflows/runtime-diagnostics.yml']
+permissions:
+  contents: read
+jobs:
+  diagnostics:
+    runs-on: windows-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install "pywebview>=6,<7"
+      - name: Compare the same Python.Runtime.dll before and after an Internet-zone tag
+        shell: python
+        run: |
+          import importlib.metadata as md, json, pathlib, subprocess, sys
+          root=pathlib.Path('test-results/runtime-diagnostics'); root.mkdir(parents=True,exist_ok=True)
+          dist=md.distribution('pythonnet')
+          dll=pathlib.Path(dist.locate_file('pythonnet/runtime/Python.Runtime.dll'))
+          assert dll.is_file()
+          tag=pathlib.Path(str(dll)+':Zone.Identifier')
+          def probe():
+              p=subprocess.run([sys.executable,'-c','import clr; print("Python.NET initialized")'],capture_output=True,text=True,timeout=45)
+              return {'returncode':p.returncode,'stdout':p.stdout,'stderr':p.stderr}
+          report={'versions':{name:md.version(name) for name in ('pywebview','pythonnet','clr_loader')},'plain':probe()}
+          try:
+              tag.write_text('[ZoneTransfer]\nZoneId=3\nHostUrl=https://github.com/AronAxe/GraphPaper/releases/\n',encoding='utf-8')
+              report['internet_marked']=probe()
+          finally:
+              tag.unlink(missing_ok=True)
+          report['unblocked']=probe()
+          report['reproduced']=report['plain']['returncode']==0 and report['internet_marked']['returncode']!=0 and 'Python.Runtime.Loader.Initialize' in report['internet_marked']['stderr'] and report['unblocked']['returncode']==0
+          (root/'report.json').write_text(json.dumps(report,indent=2),encoding='utf-8')
+          print(json.dumps(report,indent=2))
+          subprocess.run(['git','archive','--format=zip','HEAD','-o',str(root/'source.zip')],check=True)
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-investigation
+          path: test-results/runtime-diagnostics/
+          retention-days: 3
