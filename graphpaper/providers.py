@@ -114,7 +114,13 @@ class Clients:
         raise ProviderError("Provider retry limit reached")
 
     def complete(self, system: str, user: str, *, role="writer", json_mode=False, max_tokens=None) -> str | dict:
+        from .s1_routing import prepare_call
+        system,user,routed=prepare_call(self,system,user,role)
         s = self.settings
+        if routed and routed['model']:
+            model_field={'editor':'editor_model','extraction':'extraction_model'}.get(role,'model')
+            effort_field={'editor':'editor_reasoning_effort','extraction':'extraction_reasoning_effort'}.get(role,'reasoning_effort')
+            s=s.model_copy(update={model_field:routed['model'],effort_field:routed['effort']})
         model = {"editor": s.editor_model, "extraction": s.extraction_model}.get(role) or s.model
         if not model.strip() and s.provider != "codex":
             raise ProviderError("Choose a writing model in Connections. Model IDs are configurable; GraphPaper does not silently substitute one.")

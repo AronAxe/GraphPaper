@@ -46,7 +46,17 @@ class ScriptedClients:
             return None
         self._record("JEV")
         self.calls.append(("decide", state, questions))
-        return {k: {"type": q["type"], **({"noul": .1 if "spurious" in k or k == "needs_research" else .85} if q["type"] == "noul" else {"choice": "author_review" if "author_review" in q["criteria"] else next(iter(q["criteria"]))})} for k, q in questions.items()}
+        answers={}
+        negative=('spurious','needs_research','added_allegation','irrelevant_caveat','meaning_drift','lost_reasoning','canon_conflict','knowledge_conflict','motivation_conflict','repetitive','material_issue','contradiction','overclaim')
+        for k,q in questions.items():
+            if q['type']=='noul':answers[k]={'type':'noul','noul':.1 if any(t in k for t in negative) else .85}
+            elif q['type']=='choice':
+                chosen='author_review' if 'author_review' in q['criteria'] else 'uncertain' if 'uncertain' in q['criteria'] else next(iter(q['criteria']))
+                answers[k]={'type':'choice','choice':chosen,'probabilities':{v:float(v==chosen) for v in q['criteria']},'confidence':1}
+            else:
+                keys=list(map(str,range(len(q['criteria']))))
+                answers[k]={'type':'score','score':len(keys)-1,'legend':dict(zip(keys,q['criteria'])),'probabilities':{v:float(v==keys[-1]) for v in keys},'confidence':1}
+        return answers
 
     def complete(self, system, user, *, role="writer", json_mode=False, max_tokens=None):
         self._record(role)

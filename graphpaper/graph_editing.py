@@ -15,7 +15,7 @@ from .storage import Conflict
 
 class Edit(Model):
     version: int = Field(ge=0)
-    operation: Literal['node','edge','delete-node','delete-edge']
+    operation: Literal['node','edge','delete-node','delete-edge','merge-nodes']
     id: str | None = Field(None,max_length=1000)
     values: dict = Field(default_factory=dict)
 
@@ -83,6 +83,23 @@ def install(app,store,runner):
             if node:nodes[item.id]=item
             else:edges[item.id]=item
             selected=item.id
+        elif raw.operation=='merge-nodes':
+            if set(v)!={'into'} or not isinstance(v['into'],str):raise ValueError('Choose the surviving node ID.')
+            if raw.id not in nodes or v['into'] not in nodes or raw.id==v['into']:raise ValueError('Choose two distinct existing nodes.')
+            old=nodes[raw.id];keep=nodes[v['into']]
+            # Only the author can apply this identity decision. Keep every anchor.
+            keep.evidence=list({(e.source_id,e.quote):e for e in keep.evidence+old.evidence}.values())
+            keep.source_ids=list(dict.fromkeys(keep.source_ids+old.source_ids))
+            description=keep.description+'\n'+old.description if old.description and old.description!=keep.description else keep.description
+            if len(description)>4000:raise ValueError('Combined notes exceed 4,000 characters; edit them before merging. Nothing was clipped.')
+            keep.description=description;keep.status='proposed'
+            for edge in edges.values():
+                if edge.source==raw.id:edge.source=keep.id;edge.status='proposed'
+                if edge.target==raw.id:edge.target=keep.id;edge.status='proposed'
+            del nodes[raw.id]
+            p.brief.pinned_nodes=list(dict.fromkeys(keep.id if n==raw.id else n for n in p.brief.pinned_nodes))
+            p.brief.excluded_nodes=list(dict.fromkeys(keep.id if n==raw.id else n for n in p.brief.excluded_nodes))
+            selected=keep.id
         else:
             if v:raise ValueError('Deletion does not accept replacement fields.')
             if raw.operation=='delete-node':

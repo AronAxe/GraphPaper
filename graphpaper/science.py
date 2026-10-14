@@ -87,6 +87,8 @@ def search_literature(p,clients,store,job):
                 log={'database':db,'query':selected,'searched_at':now(),'status':'failed','error':str(exc)[:600],'retrieved':0,'id':'q_'+digest(selected+db+now())[:16]}
             p.research.searches.append(log);p.research.searches=p.research.searches[-300:]
             complete+=1
+    from .s1_science import screen
+    screen(p,clients)
     mark_changed(p)
     good=sum(x['status']=='ok' for x in p.research.searches[-total:])
     job.note(f'{good}/{total} database searches completed; {len(p.research.records)} unique records in this project. Review failures, limits and screening decisions in Research.',95)
@@ -96,7 +98,8 @@ def http_errors():
     return httpx.HTTPError
 
 def fetch_fulltexts(p,clients,store,job):
-    targets=[r for r in included(p) if r.metadata.content_scope!='full_text'][:30]
+    from .s1_science import prioritize_fulltexts
+    targets=prioritize_fulltexts(p,clients,[r for r in included(p) if r.metadata.content_scope!='full_text'])[:30]
     net=getattr(clients,'scholarly_factory',ScholarlyClient)(getattr(clients,'vault',None),job)
     if not targets:raise ValueError('Include papers that need full text first.')
     for i,r in enumerate(targets):
@@ -143,6 +146,8 @@ def appraise(p,clients,store,job):
         r.appraisal={k:raw.get(k,'' if k!='limitations' else []) for k in ['summary','design','sample','findings','limitations','contrary_evidence','appraisal_note']}
         r.appraisal.update({'claims':claims,'scope':r.metadata.content_scope,'coverage':coverage,'appraised_at':now()})
         r.appraisal_source_hash=s.digest
+    from .s1_science import check_appraisals
+    check_appraisals(p,clients)
     mark_changed(p);job.note('Evidence matrix ready. Exact quote matches verify attribution, not scientific validity.',95)
 
 def evidence_pack(p,budget=46000):
