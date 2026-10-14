@@ -50,7 +50,9 @@ def test_unmarked_runtime_does_not_prompt(tmp_path):
 
 
 def test_corrupt_assembly_is_not_unblocked(tmp_path):
-    mod=runtime();root,path,hashes=bundle(tmp_path);tag(path).write_text('ZoneId=3');path.write_bytes(b'changed')
+    mod=runtime();root,path,hashes=bundle(tmp_path);path.write_bytes(b'changed');tag(path).write_text('ZoneId=3')
+    # Truncating the primary stream can remove Windows ADS: mark the replaced fixture afterward.
+    assert tag(path).exists()
     with pytest.raises(mod.RuntimePackageError,match='match'):mod.repair_bundle(root,hashes,lambda _:pytest.fail('Do not ask to trust mismatched files'))
     assert tag(path).exists()
 
@@ -72,7 +74,11 @@ def test_symlink_not_followed(tmp_path):
 
 def test_changed_during_consent_is_rechecked(tmp_path):
     mod=runtime();root,path,hashes=bundle(tmp_path);tag(path).write_text('ZoneId=3')
-    def consent(_):path.write_bytes(b'changed while dialog was open');return True
+    def consent(_):
+        path.write_bytes(b'changed while dialog was open')
+        tag(path).write_text('ZoneId=3')
+        assert tag(path).exists()
+        return True
     with pytest.raises(mod.RuntimePackageError,match='match'):mod.repair_bundle(root,hashes,consent)
     assert tag(path).exists()
 
