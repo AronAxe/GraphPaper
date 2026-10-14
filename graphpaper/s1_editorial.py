@@ -29,6 +29,9 @@ def angle_questions(item=None):
 
 def assess_angles(p,clients,evidence=None):
     items=[]
+    if evidence is None:
+        from .pipeline import source_pack
+        evidence={a.id:source_pack(p,a.thesis,9000,a.source_ids)['passages'] for a in p.angles}
     for a in p.angles:
         item={'id':a.id,'title':a.title,'thesis':a.thesis,'hook':a.hook,'evidence':(evidence or {}).get(a.id,[]),
               'source_ids':a.source_ids,'evaluation_questions':p.system_one.get('angle_tests',{}).get(a.id,[])}

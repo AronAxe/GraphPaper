@@ -214,6 +214,10 @@ not copies of private source text. No inference occurs from opening the UI.
         if not items or not specifications:return {}
         if not self.enabled:return {}
         context=dict(context or {})
+        if self.project is not None and self.store and getattr(self.clients.settings,'system_one_learning',True):
+            from .s1_learning import guidance
+            corrections=guidance(self.project,self.store)
+            if corrections:context['author_corrections']=corrections
         from .jev_budget import compact_state
         context=compact_state(context)
         material={'policy':POLICY_VERSION,**context,'candidates':items,
@@ -236,7 +240,16 @@ not copies of private source text. No inference occurs from opening the UI.
         job=getattr(self.clients,'job',None)
         try:
             if answers is None:
-                if job and self.clients.settings.max_calls-job.usage['calls']<=reserve:
+                required_calls=1
+                if job:
+                    from .jev_budget import plan,Unrepresentable
+                    bare=alias.removeprefix('~typesafe/').removeprefix('typesafe/')
+                    wire_model=('~typesafe/jev-latest' if bare=='jev-latest' else 'typesafe/'+bare) if self.clients.jev_route()=='openrouter' else bare
+                    try:required_calls=len(plan(material,questions,wire_model))
+                    except Unrepresentable:
+                        self.record(stage,'unscored',stamp,questions,{},0,reason='The focused decision cannot fit the request budget without clipping context.')
+                        return {}
+                if job and self.clients.settings.max_calls-job.usage['calls']-required_calls<reserve:
                     self.record(stage,'budget_exhausted',stamp,questions,{},0,reason='Reserved requests for the author’s writing task.')
                     return {}
                 answers=self.clients.decide(material,questions)

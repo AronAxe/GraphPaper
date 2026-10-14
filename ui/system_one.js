@@ -6,7 +6,7 @@ projectHTML=function(){return state.tab==='system-one'?s1HTML():s1PreviousProjec
 const s1PreviousRender=render;
 render=function(){
  s1PreviousRender();
- const footer=$('.sidebar-footer .tiny');if(footer&&footer.textContent.includes('GraphPaper'))footer.textContent='GraphPaper · 0.7.0';
+ const footer=$('.side-bottom .tiny');if(footer&&footer.textContent.includes('GraphPaper'))footer.textContent='GraphPaper · 0.7.0';
  if(state.p){const nav=$('.nav-section');if(nav&&!$('[data-action="s1-open"]',nav))nav.insertAdjacentHTML('beforeend',`<button class="nav-link ${state.tab==='system-one'?'active':''}" data-action="s1-open">${icon('branch')}System One<span class="spacer"></span><span class="s1-dot"></span></button>`);}
 };
 function s1Percent(n){return Number.isFinite(Number(n))?Math.round(Number(n)*100)+'%':'—';}

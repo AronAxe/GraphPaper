@@ -44,4 +44,6 @@ def scene_check(p,clients,scene,previous_ledger,previous_scene=''):
     problems=[k for k in qs if probability(a,k,0)>=YES]
     p.system_one.setdefault('continuity',[]).append({'scene_hash':__import__('hashlib').sha256(scene.encode()).hexdigest(),'answers':a,'problems':problems})
     p.system_one['continuity']=p.system_one['continuity'][-40:]
-    return problems
+    if problems:return problems
+    # A missing or uncertain check is not evidence that a repair succeeded.
+    return [] if len(a)==len(qs) and all(probability(a,k)<=1-YES for k in qs) else None

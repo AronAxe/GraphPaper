@@ -400,7 +400,7 @@ def write_draft(p: Project, clients: Clients, store: Store, job: Job):
                 candidate=clients.complete(editorial_system(p,'draft'),dumps({'task':'Repair only the identified continuity or dramatic repetition problems in this scene. Preserve the narrator, voice, events that do not conflict, moral ambiguity and intended ending. Return the scene only.',
                     'scene':text,'identified_checks':problems,'canon':p.brief.canon,'ledger':ledger,'section':section.model_dump(),**editorial_context(p)}))
                 remaining=scene_check(p,clients,candidate,ledger,draft_sections[-1] if draft_sections else '')
-                if not remaining:text=candidate
+                if remaining == []:text=candidate
                 else:job.note('Kept the original scene: targeted continuity repair still needs author review.')
         draft_sections.append(("## " + section.title + "\n\n" if p.mode != "fiction" else "") + text)
         # Recoverable checkpoints never replace the current editor document.
