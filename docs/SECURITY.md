@@ -56,3 +56,7 @@ The Windows release bundles an official Codex runtime with version and checksum 
 Before sharing a log, screenshot or project, remove credentials, confidential writing and personal data. Report ordinary reproducible defects through [Issues](https://github.com/AronAxe/GraphPaper/issues). Use an established private contact route to the repository maintainer for a security-sensitive report; do not publish active credentials or an exploit against someone’s live installation.
 
 This documentation describes implemented safeguards and their limits, not a formal penetration-test certification. [Validation scope →](QUALITY.md)
+
+## Downloaded Windows runtime files
+
+The v0.7.1 frozen build embeds an allowlist of exact DLL paths and SHA-256 hashes for Python.NET, clr-loader and pywebview. The desktop startup checks files against it and asks explicit native consent before removing Internet/Restricted-zone alternate-stream marks. It rejects missing, changed, traversing, linked or junction-backed runtime paths and rechecks after the dialog. It never recursively unblocks the application directory, changes global .NET trust, disables antivirus, or unblocks project sources. Checksums establish consistency with the already-launched executable, not publisher authentication. The unsigned-release trust decision remains with the user.

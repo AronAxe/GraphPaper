@@ -2,7 +2,7 @@
 
 **Connect your sources. Find your angle. Write in your own voice.**
 
-These guides cover **GraphPaper 0.7.0**: the System One decision studio, ink-blue interface, real graph-paper sidebar, spatial graph editor, four writing modes and reusable voice graphs. [Download for Windows](https://github.com/AronAxe/GraphPaper/releases/latest) · [System One guide](SYSTEM-ONE.md) · [See the interface](VISUAL-TOUR.md) · [Version history](../CHANGELOG.md).
+These guides cover **GraphPaper 0.7.1**: the System One decision studio, ink-blue interface, real graph-paper sidebar, spatial graph editor, four writing modes and reusable voice graphs. [Download for Windows](https://github.com/AronAxe/GraphPaper/releases/latest) · [System One guide](SYSTEM-ONE.md) · [See the interface](VISUAL-TOUR.md) · [Version history](../CHANGELOG.md).
 
 ## Start here
 

@@ -1,0 +1,23 @@
+{
+  "versions": {
+    "pywebview": "6.2.1",
+    "pythonnet": "3.2.1",
+    "clr_loader": "0.3.1"
+  },
+  "plain": {
+    "returncode": 0,
+    "stdout": "Python.NET initialized\n",
+    "stderr": ""
+  },
+  "internet_marked": {
+    "returncode": 1,
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\clr.py\", line 6, in <module>\n    load()\n  File \"C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\pythonnet\\__init__.py\", line 143, in load\n    func = assembly.get_function(\"Python.Runtime.Loader.Initialize\")\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\clr_loader\\types.py\", line 95, in get_function\n    return ClrFunction(self._runtime, self._path, name, func)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\clr_loader\\types.py\", line 59, in __init__\n    self._callable = runtime._get_callable(assembly, typename, func_name)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\clr_loader\\netfx.py\", line 47, in _get_callable\n    raise RuntimeError(\nRuntimeError: Failed to resolve Python.Runtime.Loader.Initialize from C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\Lib\\site-packages\\pythonnet\\runtime\\Python.Runtime.dll\n"
+  },
+  "unblocked": {
+    "returncode": 0,
+    "stdout": "Python.NET initialized\n",
+    "stderr": ""
+  },
+  "reproduced": true
+}

@@ -18,6 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--executable',type=Path)
+    parser.add_argument('--downloaded-runtime',action='store_true',help='Hosted-only: simulate Internet-zone tags and exercise native repair consent')
     parser.add_argument('--trace-source',action='store_true',help='Capture Python thread stacks for this isolated source test only')
     parser.add_argument('--science',action='store_true',help='Exercise the Science workspace in the actual native shell')
     parser.add_argument('--graphify',action='store_true',help='Verify the actual external Graphify action using a synthetic loopback model')
@@ -57,6 +58,18 @@ def main():
             command=[str(Path(sys.base_prefix)/'python.exe'),'-c',trace_code]
         env['PYTHONPATH']=os.pathsep.join([str(ROOT),*sys.path])
     report['debugger_configuration']='explicit isolated hosted test option' if hosted else 'WebView2 environment'
+    if args.downloaded_runtime:
+        if not hosted or not args.executable:
+            raise ValueError('Downloaded-runtime regression requires an isolated GitHub-hosted packaged build.')
+        internal=args.executable.resolve().parent/'_internal'
+        mark='[ZoneTransfer]\nZoneId=3\nHostUrl=https://github.com/AronAxe/GraphPaper/releases/\n'
+        marked_dlls=list(internal.rglob('*.dll'))
+        for dll in marked_dlls:Path(str(dll)+':Zone.Identifier').write_text(mark,encoding='utf-8')
+        sentinel=internal/'unrelated-regression-fixture.dll';sentinel.write_bytes(b'Not a loaded assembly')
+        Path(str(sentinel)+':Zone.Identifier').write_text(mark,encoding='utf-8')
+        document=data/'author-words.txt';document.write_text('Private project sentinel',encoding='utf-8')
+        Path(str(document)+':Zone.Identifier').write_text(mark,encoding='utf-8')
+        report['downloaded_runtime']={'simulated_dll_marks':len(marked_dlls),'native_consent':True}
     log=(out/'native.log').open('w',encoding='utf-8')
     proc=subprocess.Popen(command,cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT)
     def windows(parent=None):
@@ -86,13 +99,33 @@ def main():
             time.sleep(.1)
         raise AssertionError('Native test condition did not become true')
     try:
+        if args.downloaded_runtime:
+            def permission_dialog():
+                return next((w for w in windows() if w['visible'] and w['title']=='GraphPaper runtime permission'),None)
+            dialog=wait_test(permission_dialog,30)
+            u.PostMessageW(dialog['hwnd'],0x111,7,0)  # Real Win32 No button command.
+            proc.wait(timeout=10)
+            assert proc.returncode==0
+            assert Path(str(internal/'pythonnet/runtime/Python.Runtime.dll')+':Zone.Identifier').exists()
+            assert not (data/'studio.sqlite3').exists()
+            check('Declining runtime permission exits without unblocking DLLs or opening project storage')
+            proc=subprocess.Popen(command,cwd=ROOT,env=env,stdout=log,stderr=subprocess.STDOUT)
+            dialog=wait_test(permission_dialog,30)
+            u.PostMessageW(dialog['hwnd'],0x111,6,0)  # Real Win32 Yes button command.
+            check('Native downloaded-runtime repair requires and accepts explicit author consent')
         def cdp_ready():
             if proc.poll() is not None:raise AssertionError(f'Native application exited during startup: {proc.returncode}')
             try:
                 with urlopen(f'http://127.0.0.1:{port}/json',timeout=1) as r:targets=json.load(r)
                 return any(t.get('url','').startswith('http://127.0.0.1:') for t in targets)
             except OSError:return False
-        wait_test(cdp_ready,25)
+        wait_test(cdp_ready,45)
+        if args.downloaded_runtime:
+            assert not Path(str(internal/'pythonnet/runtime/Python.Runtime.dll')+':Zone.Identifier').exists()
+            assert Path(str(sentinel)+':Zone.Identifier').exists()
+            assert Path(str(document)+':Zone.Identifier').exists()
+            assert document.read_text(encoding='utf-8')=='Private project sentinel'
+            check('Verified bundled runtime is unblocked while unrelated DLLs and author documents keep their download marks')
         native=wait_test(lambda:next((w for w in windows() if w['visible'] and w['title'].startswith('GraphPaper')),None))
         hwnd=native['hwnd'];responsive(hwnd);check('Actual Windows/WebView2 window starts and responds to Windows messages')
         with sync_playwright() as pw:

@@ -129,6 +129,9 @@ def run(browser: bool = False):
     root = data_directory()
     root.mkdir(parents=True, exist_ok=True)
     logging.basicConfig(filename=str(root / "desktop.log"), level=logging.WARNING)
+    if not browser:
+        from .windows_runtime import prepare
+        prepare()
     app = create_app(root)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # Keep the ephemeral listener open until handed to uvicorn (no port-selection race).
@@ -225,15 +228,18 @@ def main():
     if args.self_test:
         self_test(args.self_test)
         return
+    from .windows_runtime import RepairDeclined, startup_advice
     try:
         run(args.browser)
+    except RepairDeclined:
+        return
     except Exception as e:
         logging.exception("GraphPaper could not start")
         try:
             import tkinter as tk
             from tkinter import messagebox
             root = tk.Tk(); root.withdraw()
-            messagebox.showerror("GraphPaper could not open", f"{e}\n\nOn Windows, install Microsoft Edge WebView2 Runtime.\nDetails are in GraphPaper's local desktop.log.")
+            messagebox.showerror("GraphPaper could not open", f"{e}\n\n{startup_advice(e)}\nDetails: {data_directory() / 'desktop.log'}")
             root.destroy()
         except Exception:
             print(f"GraphPaper could not start: {e}", file=sys.stderr)
