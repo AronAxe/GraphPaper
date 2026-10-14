@@ -86,7 +86,7 @@ class DesktopBridge:
     def save_export(self, project_id: str, kind: str):
         try:
             import webview
-            if kind not in {"md", "docx", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission", "voice"}:
+            if kind not in {"md", "docx", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission", "voice", "system-one"}:
                 return {"error": "Unknown export type"}
             if kind == 'voice':
                 from .voice_library import VoiceLibrary
@@ -98,7 +98,13 @@ class DesktopBridge:
                 ext='.json';title=v.profile.name
             else:
                 p = self._store.get(project_id)
-                data, _, ext = export(p, kind)
+                if kind == 'system-one':
+                    import json
+                    from .s1_learning import evaluation_export
+                    data=json.dumps(evaluation_export(self._store,p),ensure_ascii=False,indent=2).encode('utf-8')
+                    ext='.system-one.json'
+                else:
+                    data, _, ext = export(p, kind)
                 title=p.title
             stem = re.sub(r'[^\w\s.-]', '', title).strip()[:80] or "GraphPaper"
             result = self._window.create_file_dialog(

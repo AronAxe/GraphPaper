@@ -318,7 +318,12 @@ def create_app(root=None):
     @app.get("/api/projects/{pid}/export/{kind}")
     def get_export(pid: str, kind: str):
         p = store.get(pid)
-        data, media, ext = export(p, kind)
+        if kind == 'system-one':
+            from .s1_learning import evaluation_export
+            data=json.dumps(evaluation_export(store,p),ensure_ascii=False,indent=2).encode('utf-8')
+            media,ext='application/json','.system-one.json'
+        else:
+            data, media, ext = export(p, kind)
         stem = re.sub(r"[^a-zA-Z0-9_-]+", "-", p.title).strip("-")[:80] or "GraphPaper"
         return Response(data, media_type=media, headers={"Content-Disposition": f'attachment; filename="{stem}{ext}"'})
 
@@ -360,5 +365,7 @@ def create_app(root=None):
     install_science(app, store, vault, runner, settings)
     from .graph_editing import install as install_graph_editing
     install_graph_editing(app, store, runner)
+    from .s1_routes import install as install_system_one
+    install_system_one(app,store,runner,settings)
     app.mount("/static", StaticFiles(directory=asset_directory()), name="static")
     return app

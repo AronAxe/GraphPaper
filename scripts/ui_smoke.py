@@ -129,7 +129,10 @@ def main():
                 pid=page.evaluate('state.p.id')
                 page.get_by_role('button',name='Build graph',exact=True).click();page.wait_for_selector('#graph-svg');wait_for_completion(page)
                 page.get_by_role('button',name='Discover angles',exact=True).click();page.wait_for_selector('.angle-card');wait_for_completion(page)
-                assert '85 / 100' in page.locator('.angle-score').first.inner_text()
+                assert '100 / 100' in page.locator('.angle-score').first.inner_text()
+                result=client.get('/api/projects/'+pid).json()
+                assert result['system_one']['angle_policies'][result['angles'][0]['id']]['action']=='ready'
+                assert any(a.get('type')=='score' for d in result['system_one']['decisions'] for a in d['answers'].values())
                 page.get_by_role('button',name='Take this angle',exact=True).first.click()
                 page.get_by_role('button',name='Develop outline',exact=True).click();page.wait_for_selector('.outline-section');wait_for_completion(page)
                 page.get_by_role('button',name='Write draft',exact=True).first.click();wait_for_completion(page, 'draft');page.wait_for_selector('#manuscript')

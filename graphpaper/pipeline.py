@@ -166,28 +166,15 @@ def make_angles(p: Project, clients: Clients, job: Job):
                 c['source_context'].append({'source_id':sid,'role':source.role,'text':source.text[start:start+1000],
                     'scope':'Retrieved source excerpt, not proof that the proposed relationship follows.'})
     job.note(f"Discovered {len(candidates)} diverse paths and motifs.", 10)
-    for offset in range(0, len(candidates), 4):
-        batch = candidates[offset:offset + 4]
-        state = {"mode": p.mode, "brief": p.brief.model_dump(), "candidates": [compact_motif(c) for c in batch], **judge_context}
-        questions = {}
-        for i, c in enumerate(batch):
-            for key, question in {
-                "valuable": "Could this candidate sustain a distinctive, compelling piece in the requested genre and author voice, rather than a neutralized substitute?",
-                "grounded": "Are the empirical premises anchored to supplied evidence or canon? Do not demand experimental proof for a value judgment or mistake an explicit analogy for a claim of causal identity.",
-                "fit": "Does this candidate serve the author's actual thesis and direction without replacing a judgment with an unresolved question or a more moderate position?",
-                "spurious": "Does this candidate invent an empirical or causal connection? Assess facts separately from values; a bold moral judgment or explicitly rhetorical analogy is not a spurious factual claim merely because it is forceful.",
-            }.items():
-                questions[f"c{i}_{key}"] = {"type": "noul", "instructions": f"Evaluate candidate {c['id']} only. {question}"}
-        answers = clients.decide(state, questions)
-        for i, c in enumerate(batch):
-            if answers:
-                c["scores"] = {key: answers[f"c{i}_{key}"]["noul"] for key in ["valuable", "grounded", "fit", "spurious"]}
-                sc = c["scores"]
-                c["priority"] = sc["valuable"] * 0.4 + sc["fit"] * 0.3 + sc["grounded"] * 0.2 + (1 - sc["spurious"]) * 0.1
-            else:
-                c["priority"] = c["structural_rank"]
-        job.note(f"{'JEV inspected' if answers else 'Structurally explored (unscored)'} {min(offset + 4, len(candidates))}/{len(candidates)} motifs.", 15 + int(45 * (offset + len(batch)) / len(candidates)))
-    ranked = sorted(candidates, key=lambda x: x["priority"], reverse=True)
+    from .s1_graph import assess_motifs, explore
+    from .system_one import Engine
+    if Engine(clients).enabled:
+        ranked = assess_motifs(p, clients, candidates)
+        ranked = explore(p, clients, ranked)
+        candidates = ranked
+    else:
+        ranked = sorted(candidates, key=lambda x:x['structural_rank'], reverse=True)
+    job.note('Graph opportunities ranked. Authorial fidelity is assessed separately from craft.', 55)
     selected = []
     counts = defaultdict(int)
     for c in ranked:
@@ -207,24 +194,25 @@ def make_angles(p: Project, clients: Clients, job: Job):
         if not refs or not a.get("title") or not a.get("thesis"):
             continue
         angle = Angle(title=str(a["title"])[:300], thesis=str(a["thesis"])[:4000], hook=str(a.get("hook", ""))[:2000], why=str(a.get("why", ""))[:2500], counterargument=str(a.get("counterargument", ""))[:2500], questions=[str(q)[:500] for q in a.get("questions", [])[:8]], motif=" + ".join(dict.fromkeys(c["motif"] for c in refs)), node_ids=list(dict.fromkeys(n for c in refs for n in c["node_ids"])), edge_ids=list(dict.fromkeys(e for c in refs for e in c["edge_ids"])), source_ids=sorted({s for c in refs for s in c["source_ids"]}))
-        state = {"brief": p.brief.model_dump(), "mode": p.mode, "angle": angle.model_dump(), "evidence": [compact_motif(c) for c in refs], **judge_context}
-        qs = {"editorial_potential": {"type": "noul", "instructions": "Is this a coherent, compelling angle that fulfills this author's intended argument and voice, without compulsory balance or a generic restatement?"}, "evidence_fit": {"type": "noul", "instructions": "Do supplied sources support the actual factual premises? Preserve the distinction between those premises and the author's moral judgment, analogy or interpretation. Do not penalize a stance for lacking neutrality."}, "needs_research": {"type": "noul", "instructions": "Is essential evidence missing for a specific factual premise actually asserted here? Mere uncertainty about consciousness, an untestable value judgment or a remote objection to an argument not made does not alone require more research."}}
-        for i, q in enumerate(a.get("evaluation_questions", [])[:2]):
-            qs[f"tailored_{i}"] = {"type": "noul", "instructions": str(q)[:500]}
-        qs['stance_fidelity'] = {'type':'noul',"instructions":"Does this angle preserve the stated author position and requested purpose, instead of reopening it as a neutral inquiry or substituting a compromise? For exploratory work, does it genuinely explore the question?"}
-        qs['voice_fidelity'] = {'type':'noul','instructions':'Does this angle match the supplied voice, rhetorical habits and requested force, rather than generic committee prose?'}
-        scores = clients.decide(state, qs)
-        if scores:
-            angle.scores = {k: v["noul"] for k, v in scores.items()}
-            angle.score = round(100 * (0.45 * angle.scores["editorial_potential"] + 0.25 * angle.scores["stance_fidelity"] + 0.15 * angle.scores["voice_fidelity"] + 0.15 * angle.scores["evidence_fit"]), 1)
-            angle.score_engine = "JEV editorial estimate (not a truth probability)"
-            angle.decision = "Research first" if angle.scores["needs_research"] > 0.65 else "Ready to develop"
+        p.system_one.setdefault('angle_tests',{})[angle.id] = [str(q)[:500] for q in a.get('evaluation_questions',[])[:3]]
         result.append(angle)
     if not result:
         raise ProviderError("No valid, graph-grounded angles returned. Your previous angles are unchanged.")
-    if clients.jev_route() != "off":
-        result.sort(key=lambda a: a.score or 0, reverse=True)
     p.angles = result
+    from .s1_editorial import assess_angles, repair_angles
+    evidence = {a.id:[compact_motif(c) for c in candidates if any(n in a.node_ids for n in c['node_ids'])][:3] for a in result}
+    assess_angles(p, clients, evidence)
+    repair_angles(p, clients, job, evidence)
+    if clients.settings.system_one_learning:
+        from .s1_learning import adjustment
+        policies=p.system_one.get('angle_policies',{})
+        for a in p.angles:
+            a.scores['preference_adjustment']=adjustment(p,getattr(clients,'system_one_store',None),{**a.scores,'eligible':policies.get(a.id,{}).get('eligible',True)}) if a.score is not None else 0
+            if a.score is None:a.scores={}
+        p.angles.sort(key=lambda a:(policies.get(a.id,{}).get('eligible',True),a.score is not None,(a.score or 0)/100+a.scores.get('preference_adjustment',0)),reverse=True)
+    active_ids={a.id for a in p.angles}
+    for name in ('angle_tests','angle_policies','angle_originals'):
+        if name in p.system_one:p.system_one[name]={k:v for k,v in p.system_one[name].items() if k in active_ids}
     p.angles_context_hash = editorial_fingerprint(p)
     p.selected_angle = ""  # human selects; do not silently force highest-scored opinion
     job.note(f"{len(result)} angles ready. Choose one, edit its thesis, or write your own.", 95)
@@ -237,7 +225,7 @@ def selected_angle(p: Project):
     return a
 
 
-def source_pack(p: Project, query: str, limit=38000, ids=None):
+def source_pack(p: Project, query: str, limit=38000, ids=None, clients=None):
     """Diverse, bounded relevant passages with stable source labels. Explicit coverage."""
     sources = [s for s in p.sources if s.enabled and s.role != "voice"]
     terms = set(re.findall(r"\w{4,}", query.casefold()))
@@ -265,12 +253,23 @@ def source_pack(p: Project, query: str, limit=38000, ids=None):
             first.append(item)
             seen.add(item["source_id"])
     order = first + [i for i in items if i not in first]
+    nomination_limit = max(limit, 65000) if clients and clients.settings.system_one_retrieval else limit
     for item in order:
         n = len(dumps(item))
-        if size + n <= limit:
+        if size + n <= nomination_limit:
             chosen.append({k: v for k, v in item.items() if k != "rank"})
             size += n
-    return {"passages": chosen, "retrieved_passages": len(chosen), "total_passages": len(items), "note": "Selected source passages, not the whole corpus. Do not cite content not supplied here."}
+    pack = {"passages": chosen, "retrieved_passages": len(chosen), "total_passages": len(items), "note": "Selected source passages, not the whole corpus. Do not cite content not supplied here."}
+    if clients:
+        from .s1_retrieval import rerank_pack
+        pack = rerank_pack(p,clients,pack,query,limit,ids)
+    # Off/unavailable JEV never bypasses the writer's context budget.
+    kept=[];size=0
+    for row in pack['passages']:
+        n=len(dumps(row))
+        if size+n<=limit:kept.append(row);size+=n
+    pack['passages']=kept;pack['retrieved_passages']=len(kept)
+    return pack
 
 
 def voice_notes(p: Project):
@@ -281,7 +280,7 @@ def voice_notes(p: Project):
 def make_outline(p: Project, clients: Clients, job: Job):
     a = selected_angle(p)
     job.note("Designing the argument / dramatic progression before writing prose.", 20)
-    pack = source_pack(p, a.thesis, min(38000, clients.settings.context_chars // 2), a.source_ids)
+    pack = source_pack(p, a.thesis, min(38000, clients.settings.context_chars // 2), a.source_ids, clients=clients)
     schema = {"sections": [{"title": "Section title or scene label", "purpose": "What changes for the reader here", "beats": ["Specific beat, mechanism or evidence to develop"], "source_ids": ["S1"], "target_words": 400}]}
     raw = clients.complete(editorial_system(p, 'outline'), dumps({"task": "Build an editable outline. Nonfiction and Polemic: each section advances the author's selected thesis in a distinct way. Address an objection only when it materially bears on that thesis; no mandatory opposing-view or compromise section. No obligatory generic introduction or summary. Fiction: scene-driven desire, tension, consequential choices, subtext, sensory specifics, a satisfying but not necessarily resolved ending. Respect canon. Use 3–12 sections/scenes, approximately 500–1500 words each for longer pieces. Allocate target words to match the brief. Flag missing evidence within beats; never manufacture it.", "mode": p.mode, "brief": p.brief.model_dump(), "angle": a.model_dump(), "sources": pack, "schema": schema, **editorial_context(p)}), json_mode=True)
     valid = {s.id for s in p.sources if s.enabled and s.role != "voice"}
@@ -324,7 +323,7 @@ def review_draft(p: Project, clients: Clients, job: Job, text=None) -> Review:
     if not text.strip():
         raise ValueError("Write or generate a draft first.")
     job.note("Editorial review: structure, specificity, evidence / continuity and voice.", 80)
-    pack = source_pack(p, text[:5000], min(30000, clients.settings.context_chars // 3))
+    pack = source_pack(p, text[:5000], min(30000, clients.settings.context_chars // 3), clients=clients)
     review_schema = {"summary": "Short honest editorial assessment", "strengths": ["specific strength"], "issues": [{"severity": "critical|major|minor", "category": "evidence|logic|continuity|voice|structure|craft|authorial_drift|irrelevant_caveat", "excerpt": "exact draft excerpt", "problem": "specific problem", "suggestion": "concrete repair", "source_ids": ["S1"]}], "suggestions": ["useful revision instruction"], "verdict": "Ready for author review / Needs revision / Needs evidence", "claims": [{"claim": "One load-bearing factual claim from the draft", "support": "supported|partial|unsupported|inference|opinion|unknown", "quotes": [{"source_id": "S1", "quote": "verbatim supporting passage supplied here"}]}]}
     review_schema['authorial_assessment'] = {'intent_preserved': True, 'stance_preserved': True, 'voice_preserved': True,
         'summary': 'Specific observations about fidelity to the supplied authorial contract; no ideological moderation score.'}
@@ -339,13 +338,14 @@ def review_draft(p: Project, clients: Clients, job: Job, text=None) -> Review:
         for claim in review.citation_audit["sampled_claims"]:
             if claim["editor_judgment"] in {"unverified", "unsupported"}:
                 review.issues.append({"severity": "major", "category": "evidence", "problem": "Source support has not been established for: " + claim["claim"], "suggestion": "Verify the original source, attribute the statement more carefully, or remove it."})
-    # State-specific JEV questions steer the next action, not just a generic score.
-    findings = {"mode": p.mode, "brief": p.brief.model_dump(), "editorial_findings": raw, "citation_audit": review.citation_audit, **editorial_context(p,compact=True)}
-    questions = {"action": {"type": "choice", "instructions": "Given these editorial findings and the authorial contract, which action is most appropriate? Do not mistake a value judgment for missing empirical evidence. Authorial drift calls for restoring the intended argument, not moderating it. Real unsupported factual premises still need correction.", "criteria": {"research": "A specifically identified, essential factual premise or canon detail is missing. Not merely moral disagreement, forceful language or a hypothetical objection.", "revise": "Known fixable issues require a prose/structure/logic revision.", "author_review": "The draft is ready for human editorial review, not automatic publication."}}, "material_issue": {"type": "noul", "instructions": "Do the findings identify a consequential factual, logical, canon or narrative flaw?"}}
-    decisions = clients.decide(findings, questions)
+    from .s1_editorial import audit_passages, review_action
+    extra = audit_passages(p,clients,text,pack) if clients.settings.system_one_fidelity else []
+    review.issues.extend(extra)
+    findings={"editorial_findings":raw,"citation_audit":review.citation_audit,"independent_checks":extra}
+    decisions, action = review_action(p,clients,findings)
     if decisions:
-        review.scores = decisions
-        review.verdict = {"research": "Research / canon clarification needed", "revise": "Revision recommended", "author_review": "Ready for author review"}[decisions["action"]["choice"]]
+        review.scores=decisions
+        review.verdict={"research":"Research / canon clarification needed","revise":"Revision recommended","author_review":"Ready for author review"}[action]
     audit = review.citation_audit
     if audit.get("unknown_or_ineligible_references") or audit.get("missing_all_citations"):
         review.verdict = "Citation repair required"
@@ -357,7 +357,7 @@ def revise(p: Project, clients: Clients, job: Job, store: Store, instruction="",
         raise ValueError("There is no draft to revise.")
     original = p.draft
     review = review_draft(p, clients, job) if not p.review.summary or p.review.draft_hash != digest(p.draft) or p.review.context_hash != review_stamp(p) else p.review
-    pack = source_pack(p, (instruction or review.summary) + original[:4000], min(28000, clients.settings.context_chars // 3))
+    pack = source_pack(p, (instruction or review.summary) + original[:4000], min(28000, clients.settings.context_chars // 3), clients=clients)
     job.note("Revising the draft without changing its intended thesis or fictional canon.", 87)
     revised = clients.complete(editorial_system(p, 'revise'), dumps({"task": "Revise this complete piece. Preserve its best lines, nuance, voice, factual limits and intentional ending. Fix material issues rather than flattening style. Do not add unsupported claims. Return the complete revised Markdown only, not a critique or preface. Source citations remain [S1] format. Fiction has no inline scholarly citations.", "mode": p.mode, "brief": p.brief.model_dump(), "author_instruction": instruction, "review": review.model_dump(), "draft": original, "sources": pack, **editorial_context(p)}), role="editor")
     # Invalid references cannot be accepted through an automated revision gate.
@@ -366,10 +366,9 @@ def revise(p: Project, clients: Clients, job: Job, store: Store, instruction="",
     candidate_project.draft = revised
     store.snapshot(candidate_project, "AI revision candidate")
     if automatic:
-        comparisons = []
-        if len(original) + len(revised) < 40000:
-            comparisons = clients.decide({"mode": p.mode, "brief": p.brief.model_dump(), "original": original, "candidate": revised, "known_issues": review.model_dump(), **editorial_context(p,compact=True)}, {"prefer_revision": {"type": "noul", "instructions": "Does the candidate materially improve the known issues while preserving the author's thesis, stance, rhetorical force, wit, meaningful empirical qualifiers and fictional canon? A more moderate, balanced or polite version is not automatically better. Reject a candidate that turns the intended argument into an unresolved inquiry unless the author requested that change."}})
-        accepted = bool(comparisons and comparisons["prefer_revision"]["noul"] >= 0.6)
+        from .s1_editorial import assess_edit
+        comparison=assess_edit(p,clients,original,revised,instruction)
+        accepted=comparison['decision']=='present' and comparison.get('improved',False)
         accepted = accepted and not audit.get("unknown_or_ineligible_references") and not audit.get("missing_all_citations")
         if not accepted:
             p.review = review
@@ -390,9 +389,19 @@ def write_draft(p: Project, clients: Clients, store: Store, job: Job):
     ledger = {}
     for i, section in enumerate(p.outline):
         job.note(f"Writing {i + 1}/{len(p.outline)} · {section.title}", 10 + int(60 * i / len(p.outline)))
-        pack = source_pack(p, a.thesis + "\n" + section.purpose + "\n" + " ".join(section.beats), min(38000, clients.settings.context_chars // 2), section.source_ids)
+        pack = source_pack(p, a.thesis + "\n" + section.purpose + "\n" + " ".join(section.beats), min(38000, clients.settings.context_chars // 2), section.source_ids, clients=clients)
         prompt = {"task": "Write only this section/scene, approximately its target_words. No title/heading, preamble, references list or summary of the whole piece. Nonfiction and Polemic: cite material factual claims using exactly [S1] etc, only evidence-role sources supplied here; preserve attribution and specific empirical limits without attaching generic uncertainty to moral judgments. Do not cite inspiration or fictional canon as real-world evidence. Missing evidence must be avoided or explicitly attributed as unresolved. Do not turn the separate counterargument metadata into a compulsory paragraph. Preserve rhetorical force and answer only objections that actually matter here. Fiction: show consequential scenes, specific actions, subtext, varied rhythm; no citations and no mechanical explanation of the theme. Preserve canon; do not resolve later scenes prematurely. Avoid repeating the previous section or announcing the next one.", "mode": p.mode, "brief": p.brief.model_dump(), "angle": a.model_dump(), "whole_outline": [s.model_dump() for s in p.outline], "current_section": section.model_dump(), "previous_prose_for_continuity": "\n\n".join(draft_sections)[-9000:], "story_ledger": ledger, "source_passages": pack, **editorial_context(p)}
         text = clients.complete(editorial_system(p, 'draft'), dumps(prompt))
+        if p.mode == 'fiction' and clients.settings.system_one_fidelity:
+            from .s1_science import scene_check
+            problems=scene_check(p,clients,text,ledger,draft_sections[-1] if draft_sections else '')
+            if problems:
+                original_scene=text
+                candidate=clients.complete(editorial_system(p,'draft'),dumps({'task':'Repair only the identified continuity or dramatic repetition problems in this scene. Preserve the narrator, voice, events that do not conflict, moral ambiguity and intended ending. Return the scene only.',
+                    'scene':text,'identified_checks':problems,'canon':p.brief.canon,'ledger':ledger,'section':section.model_dump(),**editorial_context(p)}))
+                remaining=scene_check(p,clients,candidate,ledger,draft_sections[-1] if draft_sections else '')
+                if remaining == []:text=candidate
+                else:job.note('Kept the original scene: targeted continuity repair still needs author review.')
         draft_sections.append(("## " + section.title + "\n\n" if p.mode != "fiction" else "") + text)
         # Recoverable checkpoints never replace the current editor document.
         checkpoint = p.model_copy(deep=True)
@@ -406,7 +415,7 @@ def write_draft(p: Project, clients: Clients, store: Store, job: Job):
     p.draft = "# " + a.title + "\n\n" + ("\n\n" if p.mode != "fiction" else "\n\n* * *\n\n").join(draft_sections)
     p.review = review_draft(p, clients, job)
     store.snapshot(p, "Complete first draft")
-    if clients.settings.refine and p.review.scores.get("action", {}).get("choice") == "revise":
+    if clients.settings.refine and p.review.scores.get("executed_action", {}).get("choice") == "revise":
         revise(p, clients, job, store, automatic=True)
     job.note("Draft ready for your review. Sources and all saved versions remain available.", 98)
 
@@ -423,7 +432,7 @@ class Runner:
         return next((j for j in self.jobs.values() if j.project_id == project_id and j.state in {"queued", "running"}), None)
 
     def start(self, project_id, action, instruction=""):
-        if action not in {"graph", "angles", "outline", "draft", "review", "revise", "voice", "humanize", "deslop", "both", "science-plan", "science-search", "science-fulltext", "science-appraise", "science-outline", "science-draft", "science-review"}:
+        if action not in {"graph", "angles", "outline", "draft", "review", "revise", "voice", "humanize", "deslop", "both", "science-plan", "science-search", "science-fulltext", "science-appraise", "science-outline", "science-draft", "science-review", "science-screen", "system-one-audit"}:
             raise ValueError("Unknown action")
         with self.lock:
             if self.active(project_id):
@@ -443,6 +452,8 @@ class Runner:
         base = p.version
         job.state = "running"
         clients = self.clients_factory(settings, self.vault, job)
+        clients.system_one_project = p
+        clients.system_one_store = self.store
         try:
             self.store.snapshot(p, "Before " + job.action)
             if job.action.startswith('science-') or (p.mode == 'science' and job.action in {'outline','draft','review'}):
@@ -452,8 +463,24 @@ class Runner:
                 if task == 'plan': science.plan_search(p, clients, job)
                 else:
                     tasks = {'search':science.search_literature,'fulltext':science.fetch_fulltexts,'appraise':science.appraise,
-                             'outline':science.outline_science,'draft':science.draft_science,'review':science.review_science}
+                             'outline':science.outline_science,'draft':science.draft_science,'review':science.review_science,'screen':lambda p,c,s,j: __import__('graphpaper.s1_science',fromlist=['screen']).screen(p,c)}
                     tasks[task](p, clients, self.store, job)
+            elif job.action == "system-one-audit":
+                from .s1_editorial import assess_angles
+                from .s1_graph import alignment
+                if not settings.system_one_enabled:raise ValueError('Enable System One in Configure before evaluating.')
+                if clients.jev_route() == 'off':raise ValueError('Connect TypeSafe or OpenRouter JEV first; this audit uses no writing model.')
+                if not (p.angles or p.graph.nodes or p.draft.strip() or p.research.records):raise ValueError('Add project material before requesting a decision audit.')
+                if p.angles:assess_angles(p,clients)
+                alignment(p,clients)
+                if p.mode=='science':
+                    from .s1_science import screen,check_appraisals
+                    screen(p,clients);check_appraisals(p,clients)
+                if p.draft.strip():
+                    from .s1_editorial import audit_passages
+                    pack=source_pack(p,p.draft[:4000],28000,clients=clients)
+                    audit_passages(p,clients,p.draft,pack)
+                job.note('System One decision audit ready. No draft, source or screening choice was replaced.',95)
             elif job.action == "voice":
                 from .voice import learn_voice
                 learn_voice(p, clients, job)

@@ -87,8 +87,14 @@ def polish_draft(project, clients, job, mode, instruction=''):
     if len(candidate.strip()) < max(20, len(original.strip()) * .3):
         raise ProviderError('The proposed edit discarded too much of the manuscript. Original preserved.')
     job.note('Checking the edit for meaning drift before presenting it beside the original.', 65)
-    review = clients.complete(editorial_system(project, "polish"), json.dumps({'task': 'Compare original and proposed prose edit. Identify factual/semantic drift, altered named entities, lost qualifiers or reordered citations that no longer support their claims. For fiction also check narrator, scene events, motivation and ending. Judge fidelity separately from fluency. Preserve the intended thesis, indignation, satire, humor and force; polite equivocation is a meaning change, not an improvement. Distinguish essential factual qualifiers from gratuitous caveats. Return an honest review. Do not rewrite.', 'mode': project.mode, 'original': original, 'candidate': candidate, 'author_instruction': instruction, **editorial_context(project),
-        'schema': {'meaning_preserved': True, 'stance_preserved': True, 'voice_preserved': True, 'summary': 'Specific editorial assessment', 'warnings': ['Concrete risks or unresolved differences'], 'improvements': ['Specific changes']}}, ensure_ascii=False), role='editor', json_mode=True)
+    from .s1_editorial import assess_edit
+    comparison=assess_edit(project,clients,original,candidate,instruction)
+    if comparison['decision']=='escalate':
+        review = clients.complete(editorial_system(project, "polish"), json.dumps({'task': 'Compare original and proposed prose edit. Identify factual/semantic drift, altered named entities, lost qualifiers or reordered citations that no longer support their claims. For fiction also check narrator, scene events, motivation and ending. Judge fidelity separately from fluency. Preserve the intended thesis, indignation, satire, humor and force; polite equivocation is a meaning change, not an improvement. Distinguish essential factual qualifiers from gratuitous caveats. Return an honest review. Do not rewrite.', 'mode': project.mode, 'original': original, 'candidate': candidate, 'author_instruction': instruction, **editorial_context(project),
+            'schema': {'meaning_preserved': True, 'stance_preserved': True, 'voice_preserved': True, 'summary': 'Specific editorial assessment', 'warnings': ['Concrete risks or unresolved differences'], 'improvements': ['Specific changes']}}, ensure_ascii=False), role='editor', json_mode=True)
+        review['system_one_comparison']=comparison
+    else:
+        review=comparison
     if not isinstance(review.get('meaning_preserved'), bool):
         raise ProviderError('The edit reviewer did not provide a valid fidelity assessment. Original preserved.')
     if review.get('stance_preserved') is False:

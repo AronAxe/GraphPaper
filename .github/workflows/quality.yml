@@ -45,6 +45,7 @@ jobs:
       - run: python scripts/ui_polemic_smoke.py
       - run: python scripts/ui_voices_smoke.py
       - run: python scripts/ui_graph_studio_smoke.py
+      - run: python scripts/ui_system_one_smoke.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:

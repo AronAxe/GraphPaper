@@ -196,6 +196,7 @@ class Project(Model):
     voice_profile: VoiceProfile = Field(default_factory=VoiceProfile)
     polish: PolishCandidate | None = None
     auto_import: bool = True
+    system_one: dict[str, Any] = Field(default_factory=dict)
     research: ResearchWorkspace = Field(default_factory=ResearchWorkspace)
 
 
@@ -215,6 +216,16 @@ class Settings(Model):
     context_chars: int = Field(90000, ge=16000, le=1500000)
     jev_provider: Literal["auto", "openrouter", "typesafe", "off"] = "auto"
     jev_model: str = "jev-latest"
+    system_one_enabled: bool = True
+    system_one_retrieval: bool = True
+    system_one_exploration: bool = True
+    system_one_fidelity: bool = True
+    system_one_learning: bool = True
+    system_one_routing: bool = False
+    system_one_fast_model: str = Field('', max_length=200)
+    system_one_deep_model: str = Field('', max_length=200)
+    system_one_fast_effort: str = Field('default', pattern=r'^[a-z][a-z0-9_-]{0,31}$')
+    system_one_deep_effort: str = Field('default', pattern=r'^[a-z][a-z0-9_-]{0,31}$')
     graph_engine: Literal["native", "graphify"] = "native"
     graphify_executable: str = ""
     graphify_timeout_seconds: int = Field(1200, ge=10, le=7200)

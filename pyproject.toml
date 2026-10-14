@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "graphpaper-studio"
-version = "0.5.0"
+version = "0.7.0"
 description = "A local-first graph-guided writing studio for nonfiction and fiction"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -24,7 +24,9 @@ pythonpath = ["."]
 addopts = "-ra"
 
 [tool.setuptools.data-files]
-"share/graphpaper/ui" = ["ui/index.html", "ui/styles.css", "ui/app.js", "ui/studio.js", "ui/studio.css", "ui/science.js", "ui/science.css", "ui/graphify.js", "ui/polemic.js", "ui/polemic.css", "ui/voices.js", "ui/voices.css", "ui/icon.svg", "ui/graphpaper.ico"]
+"share/graphpaper/ui" = ["ui/index.html", "ui/styles.css", "ui/app.js", "ui/studio.js", "ui/studio.css", "ui/science.js", "ui/science.css", "ui/graphify.js", "ui/polemic.js", "ui/polemic.css", "ui/voices.js", "ui/voices.css", "ui/icon.svg", "ui/graphpaper.ico", "ui/graph_math.js", "ui/graph_studio.js", "ui/graph_studio.css", "ui/system_one.js", "ui/system_one.css"]
+
+"share/graphpaper/ui/assets" = ["ui/assets/graph-paper.webp", "ui/assets/graph-paper.json", "ui/assets/CREDITS.md"]
 
 [project.optional-dependencies]
 desktop = ["pywebview>=6.0,<7", "graphifyy[openai]==0.9.80"]

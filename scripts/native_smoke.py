@@ -23,6 +23,7 @@ def main():
     parser.add_argument('--graphify',action='store_true',help='Verify the actual external Graphify action using a synthetic loopback model')
     parser.add_argument('--polemic',action='store_true',help='Verify mode conversion and authorial controls in the native shell')
     parser.add_argument('--voices',action='store_true',help='Exercise saved voice graphs without model calls')
+    parser.add_argument('--system-one',action='store_true',help='Inspect typed decisions, author feedback and approved routing in the actual native shell')
     parser.add_argument('--graph-studio',action='store_true',help='Exercise the spatial graph and real node/edge editing controls')
     parser.add_argument('--out',type=Path,default=ROOT/'test-results/native')
     args=parser.parse_args()
@@ -158,6 +159,10 @@ def main():
             if args.voices:
                 from voice_ui_checks import exercise
                 report['voice_library']=exercise(page,check,out,native=True)
+                responsive(hwnd)
+            if args.system_one:
+                from system_one_ui_checks import exercise
+                report['system_one']=exercise(page,check,out,native=True)
                 responsive(hwnd)
             page.locator('[data-action="settings"]').click();page.wait_for_selector('#s-provider')
             expect(page.locator('#s-reasoning_effort')).to_have_count(1)

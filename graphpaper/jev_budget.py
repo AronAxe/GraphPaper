@@ -152,15 +152,9 @@ def dispatch(clients,state,questions):
         data=clients.post(url,payload,key,'JEV')
         answers=data.get('answers',{})
         if not isinstance(answers,dict):raise ProviderError('JEV returned invalid typed answers.')
-        import math
+        from .system_one import validate_answer
         for name,q in b.questions.items():
-            a=answers.get(name,{})
-            if not isinstance(a,dict) or a.get('type')!=q['type']:raise ProviderError('JEV returned an invalid answer type for '+name+'.')
-            if q['type']=='noul':
-                v=a.get('noul')
-                if type(v) not in (int,float) or not math.isfinite(v) or not 0<=v<=1:raise ProviderError('JEV returned an invalid probability.')
-            elif q['type']=='choice' and a.get('choice') not in q['criteria']:raise ProviderError('JEV returned a choice outside the declared options.')
-            output[name]=a
+            output[name]=validate_answer(q,answers.get(name))
         if clients.job and clients.job.receipts:
             clients.job.receipts[-1].update({'request_bytes':size,'decision_questions':len(b.questions),'decision_batch':index+1,'decision_batches':len(batches)})
     return output
