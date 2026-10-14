@@ -1,0 +1,19 @@
+{
+  "patch_sha256": "19c27bcbc6adcea9cbf8a36c73a7b2ec6683f29ae1454ce60e50d90180d794fd",
+  "before": {
+    "graphpaper/system_one.py": "278d38f4f700229e7e4942348e7183b292efe8b2cbb9244c7e01b05b660f1f89",
+    "graphpaper/s1_editorial.py": "a61c0f1cd6f6e7ac079e66e7929e90e8e14b6c6c52cf1844157c37911f9f08a7",
+    "graphpaper/s1_science.py": "1a942078238bf3b60509334a58da94f18ae8d401b46568b608f6883f53ee2608",
+    "graphpaper/pipeline.py": "a4dc9c14e499cde407e7256f74f77c7b88a6d08c5d19cc1e3e8c4d614d6ce74e",
+    "ui/system_one.js": "26e0cbb48268e3dfb5e41ba1d25d1a792ca9c713e6fe151b57afd5bd982a3296",
+    "scripts/ui_smoke.py": "f1920dc00f8f97a1f5523c375ce573198ac32f177889b5584cd30921a0aa66b2"
+  },
+  "after": {
+    "graphpaper/system_one.py": "9d560f6202bf63d6ec25ec79d613e24a5f4c8336ab71595c593136a98cf65643",
+    "graphpaper/s1_editorial.py": "391b24e528d335594a8fe14d3eda65eafbf5b7c850b1cd8e5f9fda99ccc3f29f",
+    "graphpaper/s1_science.py": "a387c9d4abf6ea8a82f3d2555076fd306509a31b4e82d9c07f0a43ef555483d9",
+    "graphpaper/pipeline.py": "87284c19c3afbe549fa69fa642d7e613bc5e0bf2ef69894c6d3b95b19f4b29e9",
+    "ui/system_one.js": "a07c806acdd42f8ad905e3132d809d649a69f2229463f52752fff82b6ce2be81",
+    "scripts/ui_smoke.py": "5a72b1617bac75dea849f30e96960db8d03393b9893fe72afdf1b983e9484010"
+  }
+}
