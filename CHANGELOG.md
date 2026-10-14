@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.1 — Downloaded Windows runtime fix
+
+- Detect Internet-blocked bundled window DLLs before Python.NET initialization.
+- Verify per-build DLL hashes; ask native consent for narrowly scoped unblocking.
+- Replace blanket WebView2 advice with error-specific diagnostics.
+- Gate releases on fresh ZIP extraction and native consent/marked-DLL regression, including existing System One, graph and writing workflows.
+
+
 ## 0.6.0
 
 - Replace the green wash with ink-blue/charcoal surfaces and a licensed scan of real graph paper in the sidebar.

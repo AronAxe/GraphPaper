@@ -31,6 +31,8 @@ Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argum
 
 **The spatial graph studio.** Orbit or flatten your graph, focus its neighborhoods, and edit nodes and connections directly. Ink-blue surfaces and a real scanned graph-paper sidebar. [Explore the graph controls](docs/GRAPH-STUDIO.md).
 
+**Windows startup fix in 0.7.1:** downloaded runtime files are checked against this build and unblocked only after your permission. The complete ZIP is now tested with simulated Internet download marks. [Startup help](docs/WINDOWS.md#downloaded-runtime-permission).
+
 ## How GraphPaper works
 
 ![GraphPaper workflow: sources to graph, angles, outline, draft, review and export, guided by your brief and reusable voice with optional Science research and JEV decision support](docs/images/graphpaper-workflow.svg)

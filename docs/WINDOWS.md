@@ -54,3 +54,11 @@ For model, import and manuscript problems, continue with [Troubleshooting](TROUB
 ## External Graphify
 
 The current Windows package includes the public Graphify runtime and its dependencies. No separate Graphify installation is required. Clear an old custom executable path to select the included runtime; custom paths are never silently overridden. [Detailed setup and distribution](UPDATE-0.3.1.md).
+
+## Downloaded runtime permission
+
+In v0.7.1, GraphPaper checks its packaged window DLLs before loading Python.NET. Windows may mark files extracted from a downloaded ZIP as Internet files, preventing .NET from loading them. When needed, a native **GraphPaper runtime permission** dialog lists the affected, checksum-matched DLLs. Choose **Yes** only when you trust the release you downloaded. **No** cancels startup without changing files or opening the project database. This repair changes only the download marks on the listed bundled runtime files, not their bytes, your projects, unrelated files, antivirus settings, or global Windows security policy. Per-build hashes prevent mixed/corrupt runtimes being unblocked; they are not a substitute for trusting the release's publisher.
+
+For an older release reporting **Failed to resolve Python.Runtime.Loader.Initialize**, close the app. In Explorer, right-click the original release ZIP, choose **Properties → Unblock → Apply**, then extract the complete ZIP into a fresh folder. Keep `_internal` beside `GraphPaper.exe`; your project data directory stays separate. This is a repair for a downloaded-file block, not every possible .NET initialization failure. If there is no Unblock checkbox or the failure persists, retain `%LOCALAPPDATA%\GraphPaper\desktop.log` (or the log in your configured data directory) for diagnosis. Do not disable antivirus or change system-wide .NET trust settings.
+
+The release test now extracts the actual ZIP, simulates Internet-zone marks on DLLs, exercises both native consent choices, and checks the full native workflow. It does not claim to simulate SmartScreen or every managed Windows policy.

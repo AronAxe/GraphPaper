@@ -1,13 +1,13 @@
-name: GraphPaper 0.7 System One release
+name: GraphPaper 0.7.1 downloaded-runtime release
 on:
   push:
-    branches: [main, feat/system-one-v0.7]
+    branches: [main, fix/windows-runtime-v0.7.1]
     paths:
       - 'graphpaper/**'
       - 'ui/**'
       - 'scripts/**'
       - 'tests/**'
-      - 'docs/RELEASE-0.7.0.md'
+      - 'docs/RELEASE-0.7.1.md'
       - '.github/workflows/graph-studio-release.yml'
   workflow_dispatch:
 permissions:
@@ -97,11 +97,13 @@ jobs:
         run: ./scripts/build_release.ps1
       - name: Exercise the compiled System One desk and existing workspaces
         run: python scripts/native_smoke.py --science --graphify --graph-studio --polemic --voices --system-one --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
+      - name: Verify fresh ZIP extraction with Internet-zone DLL marks and native consent
+        run: python scripts/check_downloaded_release.py dist/GraphPaper-v0.7.1-Windows-x64.zip --out test-results/downloaded-package
       - uses: actions/upload-artifact@v4
         with:
-          name: GraphPaper-0.7-tested-Windows
+          name: GraphPaper-0.7.1-tested-Windows
           path: |
-            dist/GraphPaper-v0.7.0-Windows-x64.zip
+            dist/GraphPaper-v0.7.1-Windows-x64.zip
             dist/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         if: always()
@@ -121,7 +123,7 @@ jobs:
           ref: ${{ needs.source.outputs.revision }}
       - uses: actions/download-artifact@v4
         with:
-          name: GraphPaper-0.7-tested-Windows
+          name: GraphPaper-0.7.1-tested-Windows
           path: release-package
       - name: Publish the same tested archive, never overwrite an existing release
         env:
@@ -131,13 +133,13 @@ jobs:
           cd release-package
           sha256sum --check SHA256SUMS.txt
           cd ..
-          if gh release view v0.7.0 >/dev/null 2>&1; then echo 'Release already exists; refusing overwrite.'; exit 1; fi
-          cp docs/RELEASE-0.7.0.md release-package/notes.md
+          if gh release view v0.7.1 >/dev/null 2>&1; then echo 'Release already exists; refusing overwrite.'; exit 1; fi
+          cp docs/RELEASE-0.7.1.md release-package/notes.md
           revision=$(git rev-parse HEAD)
-          digest=$(sha256sum release-package/GraphPaper-v0.7.0-Windows-x64.zip | cut -d' ' -f1)
-          printf '\n\nCompiled Windows System One, graph editing and native save-on-close checks passed. Validation: https://github.com/%s/actions/runs/%s . Source: %s . Archive SHA-256: %s .\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$revision" "$digest" >> release-package/notes.md
-          gh release create v0.7.0 release-package/GraphPaper-v0.7.0-Windows-x64.zip release-package/SHA256SUMS.txt --target "$revision" --title 'GraphPaper 0.7.0 — System One decision studio' --notes-file release-package/notes.md --draft
-          release_id=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]|select(.tag_name=="v0.7.0")|.id')
-          uploaded=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id/assets" --jq '.[]|select(.name=="GraphPaper-v0.7.0-Windows-x64.zip")|.digest')
+          digest=$(sha256sum release-package/GraphPaper-v0.7.1-Windows-x64.zip | cut -d' ' -f1)
+          printf '\n\nCompiled Windows, fresh downloaded-ZIP runtime consent, System One and native save-on-close checks passed. Validation: https://github.com/%s/actions/runs/%s . Source: %s . Archive SHA-256: %s .\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$revision" "$digest" >> release-package/notes.md
+          gh release create v0.7.1 release-package/GraphPaper-v0.7.1-Windows-x64.zip release-package/SHA256SUMS.txt --target "$revision" --title 'GraphPaper 0.7.1 — Windows runtime startup fix' --notes-file release-package/notes.md --draft
+          release_id=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]|select(.tag_name=="v0.7.1")|.id')
+          uploaded=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id/assets" --jq '.[]|select(.name=="GraphPaper-v0.7.1-Windows-x64.zip")|.digest')
           test "$uploaded" = "sha256:$digest"
-          gh release edit v0.7.0 --draft=false --latest
+          gh release edit v0.7.1 --draft=false --latest

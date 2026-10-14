@@ -86,3 +86,7 @@ Review diagnostics before sharing them. Never attach `credentials.dpapi`, Codex 
 ## Angles are too cautious or ignore my voice
 
 Use v0.6.0 or newer. The authorial-intent changes introduced in v0.4 remove forced counterbalancing and supplies voice context to the early editorial stages. In an existing project, choose **current mode · Change -> Polemic**, then edit **Core thesis** and **Rhetorical force**. In Angles, choose **Refresh angles with my voice**; old saved angles do not rewrite themselves when a slider changes. The existing graph is reused. Evidence detail is a separate control and never sets how moderate your position must be. Ordinary Nonfiction can also **Develop and defend my position**.
+
+## Python.Runtime.Loader.Initialize failure
+
+This identifies Python.NET assembly loading, not by itself a missing WebView2 installation. A Windows Internet-download mark on `Python.Runtime.dll` reproduces this exact failure. Use the scoped v0.7.1 runtime-permission dialog or follow [downloaded-runtime permission](WINDOWS.md#downloaded-runtime-permission) for an older ZIP. Mismatched files, missing .NET dependencies and restrictive machine policy require inspecting the actual log rather than repeatedly reinstalling WebView2.
