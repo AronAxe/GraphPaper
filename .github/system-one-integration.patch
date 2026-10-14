@@ -1,0 +1,346 @@
+diff --git a/graphpaper/argument_draft.py b/graphpaper/argument_draft.py
+index ac0f4e1..6a2ed47 100644
+--- a/graphpaper/argument_draft.py
++++ b/graphpaper/argument_draft.py
+@@ -14 +14 @@ def write_whole_argument(project,clients,store,job):
+-    pack=source_pack(project,query,min(42000,clients.settings.context_chars//2),angle.source_ids)
++    pack=source_pack(project,query,min(42000,clients.settings.context_chars//2),angle.source_ids,clients=clients)
+@@ -25 +25 @@ def write_whole_argument(project,clients,store,job):
+-    if clients.settings.refine and project.review.scores.get('action',{}).get('choice')=='revise':
++    if clients.settings.refine and project.review.scores.get('executed_action',{}).get('choice')=='revise':
+diff --git a/graphpaper/desktop.py b/graphpaper/desktop.py
+index 41e65c0..0d03b5d 100644
+--- a/graphpaper/desktop.py
++++ b/graphpaper/desktop.py
+@@ -89 +89 @@ class DesktopBridge:
+-            if kind not in {"md", "docx", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission", "voice"}:
++            if kind not in {"md", "docx", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission", "voice", "system-one"}:
+@@ -101 +101,7 @@ class DesktopBridge:
+-                data, _, ext = export(p, kind)
++                if kind == 'system-one':
++                    import json
++                    from .s1_learning import evaluation_export
++                    data=json.dumps(evaluation_export(self._store,p),ensure_ascii=False,indent=2).encode('utf-8')
++                    ext='.system-one.json'
++                else:
++                    data, _, ext = export(p, kind)
+diff --git a/graphpaper/graph_editing.py b/graphpaper/graph_editing.py
+index 94bf307..d836c23 100644
+--- a/graphpaper/graph_editing.py
++++ b/graphpaper/graph_editing.py
+@@ -18 +18 @@ class Edit(Model):
+-    operation: Literal['node','edge','delete-node','delete-edge']
++    operation: Literal['node','edge','delete-node','delete-edge','merge-nodes']
+@@ -85,0 +86,17 @@ def install(app,store,runner):
++        elif raw.operation=='merge-nodes':
++            if set(v)!={'into'} or not isinstance(v['into'],str):raise ValueError('Choose the surviving node ID.')
++            if raw.id not in nodes or v['into'] not in nodes or raw.id==v['into']:raise ValueError('Choose two distinct existing nodes.')
++            old=nodes[raw.id];keep=nodes[v['into']]
++            # Only the author can apply this identity decision. Keep every anchor.
++            keep.evidence=list({(e.source_id,e.quote):e for e in keep.evidence+old.evidence}.values())
++            keep.source_ids=list(dict.fromkeys(keep.source_ids+old.source_ids))
++            description=keep.description+'\n'+old.description if old.description and old.description!=keep.description else keep.description
++            if len(description)>4000:raise ValueError('Combined notes exceed 4,000 characters; edit them before merging. Nothing was clipped.')
++            keep.description=description;keep.status='proposed'
++            for edge in edges.values():
++                if edge.source==raw.id:edge.source=keep.id;edge.status='proposed'
++                if edge.target==raw.id:edge.target=keep.id;edge.status='proposed'
++            del nodes[raw.id]
++            p.brief.pinned_nodes=list(dict.fromkeys(keep.id if n==raw.id else n for n in p.brief.pinned_nodes))
++            p.brief.excluded_nodes=list(dict.fromkeys(keep.id if n==raw.id else n for n in p.brief.excluded_nodes))
++            selected=keep.id
+diff --git a/graphpaper/jev_budget.py b/graphpaper/jev_budget.py
+index b1a1282..4c61436 100644
+--- a/graphpaper/jev_budget.py
++++ b/graphpaper/jev_budget.py
+@@ -155 +155 @@ def dispatch(clients,state,questions):
+-        import math
++        from .system_one import validate_answer
+@@ -157,7 +157 @@ def dispatch(clients,state,questions):
+-            a=answers.get(name,{})
+-            if not isinstance(a,dict) or a.get('type')!=q['type']:raise ProviderError('JEV returned an invalid answer type for '+name+'.')
+-            if q['type']=='noul':
+-                v=a.get('noul')
+-                if type(v) not in (int,float) or not math.isfinite(v) or not 0<=v<=1:raise ProviderError('JEV returned an invalid probability.')
+-            elif q['type']=='choice' and a.get('choice') not in q['criteria']:raise ProviderError('JEV returned a choice outside the declared options.')
+-            output[name]=a
++            output[name]=validate_answer(q,answers.get(name))
+diff --git a/graphpaper/models.py b/graphpaper/models.py
+index 8288724..ce7581f 100644
+--- a/graphpaper/models.py
++++ b/graphpaper/models.py
+@@ -198,0 +199 @@ class Project(Model):
++    system_one: dict[str, Any] = Field(default_factory=dict)
+@@ -217,0 +219,10 @@ class Settings(Model):
++    system_one_enabled: bool = True
++    system_one_retrieval: bool = True
++    system_one_exploration: bool = True
++    system_one_fidelity: bool = True
++    system_one_learning: bool = True
++    system_one_routing: bool = False
++    system_one_fast_model: str = Field('', max_length=200)
++    system_one_deep_model: str = Field('', max_length=200)
++    system_one_fast_effort: str = Field('default', pattern=r'^[a-z][a-z0-9_-]{0,31}$')
++    system_one_deep_effort: str = Field('default', pattern=r'^[a-z][a-z0-9_-]{0,31}$')
+diff --git a/graphpaper/pipeline.py b/graphpaper/pipeline.py
+index 1186007..2b69b23 100644
+--- a/graphpaper/pipeline.py
++++ b/graphpaper/pipeline.py
+@@ -169,22 +169,9 @@ def make_angles(p: Project, clients: Clients, job: Job):
+-    for offset in range(0, len(candidates), 4):
+-        batch = candidates[offset:offset + 4]
+-        state = {"mode": p.mode, "brief": p.brief.model_dump(), "candidates": [compact_motif(c) for c in batch], **judge_context}
+-        questions = {}
+-        for i, c in enumerate(batch):
+-            for key, question in {
+-                "valuable": "Could this candidate sustain a distinctive, compelling piece in the requested genre and author voice, rather than a neutralized substitute?",
+-                "grounded": "Are the empirical premises anchored to supplied evidence or canon? Do not demand experimental proof for a value judgment or mistake an explicit analogy for a claim of causal identity.",
+-                "fit": "Does this candidate serve the author's actual thesis and direction without replacing a judgment with an unresolved question or a more moderate position?",
+-                "spurious": "Does this candidate invent an empirical or causal connection? Assess facts separately from values; a bold moral judgment or explicitly rhetorical analogy is not a spurious factual claim merely because it is forceful.",
+-            }.items():
+-                questions[f"c{i}_{key}"] = {"type": "noul", "instructions": f"Evaluate candidate {c['id']} only. {question}"}
+-        answers = clients.decide(state, questions)
+-        for i, c in enumerate(batch):
+-            if answers:
+-                c["scores"] = {key: answers[f"c{i}_{key}"]["noul"] for key in ["valuable", "grounded", "fit", "spurious"]}
+-                sc = c["scores"]
+-                c["priority"] = sc["valuable"] * 0.4 + sc["fit"] * 0.3 + sc["grounded"] * 0.2 + (1 - sc["spurious"]) * 0.1
+-            else:
+-                c["priority"] = c["structural_rank"]
+-        job.note(f"{'JEV inspected' if answers else 'Structurally explored (unscored)'} {min(offset + 4, len(candidates))}/{len(candidates)} motifs.", 15 + int(45 * (offset + len(batch)) / len(candidates)))
+-    ranked = sorted(candidates, key=lambda x: x["priority"], reverse=True)
++    from .s1_graph import assess_motifs, explore
++    from .system_one import Engine
++    if Engine(clients).enabled:
++        ranked = assess_motifs(p, clients, candidates)
++        ranked = explore(p, clients, ranked)
++        candidates = ranked
++    else:
++        ranked = sorted(candidates, key=lambda x:x['structural_rank'], reverse=True)
++    job.note('Graph opportunities ranked. Authorial fidelity is assessed separately from craft.', 55)
+@@ -210,12 +197 @@ def make_angles(p: Project, clients: Clients, job: Job):
+-        state = {"brief": p.brief.model_dump(), "mode": p.mode, "angle": angle.model_dump(), "evidence": [compact_motif(c) for c in refs], **judge_context}
+-        qs = {"editorial_potential": {"type": "noul", "instructions": "Is this a coherent, compelling angle that fulfills this author's intended argument and voice, without compulsory balance or a generic restatement?"}, "evidence_fit": {"type": "noul", "instructions": "Do supplied sources support the actual factual premises? Preserve the distinction between those premises and the author's moral judgment, analogy or interpretation. Do not penalize a stance for lacking neutrality."}, "needs_research": {"type": "noul", "instructions": "Is essential evidence missing for a specific factual premise actually asserted here? Mere uncertainty about consciousness, an untestable value judgment or a remote objection to an argument not made does not alone require more research."}}
+-        for i, q in enumerate(a.get("evaluation_questions", [])[:2]):
+-            qs[f"tailored_{i}"] = {"type": "noul", "instructions": str(q)[:500]}
+-        qs['stance_fidelity'] = {'type':'noul',"instructions":"Does this angle preserve the stated author position and requested purpose, instead of reopening it as a neutral inquiry or substituting a compromise? For exploratory work, does it genuinely explore the question?"}
+-        qs['voice_fidelity'] = {'type':'noul','instructions':'Does this angle match the supplied voice, rhetorical habits and requested force, rather than generic committee prose?'}
+-        scores = clients.decide(state, qs)
+-        if scores:
+-            angle.scores = {k: v["noul"] for k, v in scores.items()}
+-            angle.score = round(100 * (0.45 * angle.scores["editorial_potential"] + 0.25 * angle.scores["stance_fidelity"] + 0.15 * angle.scores["voice_fidelity"] + 0.15 * angle.scores["evidence_fit"]), 1)
+-            angle.score_engine = "JEV editorial estimate (not a truth probability)"
+-            angle.decision = "Research first" if angle.scores["needs_research"] > 0.65 else "Ready to develop"
++        p.system_one.setdefault('angle_tests',{})[angle.id] = [str(q)[:500] for q in a.get('evaluation_questions',[])[:3]]
+@@ -225,2 +200,0 @@ def make_angles(p: Project, clients: Clients, job: Job):
+-    if clients.jev_route() != "off":
+-        result.sort(key=lambda a: a.score or 0, reverse=True)
+@@ -227,0 +202,14 @@ def make_angles(p: Project, clients: Clients, job: Job):
++    from .s1_editorial import assess_angles, repair_angles
++    evidence = {a.id:[compact_motif(c) for c in candidates if any(n in a.node_ids for n in c['node_ids'])][:3] for a in result}
++    assess_angles(p, clients, evidence)
++    repair_angles(p, clients, job, evidence)
++    if clients.settings.system_one_learning:
++        from .s1_learning import adjustment
++        policies=p.system_one.get('angle_policies',{})
++        for a in p.angles:
++            a.scores['preference_adjustment']=adjustment(p,getattr(clients,'system_one_store',None),{**a.scores,'eligible':policies.get(a.id,{}).get('eligible',True)}) if a.score is not None else 0
++            if a.score is None:a.scores={}
++        p.angles.sort(key=lambda a:(policies.get(a.id,{}).get('eligible',True),a.score is not None,(a.score or 0)/100+a.scores.get('preference_adjustment',0)),reverse=True)
++    active_ids={a.id for a in p.angles}
++    for name in ('angle_tests','angle_policies','angle_originals'):
++        if name in p.system_one:p.system_one[name]={k:v for k,v in p.system_one[name].items() if k in active_ids}
+@@ -240 +228 @@ def selected_angle(p: Project):
+-def source_pack(p: Project, query: str, limit=38000, ids=None):
++def source_pack(p: Project, query: str, limit=38000, ids=None, clients=None):
+@@ -267,0 +256 @@ def source_pack(p: Project, query: str, limit=38000, ids=None):
++    nomination_limit = max(limit, 65000) if clients and clients.settings.system_one_retrieval else limit
+@@ -270 +259 @@ def source_pack(p: Project, query: str, limit=38000, ids=None):
+-        if size + n <= limit:
++        if size + n <= nomination_limit:
+@@ -273 +262,11 @@ def source_pack(p: Project, query: str, limit=38000, ids=None):
+-    return {"passages": chosen, "retrieved_passages": len(chosen), "total_passages": len(items), "note": "Selected source passages, not the whole corpus. Do not cite content not supplied here."}
++    pack = {"passages": chosen, "retrieved_passages": len(chosen), "total_passages": len(items), "note": "Selected source passages, not the whole corpus. Do not cite content not supplied here."}
++    if clients:
++        from .s1_retrieval import rerank_pack
++        pack = rerank_pack(p,clients,pack,query,limit,ids)
++    # Off/unavailable JEV never bypasses the writer's context budget.
++    kept=[];size=0
++    for row in pack['passages']:
++        n=len(dumps(row))
++        if size+n<=limit:kept.append(row);size+=n
++    pack['passages']=kept;pack['retrieved_passages']=len(kept)
++    return pack
+@@ -284 +283 @@ def make_outline(p: Project, clients: Clients, job: Job):
+-    pack = source_pack(p, a.thesis, min(38000, clients.settings.context_chars // 2), a.source_ids)
++    pack = source_pack(p, a.thesis, min(38000, clients.settings.context_chars // 2), a.source_ids, clients=clients)
+@@ -327 +326 @@ def review_draft(p: Project, clients: Clients, job: Job, text=None) -> Review:
+-    pack = source_pack(p, text[:5000], min(30000, clients.settings.context_chars // 3))
++    pack = source_pack(p, text[:5000], min(30000, clients.settings.context_chars // 3), clients=clients)
+@@ -342,4 +341,5 @@ def review_draft(p: Project, clients: Clients, job: Job, text=None) -> Review:
+-    # State-specific JEV questions steer the next action, not just a generic score.
+-    findings = {"mode": p.mode, "brief": p.brief.model_dump(), "editorial_findings": raw, "citation_audit": review.citation_audit, **editorial_context(p,compact=True)}
+-    questions = {"action": {"type": "choice", "instructions": "Given these editorial findings and the authorial contract, which action is most appropriate? Do not mistake a value judgment for missing empirical evidence. Authorial drift calls for restoring the intended argument, not moderating it. Real unsupported factual premises still need correction.", "criteria": {"research": "A specifically identified, essential factual premise or canon detail is missing. Not merely moral disagreement, forceful language or a hypothetical objection.", "revise": "Known fixable issues require a prose/structure/logic revision.", "author_review": "The draft is ready for human editorial review, not automatic publication."}}, "material_issue": {"type": "noul", "instructions": "Do the findings identify a consequential factual, logical, canon or narrative flaw?"}}
+-    decisions = clients.decide(findings, questions)
++    from .s1_editorial import audit_passages, review_action
++    extra = audit_passages(p,clients,text,pack) if clients.settings.system_one_fidelity else []
++    review.issues.extend(extra)
++    findings={"editorial_findings":raw,"citation_audit":review.citation_audit,"independent_checks":extra}
++    decisions, action = review_action(p,clients,findings)
+@@ -347,2 +347,2 @@ def review_draft(p: Project, clients: Clients, job: Job, text=None) -> Review:
+-        review.scores = decisions
+-        review.verdict = {"research": "Research / canon clarification needed", "revise": "Revision recommended", "author_review": "Ready for author review"}[decisions["action"]["choice"]]
++        review.scores=decisions
++        review.verdict={"research":"Research / canon clarification needed","revise":"Revision recommended","author_review":"Ready for author review"}[action]
+@@ -360 +360 @@ def revise(p: Project, clients: Clients, job: Job, store: Store, instruction="",
+-    pack = source_pack(p, (instruction or review.summary) + original[:4000], min(28000, clients.settings.context_chars // 3))
++    pack = source_pack(p, (instruction or review.summary) + original[:4000], min(28000, clients.settings.context_chars // 3), clients=clients)
+@@ -369,4 +369,3 @@ def revise(p: Project, clients: Clients, job: Job, store: Store, instruction="",
+-        comparisons = []
+-        if len(original) + len(revised) < 40000:
+-            comparisons = clients.decide({"mode": p.mode, "brief": p.brief.model_dump(), "original": original, "candidate": revised, "known_issues": review.model_dump(), **editorial_context(p,compact=True)}, {"prefer_revision": {"type": "noul", "instructions": "Does the candidate materially improve the known issues while preserving the author's thesis, stance, rhetorical force, wit, meaningful empirical qualifiers and fictional canon? A more moderate, balanced or polite version is not automatically better. Reject a candidate that turns the intended argument into an unresolved inquiry unless the author requested that change."}})
+-        accepted = bool(comparisons and comparisons["prefer_revision"]["noul"] >= 0.6)
++        from .s1_editorial import assess_edit
++        comparison=assess_edit(p,clients,original,revised,instruction)
++        accepted=comparison['decision']=='present' and comparison.get('improved',False)
+@@ -393 +392 @@ def write_draft(p: Project, clients: Clients, store: Store, job: Job):
+-        pack = source_pack(p, a.thesis + "\n" + section.purpose + "\n" + " ".join(section.beats), min(38000, clients.settings.context_chars // 2), section.source_ids)
++        pack = source_pack(p, a.thesis + "\n" + section.purpose + "\n" + " ".join(section.beats), min(38000, clients.settings.context_chars // 2), section.source_ids, clients=clients)
+@@ -395,0 +395,10 @@ def write_draft(p: Project, clients: Clients, store: Store, job: Job):
++        if p.mode == 'fiction' and clients.settings.system_one_fidelity:
++            from .s1_science import scene_check
++            problems=scene_check(p,clients,text,ledger,draft_sections[-1] if draft_sections else '')
++            if problems:
++                original_scene=text
++                candidate=clients.complete(editorial_system(p,'draft'),dumps({'task':'Repair only the identified continuity or dramatic repetition problems in this scene. Preserve the narrator, voice, events that do not conflict, moral ambiguity and intended ending. Return the scene only.',
++                    'scene':text,'identified_checks':problems,'canon':p.brief.canon,'ledger':ledger,'section':section.model_dump(),**editorial_context(p)}))
++                remaining=scene_check(p,clients,candidate,ledger,draft_sections[-1] if draft_sections else '')
++                if not remaining:text=candidate
++                else:job.note('Kept the original scene: targeted continuity repair still needs author review.')
+@@ -409 +418 @@ def write_draft(p: Project, clients: Clients, store: Store, job: Job):
+-    if clients.settings.refine and p.review.scores.get("action", {}).get("choice") == "revise":
++    if clients.settings.refine and p.review.scores.get("executed_action", {}).get("choice") == "revise":
+@@ -426 +435 @@ class Runner:
+-        if action not in {"graph", "angles", "outline", "draft", "review", "revise", "voice", "humanize", "deslop", "both", "science-plan", "science-search", "science-fulltext", "science-appraise", "science-outline", "science-draft", "science-review"}:
++        if action not in {"graph", "angles", "outline", "draft", "review", "revise", "voice", "humanize", "deslop", "both", "science-plan", "science-search", "science-fulltext", "science-appraise", "science-outline", "science-draft", "science-review", "science-screen", "system-one-audit"}:
+@@ -445,0 +455,2 @@ class Runner:
++        clients.system_one_project = p
++        clients.system_one_store = self.store
+@@ -455 +466 @@ class Runner:
+-                             'outline':science.outline_science,'draft':science.draft_science,'review':science.review_science}
++                             'outline':science.outline_science,'draft':science.draft_science,'review':science.review_science,'screen':lambda p,c,s,j: __import__('graphpaper.s1_science',fromlist=['screen']).screen(p,c)}
+@@ -456,0 +468,16 @@ class Runner:
++            elif job.action == "system-one-audit":
++                from .s1_editorial import assess_angles
++                from .s1_graph import alignment
++                if not settings.system_one_enabled:raise ValueError('Enable System One in Configure before evaluating.')
++                if clients.jev_route() == 'off':raise ValueError('Connect TypeSafe or OpenRouter JEV first; this audit uses no writing model.')
++                if not (p.angles or p.graph.nodes or p.draft.strip() or p.research.records):raise ValueError('Add project material before requesting a decision audit.')
++                if p.angles:assess_angles(p,clients)
++                alignment(p,clients)
++                if p.mode=='science':
++                    from .s1_science import screen,check_appraisals
++                    screen(p,clients);check_appraisals(p,clients)
++                if p.draft.strip():
++                    from .s1_editorial import audit_passages
++                    pack=source_pack(p,p.draft[:4000],28000,clients=clients)
++                    audit_passages(p,clients,p.draft,pack)
++                job.note('System One decision audit ready. No draft, source or screening choice was replaced.',95)
+diff --git a/graphpaper/polish.py b/graphpaper/polish.py
+index 1fc2254..0c8ce96 100644
+--- a/graphpaper/polish.py
++++ b/graphpaper/polish.py
+@@ -90,2 +90,8 @@ def polish_draft(project, clients, job, mode, instruction=''):
+-    review = clients.complete(editorial_system(project, "polish"), json.dumps({'task': 'Compare original and proposed prose edit. Identify factual/semantic drift, altered named entities, lost qualifiers or reordered citations that no longer support their claims. For fiction also check narrator, scene events, motivation and ending. Judge fidelity separately from fluency. Preserve the intended thesis, indignation, satire, humor and force; polite equivocation is a meaning change, not an improvement. Distinguish essential factual qualifiers from gratuitous caveats. Return an honest review. Do not rewrite.', 'mode': project.mode, 'original': original, 'candidate': candidate, 'author_instruction': instruction, **editorial_context(project),
+-        'schema': {'meaning_preserved': True, 'stance_preserved': True, 'voice_preserved': True, 'summary': 'Specific editorial assessment', 'warnings': ['Concrete risks or unresolved differences'], 'improvements': ['Specific changes']}}, ensure_ascii=False), role='editor', json_mode=True)
++    from .s1_editorial import assess_edit
++    comparison=assess_edit(project,clients,original,candidate,instruction)
++    if comparison['decision']=='escalate':
++        review = clients.complete(editorial_system(project, "polish"), json.dumps({'task': 'Compare original and proposed prose edit. Identify factual/semantic drift, altered named entities, lost qualifiers or reordered citations that no longer support their claims. For fiction also check narrator, scene events, motivation and ending. Judge fidelity separately from fluency. Preserve the intended thesis, indignation, satire, humor and force; polite equivocation is a meaning change, not an improvement. Distinguish essential factual qualifiers from gratuitous caveats. Return an honest review. Do not rewrite.', 'mode': project.mode, 'original': original, 'candidate': candidate, 'author_instruction': instruction, **editorial_context(project),
++            'schema': {'meaning_preserved': True, 'stance_preserved': True, 'voice_preserved': True, 'summary': 'Specific editorial assessment', 'warnings': ['Concrete risks or unresolved differences'], 'improvements': ['Specific changes']}}, ensure_ascii=False), role='editor', json_mode=True)
++        review['system_one_comparison']=comparison
++    else:
++        review=comparison
+diff --git a/graphpaper/providers.py b/graphpaper/providers.py
+index d8db011..d243611 100644
+--- a/graphpaper/providers.py
++++ b/graphpaper/providers.py
+@@ -116,0 +117,2 @@ class Clients:
++        from .s1_routing import prepare_call
++        system,user,routed=prepare_call(self,system,user,role)
+@@ -117,0 +120,4 @@ class Clients:
++        if routed and routed['model']:
++            model_field={'editor':'editor_model','extraction':'extraction_model'}.get(role,'model')
++            effort_field={'editor':'editor_reasoning_effort','extraction':'extraction_reasoning_effort'}.get(role,'reasoning_effort')
++            s=s.model_copy(update={model_field:routed['model'],effort_field:routed['effort']})
+diff --git a/graphpaper/science.py b/graphpaper/science.py
+index a525346..242b167 100644
+--- a/graphpaper/science.py
++++ b/graphpaper/science.py
+@@ -89,0 +90,2 @@ def search_literature(p,clients,store,job):
++    from .s1_science import screen
++    screen(p,clients)
+@@ -99 +101,2 @@ def fetch_fulltexts(p,clients,store,job):
+-    targets=[r for r in included(p) if r.metadata.content_scope!='full_text'][:30]
++    from .s1_science import prioritize_fulltexts
++    targets=prioritize_fulltexts(p,clients,[r for r in included(p) if r.metadata.content_scope!='full_text'])[:30]
+@@ -145,0 +149,2 @@ def appraise(p,clients,store,job):
++    from .s1_science import check_appraisals
++    check_appraisals(p,clients)
+diff --git a/graphpaper/server.py b/graphpaper/server.py
+index 52fea0d..b87a1f3 100644
+--- a/graphpaper/server.py
++++ b/graphpaper/server.py
+@@ -321 +321,6 @@ def create_app(root=None):
+-        data, media, ext = export(p, kind)
++        if kind == 'system-one':
++            from .s1_learning import evaluation_export
++            data=json.dumps(evaluation_export(store,p),ensure_ascii=False,indent=2).encode('utf-8')
++            media,ext='application/json','.system-one.json'
++        else:
++            data, media, ext = export(p, kind)
+@@ -362,0 +368,2 @@ def create_app(root=None):
++    from .s1_routes import install as install_system_one
++    install_system_one(app,store,runner,settings)
+diff --git a/scripts/build_release.ps1 b/scripts/build_release.ps1
+index a2ca405..6c23177 100644
+--- a/scripts/build_release.ps1
++++ b/scripts/build_release.ps1
+@@ -15 +15 @@ Copy-Item ui/assets/CREDITS.md -Destination dist/GraphPaper/ASSET-CREDITS.md
+-Copy-Item docs/RELEASE-0.6.0.md -Destination dist/GraphPaper/WHATS-NEW.md
++Copy-Item docs/RELEASE-0.7.0.md -Destination dist/GraphPaper/WHATS-NEW.md
+diff --git a/scripts/native_smoke.py b/scripts/native_smoke.py
+index e2bece9..67caabf 100644
+--- a/scripts/native_smoke.py
++++ b/scripts/native_smoke.py
+@@ -25,0 +26 @@ def main():
++    parser.add_argument('--system-one',action='store_true',help='Inspect typed decisions, author feedback and approved routing in the actual native shell')
+@@ -161,0 +163,4 @@ def main():
++            if args.system_one:
++                from system_one_ui_checks import exercise
++                report['system_one']=exercise(page,check,out,native=True)
++                responsive(hwnd)
+diff --git a/tests/conftest.py b/tests/conftest.py
+index 24ac446..70b4908 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -49 +49,11 @@ class ScriptedClients:
+-        return {k: {"type": q["type"], **({"noul": .1 if "spurious" in k or k == "needs_research" else .85} if q["type"] == "noul" else {"choice": "author_review" if "author_review" in q["criteria"] else next(iter(q["criteria"]))})} for k, q in questions.items()}
++        answers={}
++        negative=('spurious','needs_research','added_allegation','irrelevant_caveat','meaning_drift','lost_reasoning','canon_conflict','knowledge_conflict','motivation_conflict','repetitive','material_issue','contradiction','overclaim')
++        for k,q in questions.items():
++            if q['type']=='noul':answers[k]={'type':'noul','noul':.1 if any(t in k for t in negative) else .85}
++            elif q['type']=='choice':
++                chosen='author_review' if 'author_review' in q['criteria'] else 'uncertain' if 'uncertain' in q['criteria'] else next(iter(q['criteria']))
++                answers[k]={'type':'choice','choice':chosen,'probabilities':{v:float(v==chosen) for v in q['criteria']},'confidence':1}
++            else:
++                keys=list(map(str,range(len(q['criteria']))))
++                answers[k]={'type':'score','score':len(keys)-1,'legend':dict(zip(keys,q['criteria'])),'probabilities':{v:float(v==keys[-1]) for v in keys},'confidence':1}
++        return answers
+diff --git a/ui/index.html b/ui/index.html
+index 63c14a1..e0bedb5 100644
+--- a/ui/index.html
++++ b/ui/index.html
+@@ -18,0 +19,2 @@
++<link rel="stylesheet" href="/static/system_one.css">
++<script src="/static/system_one.js" defer></script>

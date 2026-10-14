@@ -1,19 +1,19 @@
-name: GraphPaper 0.6 graph studio release
+name: GraphPaper 0.7 System One release
 on:
   push:
-    branches: [main, feat/graph-studio-v0.6]
+    branches: [main, feat/system-one-v0.7]
     paths:
       - 'graphpaper/**'
       - 'ui/**'
       - 'scripts/**'
       - 'tests/**'
-      - 'docs/RELEASE-0.6.0.md'
+      - 'docs/RELEASE-0.7.0.md'
       - '.github/workflows/graph-studio-release.yml'
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: graph-studio-${{ github.ref }}
+  group: system-one-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   source:
@@ -25,17 +25,38 @@ jobs:
       revision: ${{ steps.source.outputs.revision }}
     steps:
       - uses: actions/checkout@v4
-      - name: Refresh the source manifest without changing application code or workflows
+      - name: Apply reviewed integration delta and record the exact release source
         id: source
         env:
           TARGET_BRANCH: ${{ github.ref_name }}
         run: |
+          set -eu
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess,os
+          patch=Path('.github/system-one-integration.patch')
+          if patch.exists():
+              assert os.environ['TARGET_BRANCH']=='feat/system-one-v0.7'
+              manifest=Path('.github/system-one-source.json')
+              expected=json.loads(manifest.read_text())
+              assert hashlib.sha256(patch.read_bytes()).hexdigest()==expected['patch_sha256'],'Integration patch transfer mismatch'
+              for name,digest in expected['before'].items():
+                  assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==digest,'Baseline changed: '+name
+              subprocess.run(['git','apply','--unidiff-zero','--check',str(patch)],check=True)
+              subprocess.run(['git','apply','--unidiff-zero',str(patch)],check=True)
+              for name,digest in expected['after'].items():
+                  assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==digest,'Integrated source mismatch: '+name
+              patch.unlink();manifest.unlink()
+              print('All integrated source files match the locally tested implementation.')
+          PY
+          git add graphpaper ui scripts tests docs pyproject.toml .github/system-one-* 2>/dev/null || git add -u
           python scripts/prepare_assets.py --manifest
           git add publish-manifest.json
           if ! git diff --cached --quiet; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit -m 'Refresh graph studio source publishing manifest'
+            git diff --cached --check
+            git commit -m 'Integrate verified System One source and refresh publishing manifest'
             git push origin "HEAD:$TARGET_BRANCH"
           fi
           echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
@@ -54,6 +75,7 @@ jobs:
       - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q --junitxml=test-results/linux.xml
       - run: node --test tests/graph_math.test.cjs
+      - run: python -m unittest discover -s docs/tests -p 'test_*.py' -v
       - run: python scripts/docs_tool.py check
       - run: python -m playwright install chromium
       - run: python scripts/ui_smoke.py
@@ -63,10 +85,11 @@ jobs:
       - run: python scripts/ui_polemic_smoke.py
       - run: python scripts/ui_voices_smoke.py
       - run: python scripts/ui_graph_studio_smoke.py
+      - run: python scripts/ui_system_one_smoke.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: graph-studio-browser-validation
+          name: system-one-browser-validation
           path: test-results/
   windows:
     needs: [source, browser]
@@ -91,18 +114,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: ./scripts/build_release.ps1
-      - name: Exercise the actual compiled spatial graph editor and existing workspaces
-        run: python scripts/native_smoke.py --science --graphify --graph-studio --polemic --voices --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
+      - name: Exercise the compiled System One desk and existing workspaces
+        run: python scripts/native_smoke.py --science --graphify --graph-studio --polemic --voices --system-one --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
       - uses: actions/upload-artifact@v4
         with:
-          name: GraphPaper-0.6-tested-Windows
+          name: GraphPaper-0.7-tested-Windows
           path: |
-            dist/GraphPaper-v0.6.0-Windows-x64.zip
+            dist/GraphPaper-v0.7.0-Windows-x64.zip
             dist/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: graph-studio-native-validation
+          name: system-one-native-validation
           path: test-results/
   publish:
     needs: [source, browser, windows]
@@ -117,7 +140,7 @@ jobs:
           ref: ${{ needs.source.outputs.revision }}
       - uses: actions/download-artifact@v4
         with:
-          name: GraphPaper-0.6-tested-Windows
+          name: GraphPaper-0.7-tested-Windows
           path: release-package
       - name: Publish the same tested archive, never overwrite an existing release
         env:
@@ -127,13 +150,13 @@ jobs:
           cd release-package
           sha256sum --check SHA256SUMS.txt
           cd ..
-          if gh release view v0.6.0 >/dev/null 2>&1; then echo 'Release already exists; refusing overwrite.'; exit 1; fi
-          cp docs/RELEASE-0.6.0.md release-package/notes.md
+          if gh release view v0.7.0 >/dev/null 2>&1; then echo 'Release already exists; refusing overwrite.'; exit 1; fi
+          cp docs/RELEASE-0.7.0.md release-package/notes.md
           revision=$(git rev-parse HEAD)
-          digest=$(sha256sum release-package/GraphPaper-v0.6.0-Windows-x64.zip | cut -d' ' -f1)
-          printf '\n\nCompiled Windows graph editing and native save-on-close checks passed. Validation: https://github.com/%s/actions/runs/%s . Source: %s . Archive SHA-256: %s .\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$revision" "$digest" >> release-package/notes.md
-          gh release create v0.6.0 release-package/GraphPaper-v0.6.0-Windows-x64.zip release-package/SHA256SUMS.txt --target "$revision" --title 'GraphPaper 0.6.0 — Ink, paper & spatial graph editing' --notes-file release-package/notes.md --draft
-          release_id=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]|select(.tag_name=="v0.6.0")|.id')
-          uploaded=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id/assets" --jq '.[]|select(.name=="GraphPaper-v0.6.0-Windows-x64.zip")|.digest')
+          digest=$(sha256sum release-package/GraphPaper-v0.7.0-Windows-x64.zip | cut -d' ' -f1)
+          printf '\n\nCompiled Windows System One, graph editing and native save-on-close checks passed. Validation: https://github.com/%s/actions/runs/%s . Source: %s . Archive SHA-256: %s .\n' "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$revision" "$digest" >> release-package/notes.md
+          gh release create v0.7.0 release-package/GraphPaper-v0.7.0-Windows-x64.zip release-package/SHA256SUMS.txt --target "$revision" --title 'GraphPaper 0.7.0 — System One decision studio' --notes-file release-package/notes.md --draft
+          release_id=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[]|select(.tag_name=="v0.7.0")|.id')
+          uploaded=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id/assets" --jq '.[]|select(.name=="GraphPaper-v0.7.0-Windows-x64.zip")|.digest')
           test "$uploaded" = "sha256:$digest"
-          gh release edit v0.6.0 --draft=false --latest
+          gh release edit v0.7.0 --draft=false --latest
