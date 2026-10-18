@@ -88,12 +88,15 @@ class ClientTests(unittest.TestCase):
 
     def test_multipart_file_and_role_are_preserved(self):
         with tempfile.TemporaryDirectory() as d:
-            path=Path(d)/'writing sample.txt';path.write_text('Specific author voice.\n',encoding='utf-8')
-            self.client.upload('/api/projects/p_one/sources/file',path,role='canon')
-        body=self.events[-1][3]
-        self.assertIn(b'name="role"\r\n\r\ncanon',body)
-        self.assertIn(b'filename="writing sample.txt"',body)
-        self.assertIn(b'Specific author voice.\n',body)
+            path=Path(d)/'writing sample.txt'
+            for original in (b'Specific author voice.\n', b'Specific author voice.\r\n'):
+                with self.subTest(original=original):
+                    path.write_bytes(original)
+                    self.client.upload('/api/projects/p_one/sources/file',path,role='canon')
+                    body=self.events[-1][3]
+                    self.assertIn(b'name="role"\r\n\r\ncanon',body)
+                    self.assertIn(b'filename="writing sample.txt"',body)
+                    self.assertIn(original,body)
 
     def test_output_refuses_accidental_overwrite(self):
         with tempfile.TemporaryDirectory() as d:

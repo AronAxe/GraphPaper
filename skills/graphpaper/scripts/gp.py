@@ -246,9 +246,9 @@ def workspace_lock(root: Path, adopt=False):
     stream = (root/'.graphpaper-agent.lock').open('a+b')
     acquired = False
     try:
-        stream.seek(0)
-        if not stream.read(1):
-            stream.write(b'0');stream.flush()
+        # Windows byte-range locks may extend beyond EOF. Do not read or
+        # initialize the byte first: an existing mandatory lock denies that IO
+        # before we can translate contention into the expected ClientError.
         stream.seek(0)
         try:
             if os.name == 'nt':
