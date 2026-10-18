@@ -1,0 +1,16 @@
+# Science: actual research, recorded methods
+
+Create `mode=science`. An ordinary article with scholarly-sounding prose is not a Science search. The existing workflow supports a scientific protocol, logged retrieval, screening, appraisal, manuscript drafting and APA exports. No diagram, JEV probability or formatting operation confers peer review.
+
+## Sequence
+
+1. Fetch the project. Edit its full `research.plan`, preserving existing fields. PUT `/api/projects/PID/research/plan` with current `version` and `plan`. A useful initial plan includes `question`, explicit `inclusion`/`exclusion` and selected `databases` (`pubmed`, `semantic_scholar`, `arxiv`, `crossref`, `europe_pmc`); verify accepted database identifiers against the backend before submitting a changed catalog. See the source `graphpaper/science_models.py` for the full versioned schema. Choose the article type deliberately.
+2. Run `science-plan` only when query planning is needed. This prepares queries; it has not searched anything. Review them and the protocol.
+3. Run `science-search`. Inspect `research.searches`: per-database success/failure, actual queries, dates, hits, retrieval bounds and deduplication. Do not equate “job completed” with all databases having succeeded.
+4. Run `science-screen` for JEV recommendations where authorized. Recommendations do **not** include or exclude records. Under explicitly delegated screening criteria, apply justified decisions with POST `/api/projects/PID/research/screen`: current `version`, record `ids`, `decision` (`include`, `exclude`, `unscreened`), and `reason`. Missing/ambiguous evidence stays unresolved rather than automatically excluded. State whether screening was agent-assisted; never claim independent human reviewers.
+5. Run `science-fulltext` for included records, inspect individual retrieval failures and scopes, then `science-appraise`. Abstract-only and excerpted appraisals are labelled as such. Uploaded text can be attached to the exact record via `/research/records/RID/attach` using current `version`, `source_id`, `confirm_identity` and `full_text`; verify identity and completeness before setting these flags.
+6. Run `science-outline`, inspect/edit it, then `science-draft`. The writer uses recorded material and methods. Empirical mode additionally requires the author's completed methods/results source; never fill that gap with invented data or literature summaries.
+7. Inspect the manuscript, source references, research readiness and actual S1 receipts. Run `science-review` after relevant manual changes. Check effect sizes, study limitations, source identity, reference metadata and any incomplete search claims.
+8. Export draft `docx`/`md` and `research-package`, `evidence` or `search-log` as requested. Use GET `/research/readiness` and `/research/preview` for blockers and APA preview. **Do not POST `/research/confirm` to claim the author performed checks they have not performed.** Submission export remains gated until legitimate author confirmations exist.
+
+Do not loosen inclusion criteria, enable unapproved databases, invent unavailable full text, or change the question simply to clear a blocker. Explain the specific limitation and retain completed work. Reviews, protocols and completed empirical studies are different deliverables.
