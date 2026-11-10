@@ -38,8 +38,8 @@ Explicitly argument-led outlines up to 3,000 words are drafted as one coherent p
 
 ## Edit, verify, export
 
-The writing desk has text, split and preview views. Internal `[S1]` references are clickable source links. Review checks include citation-ID integrity and a sampled examination of load-bearing claims; a valid ID alone does not prove support.
+In **Write**, use `[S1]` or `[S1, S2]` to cite evidence. **Split** and **Preview** show numbered citations, a reference list, and any source IDs you need to resolve. Click a citation to inspect its source. Editorial review samples the claims that carry the argument so you can check the passages behind them.
 
 Use an explicit revision instruction to change emphasis or structure. Use Humanize/Deslop for prose work and inspect the proposal before acceptance. Earlier drafts and generated checkpoints remain in Versions.
 
-For ordinary nonfiction, exports retain source identifiers and a source list. Academic author-year formatting belongs to [Science and APA export](EXPORTS-AND-APA.md). Read the actual source passages, check quotations and figures, and resolve important evidence gaps before publishing.
+Choose **Export draft** to save a PDF or Word document with the numbered references. Markdown retains the original source IDs. Read the actual passages, check quotations and figures, and resolve important evidence gaps before publishing. [Export guide and Science APA formatting](EXPORTS-AND-APA.md)

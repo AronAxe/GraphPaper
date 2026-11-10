@@ -34,7 +34,7 @@ Before publishing, verify that the package contains the current interface, versi
 
 Update the application version and changelog deliberately. Review the workflow’s current release-note path; it must describe the version being built. Run validation and inspect the reports before attaching the asset.
 
-A version tag must match the application version. The workflow publishes a versioned ZIP and checksum, and avoids silently overwriting an existing verified release asset. If a fix is needed after publication, create a new corrective release with its own version and evidence.
+Push a version tag on the verified merge commit. It must match the application version. The workflow runs the browser and native Windows checks, then tests a fresh extraction of the release ZIP. It uploads the tested archive and checksum to a draft release, verifies both uploaded digests, and makes the release public. Keep published assets intact. If a fix is needed after publication, create a corrective release with its own version and validation.
 
 The release notes should distinguish native/local validation from hosted Actions results, and live provider checks from controlled test doubles. Do not present an unavailable or throttled database as tested successfully.
 

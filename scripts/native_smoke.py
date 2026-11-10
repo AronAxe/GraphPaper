@@ -204,7 +204,7 @@ def main():
             page.locator('.nav-link[data-tab="write"]').click();page.wait_for_selector('#manuscript')
             page.locator('#manuscript').fill('# Native test\n\nA saved line.')
             page.evaluate('() => flush()')
-            page.evaluate("id => {window.__saveTest=null;window.pywebview.api.save_export(id,'md').then(r=>window.__saveTest=r).catch(e=>window.__saveTest={error:String(e)});}",pid)
+            page.evaluate("id => {window.__saveTest=null;window.pywebview.api.save_export(id,'pdf').then(r=>window.__saveTest=r).catch(e=>window.__saveTest={error:String(e)});}",pid)
             def export_dialog_ready():
                 result=page.evaluate('() => window.__saveTest')
                 report['save_bridge_result']=result
@@ -217,7 +217,7 @@ def main():
             result=wait_test(lambda:page.evaluate('() => window.__saveTest'))
             report['save_bridge_result']=result
             assert result=={'saved':False},result;responsive(hwnd)
-            check('Native Save As dialog opens, cancels and returns without blocking the interface')
+            check('Native PDF Save As dialog opens and cancels without blocking the interface')
             page.screenshot(path=str(out/'native-writing.png'))
             draft='# Native test\n\nThis pending edit must survive the native close button.'
             page.locator('#manuscript').fill(draft)

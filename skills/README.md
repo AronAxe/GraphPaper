@@ -2,7 +2,7 @@
 
 Install **[graphpaper](graphpaper/SKILL.md)** to let a filesystem/process-capable agent use GraphPaper without clicking through its Windows application. The pack includes a headless host, a JSON API client and on-demand workflow guides for nonfiction, polemic, fiction, scientific research, saved voices, editing and System One.
 
-This is a skill plus an executable bridge to the **same backend**, not a separate writing engine, an MCP server or a claim of guaranteed writing improvement. The desktop executable is unchanged. The source edition supplies the backend; an agent can install and run it on its own authorized machine or sandbox. Installing the skill alone does not install Python dependencies or grant access to accounts.
+The skill and [GraphPaper MCP adapter](../docs/AGENT-MCP.md) use the same backend as the desktop studio. Use MCP if your client supports local stdio servers. The skill also provides command-line recipes for file uploads and more advanced workflows.
 
 ## Install once
 

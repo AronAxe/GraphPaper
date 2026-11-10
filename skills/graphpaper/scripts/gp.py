@@ -113,9 +113,10 @@ def save_bytes(path: Path, data: bytes, overwrite: bool = False):
 
 
 class Client:
-    def __init__(self, url: str, timeout: float = 60):
+    def __init__(self, url: str, timeout: float = 60, *, connect_token: str = ""):
         self.url = local_url(url)
         self.timeout = timeout
+        self.connect_token = connect_token
         self.cookies = http.cookiejar.CookieJar()
         # Never pass local manuscript traffic through an environment HTTP proxy.
         self.opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect(),
@@ -124,6 +125,8 @@ class Client:
 
     def _send(self, method: str, path: str, data=None, content_type=None, timeout=None) -> bytes:
         headers = {'X-GraphPaper': '1'}
+        if path == "/" and self.connect_token:
+            headers["X-GraphPaper-Connect"] = self.connect_token
         if content_type:
             headers['Content-Type'] = content_type
         request = urllib.request.Request(self.url + path, data=data, headers=headers, method=method)

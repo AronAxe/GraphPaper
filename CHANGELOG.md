@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 — Agent access and cited exports
+
+- Connect local AI agents to the desktop or headless workspace through the GraphPaper MCP adapter.
+- Let agents inspect sources and graphs, apply voices, edit drafts, run writing jobs, and export files. If a draft changes in another session, the writing desk lets you compare and merge the two versions.
+- Show numbered citations and a matching reference list in Nonfiction and Polemic previews. Flag unresolved references before export.
+- Save a PDF or editable Word manuscript directly from the writing desk, with the cited sources included.
+- Ship the MCP adapter and its setup guide in the Windows ZIP.
+
 ## 0.7.1 — Downloaded Windows runtime fix
 
 - Detect Internet-blocked bundled window DLLs before Python.NET initialization.

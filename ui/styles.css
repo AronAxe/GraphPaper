@@ -6,6 +6,36 @@
 @media(max-width:980px){.two-pane,.writing-layout{grid-template-columns:1fr}.direction-panel{display:grid;grid-template-columns:1fr}.graph-panel{min-height:500px}.graph-canvas{height:490px}.side-bottom .side-note{display:none}.workspace-head{align-items:flex-start}.workspace-head .header-actions{flex-direction:column;align-items:flex-end}.source-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:720px){.shell{grid-template-columns:1fr}.sidebar{display:none}.sidebar.open{display:flex;position:fixed;top:0;left:0;z-index:20;width:225px;box-shadow:var(--shadow)}.mobile-menu{display:inline-flex}.topbar{padding:0 16px;height:58px}.topbar .saved{display:none}.workspace-head{padding:23px 16px 17px}.workspace-head h1{font-size:22px}.workspace-head .description{max-width:260px}.workspace-head .header-actions{display:none}.workspace-body{padding:0 16px 24px}.steps{padding:0 16px 17px;gap:7px}.step{font-size:10px;gap:5px}.step-rule{width:9px}.job-bar{margin:0 16px 17px}.source-grid{grid-template-columns:1fr}.welcome{padding:35px 22px}.welcome h1{font-size:38px}.welcome-grid{grid-template-columns:1fr}.welcome-end{flex-wrap:wrap}.outline-fields{grid-template-columns:1fr;margin-left:0}.outline-foot{margin-left:0}.toolbar{align-items:flex-start;flex-wrap:wrap}.form-grid{grid-template-columns:1fr}.form-full{grid-column:auto}.modal-backdrop{padding:12px}.modal-head,.modal-body,.modal-foot{padding:17px}.editor-area.split{grid-template-columns:1fr}.editor-area.split .prose{border-top:1px solid var(--border)}.graph-search{max-width:190px}.graph-caption{max-width:90%}.graph-footer{font-size:9px}.graph-footer>.muted{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.draft-references {
+  border-top: 1px solid var(--border);
+  margin-top: 2em;
+}
+.draft-references li {
+  padding-bottom: .65em;
+  overflow-wrap: anywhere;
+}
+.draft-references .text-link {
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+}
+.draft-references .reference-url {
+  display: block;
+  color: var(--muted);
+  font-size: .84em;
+}
+.citation-missing {
+  color: var(--red);
+  text-decoration: underline dotted;
+}
+.citation-group {
+  font-size: .78em;
+  vertical-align: super;
+}
+.citation-group .citation {
+  font-size: inherit;
+  vertical-align: baseline;
+}
 @media print{.sidebar,.topbar,.workspace-head,.steps,.editor-toolbar,.editor-foot,.direction-panel,.toolbar,.job-bar{display:none!important}.shell,.writing-layout,.editor-area{display:block}.workspace-body{padding:0}.manuscript{display:none}.prose{display:block!important;color:#222;background:white}.panel{border:none;background:white}.prose .citation{color:#222}.modal-backdrop{display:none}}
 /* Fine details keep the workspace calm at narrow sizes. */
 .brand{text-decoration:none}.brand strong{color:var(--text)}.brand small{max-width:140px;line-height:1.45}.project-list{min-width:0}.project-item{min-width:0;overflow:hidden}.project-name{min-width:0;flex:1}.project-name small{display:block;font-size:9px;color:var(--soft);margin-top:2px}.saved{display:flex;align-items:center;gap:6px}.saved .icon{width:13px;height:13px}.range-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;font-size:11px}.range-row label{margin:0;font-size:11px;font-weight:400}.section-title{font-size:15px;letter-spacing:-.02em}.pin{display:inline-flex;align-items:center;gap:4px}.pin .icon{width:11px;height:11px}.graph-node .outer{fill:currentColor;opacity:.04}.graph-node.active .outer{fill:var(--accent);stroke:var(--accent);opacity:.3}

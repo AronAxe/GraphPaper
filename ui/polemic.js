@@ -14,7 +14,28 @@ function modeDialog(){const p=state.p;showModal('Writing mode','Change the job o
 function paintEditorialStatus(status){const p=state.p;if(!p||p.mode==='science'||state.tab==='system-one')return;$('#editorial-status')?.remove();const body=$('.workspace-body');if(!body)return;const view=state.tab;const stale=view==='angles'?status.angles_stale:view==='outline'?status.outline_stale:false;const samples=status.voice_enabled?`Voice: ${status.voice_samples} sample${status.voice_samples===1?'':'s'}`:'Author voice is switched off';const message=stale?(view==='angles'?'These saved angles predate the current brief, mode or voice. Refresh them here—no graph rebuild needed.':'This outline predates your current argument or voice. Keep it deliberately, edit it, or regenerate it.'):(p.mode==='polemic'?'Argument-led writing. Your thesis and voice guide every editorial stage.':'Your brief determines whether to argue or explore; factual checking does not require a middle position.');const node=document.createElement('div');node.id='editorial-status';node.className='editorial-status';node.innerHTML=`<div class="spacer"><span class="caps">${esc(writingModeNames[p.mode])} · ${samples}</span><p>${esc(message)}</p></div><div class="row wrap">${view==='angles'&&stale?btn('Refresh angles with my voice','run-angles','refresh','small',busy()?'disabled':''):''}${p.mode==='nonfiction'?btn('Switch to Polemic','choose-polemic','pen','small'):''}${view==='outline'&&stale?btn('Regenerate outline','run-outline','list','small',busy()?'disabled':''):''}</div>`;body.prepend(node);}
 const polemicPreviousRender=render;
 render=function(){if(state.p&&state.p.mode!=='science'&&state.tab==='research')state.tab='sources';polemicPreviousRender();const p=state.p;if(!p)return;const header=$('.workspace-head .header-actions');header?.insertAdjacentHTML('afterbegin',btn(writingModeNames[p.mode]+' · Change','writing-mode','pen','small ghost'));if(p.mode==='polemic'&&state.tab!=='system-one'){const desc=$('.workspace-head .description');if(desc)desc.textContent='Develop your argument in your voice. Precision is not compulsory compromise.';const crumb=$('.breadcrumb');if(crumb)crumb.innerHTML='Studio <span>/</span> Polemic';const title=$('.workspace-head h1');if(title)title.textContent={sources:'Give your argument its material.',graph:'Find the sharpest route to your argument.',angles:'Different angles. Your position.',outline:'Make the argument land.',write:'Write it like you mean it.'}[state.tab]||'Make your argument.';}
- const key=p.id+':'+p.version;if(editorialUI.statusKey===key&&editorialUI.status){paintEditorialStatus(editorialUI.status);return;}if(editorialUI.pendingKey===key)return;editorialUI.pendingKey=key;api('/projects/'+p.id+'/editorial/status').then(status=>{if(state.p?.id===p.id&&state.p.version===status.version){editorialUI.status=status;editorialUI.statusKey=key;paintEditorialStatus(status);}}).catch(()=>{}).finally(()=>{if(editorialUI.pendingKey===key)editorialUI.pendingKey='';});};
+ refreshEditorialStatus();
+};
+function refreshEditorialStatus(){
+ const p=state.p;
+ if(!p||p.mode==='science'||state.tab==='system-one')return;
+ const key=p.id+':'+p.version;
+ if(editorialUI.statusKey===key&&editorialUI.status){
+  paintEditorialStatus(editorialUI.status);
+  return;
+ }
+ if(editorialUI.pendingKey===key)return;
+ editorialUI.pendingKey=key;
+ api('/projects/'+p.id+'/editorial/status').then(status=>{
+  if(state.p?.id!==p.id||state.p.version!==status.version||p.version!==status.version)return;
+  editorialUI.status=status;
+  editorialUI.statusKey=key;
+  paintEditorialStatus(status);
+ }).catch(()=>{}).finally(()=>{
+  if(editorialUI.pendingKey===key)editorialUI.pendingKey='';
+ });
+}
+document.addEventListener('graphpaper-project-saved',refreshEditorialStatus);
 const polemicPreviousReview=reviewHTML;
 reviewHTML=function(){let value=polemicPreviousReview();const a=state.p?.review?.authorial_assessment;if(a&&Object.keys(a).length)value+=`<div class="evidence-card mt20"><span class="caps">Authorial fidelity</span><p class="hint mt12">${esc(a.summary||'The editor assessed the intended argument separately from factual support.')}</p><div class="row wrap mt12">${[['intent_preserved','Purpose'],['stance_preserved','Position'],['voice_preserved','Voice']].filter(([k])=>typeof a[k]==='boolean').map(([k,label])=>`<span class="chip ${a[k]?'green':'gold'}">${label}: ${a[k]?'preserved':'needs attention'}</span>`).join('')}</div></div>`;return value;};
 const polemicPreviousAction=handleAction;

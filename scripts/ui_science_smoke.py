@@ -13,6 +13,7 @@ from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT))
 from fastapi.testclient import TestClient
+from graphpaper import __version__
 from graphpaper.server import create_app
 from graphpaper.providers import Clients
 from tests.science_fixtures import ScienceClients
@@ -34,6 +35,7 @@ def wait_job(page,action):
 def main():
     import argparse
     parser=argparse.ArgumentParser();parser.add_argument('--out',default=str(ROOT/'test-results/science-ui'))
+    parser.add_argument('--chromium', help='Optional path to a Chromium-compatible browser executable')
     args=parser.parse_args();out=Path(args.out);out.mkdir(parents=True,exist_ok=True)
     report={'mode':'real HTTP browser','live_models':False,'live_databases':False,'checks':[],'page_errors':[],'ok':False}
     def check(label):report['checks'].append(label);print('PASS',label,flush=True)
@@ -47,12 +49,18 @@ def main():
         while not server.started and time.monotonic()<deadline:time.sleep(.05)
         assert server.started
         with patch.object(Clients,'discover_models',lambda self:catalog),sync_playwright() as pw:
-            browser=pw.chromium.launch(headless=True)
+            browser=pw.chromium.launch(headless=True, executable_path=args.chromium)
             page=browser.new_page(viewport={'width':1440,'height':1040},accept_downloads=True);page.set_default_timeout(12000)
             page.on('pageerror',lambda err:report['page_errors'].append(str(err)))
+            def slow_polemic_script(route):
+                # Fetching an optional desk can take longer than the bootstrap API.
+                time.sleep(0.8)
+                route.continue_()
+            page.route('**/static/polemic.js', slow_polemic_script)
             try:
                 page.goto(f'http://127.0.0.1:{port}/');page.wait_for_selector('.welcome')
                 expect(page.locator('.welcome-card')).to_have_count(4);check('Four distinct writing modes on the welcome screen')
+                expect(page.locator('.side-bottom .tiny').first).to_have_text(f'GraphPaper · {__version__}')
                 page.locator('[data-action="settings"]').click();page.locator('#s-provider').select_option('codex');page.locator('#s-allow_cloud').check();page.locator('#s-refine').uncheck();page.locator('#s-remember_keys').uncheck()
                 page.get_by_role('button',name='Load available models',exact=True).click()
                 expect(page.locator('#s-reasoning_effort option[value="ultra"]')).to_have_count(1)

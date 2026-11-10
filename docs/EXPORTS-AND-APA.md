@@ -1,18 +1,21 @@
 # Exports, references and APA manuscripts
 
-Use **Export** from the project header or writing desk. Save a current draft before exporting so the result matches the text you intend to share.
+Use **Export draft** in the writing desk or **Export** in the project header. GraphPaper saves your pending edits before exporting.
 
 ## Ordinary writing projects
 
 | Format | Contents |
 |---|---|
-| **Word (`.docx`)** | Editable manuscript with basic formatting and eligible source references |
-| **Markdown (`.md`)** | Portable plain text retaining headings and source identifiers |
-| **HTML (`.html`)** | Safe rendered text with print styling; open in a browser to print or save as PDF |
+| **Word (`.docx`)** | Editable manuscript with numbered citations and references |
+| **PDF (`.pdf`)** | Paginated manuscript with numbered citations and references, saved directly to a file |
+| **Markdown (`.md`)** | Portable text retaining headings and GraphPaper source identifiers |
+| **HTML (`.html`)** | Rendered manuscript with print styling and references |
 | **Project backup (`.json`)** | Current project state including source text; not credentials or all historical revisions |
 | **Graph (`.json`)** | The stored knowledge graph for external inspection or reuse |
 
-The editor supports a practical Markdown subset, not full desktop-publishing layout. HTML printing is different from a native PDF exporter. Publisher-specific typography and complex tables should be checked in the target editor.
+For articles and polemics, **Preview** and **Split** show references in first citation order. Click a citation or reference title to inspect its source. Word, PDF, and HTML use the same numbering and include the stored title, author, date, and web link when available. Markdown keeps the original `[S1]` labels and includes a Sources list.
+
+Use `[S1]` or grouped citations such as `[S1, S2]` in the manuscript. References are drawn from enabled evidence sources. Preview flags missing, excluded, and non-evidence sources by ID so you can resolve them before sharing. Word and PDF use a basic manuscript layout. Choose Word if you need to change fonts, prepare a publisher-specific layout, or preserve characters the PDF font cannot display.
 
 ## Science’s APA 7 Word template
 

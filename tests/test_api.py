@@ -19,6 +19,21 @@ def test_session_csrf_and_origin(app):
         assert 'HttpOnly' in r.headers['set-cookie'] and 'SameSite=strict' in r.headers['set-cookie']
 
 
+def test_agent_port_requires_authenticated_bootstrap(tmp_path):
+    from fastapi.testclient import TestClient
+    from graphpaper.server import create_app
+
+    app = create_app(tmp_path, agent_token="test-agent-token")
+    with TestClient(app, headers={"X-GraphPaper": "1"}) as client:
+        assert client.get("/").status_code == 403
+        assert client.get("/api/bootstrap").status_code == 403
+        assert client.get("/", headers={"X-GraphPaper-Connect": "wrong"}).status_code == 403
+        assert client.get("/", headers={"X-GraphPaper-Connect": "test-agent-token"}).status_code == 200
+        assert client.get("/api/bootstrap").status_code == 200
+    with TestClient(app) as desktop:
+        assert desktop.get("/", params={"open": app.state.token}).status_code == 200
+
+
 def test_create_persist_patch_and_conflict(client):
     p=client.post('/api/projects',json={'title':'My essay','mode':'nonfiction'}).json();base='/api/projects/'+p['id']
     r=client.patch(base,json={'version':0,'draft':'First.'});assert r.status_code==200

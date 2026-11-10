@@ -51,6 +51,10 @@ The review panel can report **authorial fidelity** separately from source suppor
 
 Humanize and Deslop follow the same intent. Their fidelity critic also sees the brief and voice. A changed stance counts as a meaning warning, and a candidate prepared under an earlier brief or voice cannot silently overwrite the current draft.
 
+## Check references and export
+
+Open **Preview** or **Split** in the writing desk to check numbered citations and the reference list. Click a citation to read its source and resolve any IDs marked as missing or excluded. Use **Export draft** to save a PDF or Word document with the same references. [Export guide](EXPORTS-AND-APA.md)
+
 ## Scope
 
 This is an editorial-workflow change, not a switch that rewrites a provider's behavior or guarantees a particular style from every model. Inspect the proposed angles and choose your own when appropriate. The release includes wiring, preservation, UI and native regression tests plus separately labelled live Codex examples using original synthetic material. The fixtures are not a user's private articles and are not empirical findings about AI consciousness.

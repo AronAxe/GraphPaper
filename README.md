@@ -25,7 +25,9 @@ GraphPaper is a **local-first writing studio for nonfiction, fiction, polemic an
 
 Use **Codex / ChatGPT sign-in** or your own model API. Keep control of the argument, the evidence and the final words. **Polemic and argument-led nonfiction preserve your thesis and voice across angle selection, outlining and review.** [Continue an existing project in Polemic](docs/POLEMIC.md).
 
-**New in 0.7: the System One decision studio.** JEV now guides source selection, graph exploration, targeted intent repair, edit checks and research triage. Inspect its questions, distributions and resulting actions; save reusable corrections and train a local preference ranker on your own feedback. Optional model routing uses only alternatives you approve. [System One controls and validation scope](docs/SYSTEM-ONE.md).
+**New in 0.8.0.** Connect a local AI agent to GraphPaper through MCP. In Nonfiction and Polemic, Preview and Split now show numbered references. Use **Write → Export draft** to save a PDF or editable Word document with the same citations and bibliography. [Release notes](docs/RELEASE-0.8.0.md) · [Agent setup](docs/AGENT-MCP.md) · [Export guide](docs/EXPORTS-AND-APA.md)
+
+**The System One decision studio.** JEV guides source selection, graph exploration, targeted intent repair, edit checks and research triage. Inspect its questions, distributions and resulting actions, save reusable corrections, and train a local preference ranker on your own feedback. Optional model routing uses only alternatives you approve. [System One controls and validation scope](docs/SYSTEM-ONE.md).
 
 **External Graphify supports Codex sign-in and per-model reasoning.** The Windows release includes the public runtime; there is no extra API-key requirement or duplicate Native pass. [Graphify setup and distribution](docs/UPDATE-0.3.1.md)
 

@@ -2,7 +2,7 @@
 
 **Connect your sources. Find your angle. Write in your own voice.**
 
-These guides cover **GraphPaper 0.7.1**: the System One decision studio, ink-blue interface, real graph-paper sidebar, spatial graph editor, four writing modes and reusable voice graphs. [Download for Windows](https://github.com/AronAxe/GraphPaper/releases/latest) · [System One guide](SYSTEM-ONE.md) · [See the interface](VISUAL-TOUR.md) · [Version history](../CHANGELOG.md).
+These guides cover **GraphPaper 0.8.0**. Connect a local agent to your workspace, check numbered citations in Nonfiction or Polemic, and save a PDF or Word draft with its references. [Download for Windows](https://github.com/AronAxe/GraphPaper/releases/latest) · [Release notes](RELEASE-0.8.0.md) · [See the interface](VISUAL-TOUR.md)
 
 ## Start here
 
@@ -13,6 +13,7 @@ These guides cover **GraphPaper 0.7.1**: the System One decision studio, ink-blu
 | Finish a first project | [Getting started](GETTING-STARTED.md) |
 | Install or upgrade without losing work | [Windows installation](WINDOWS.md) |
 | Choose models, Codex sign-in and reasoning depth | [Models and reasoning](CONNECTIONS.md) |
+| Connect a local AI agent over MCP | [Connect an AI agent](AGENT-MCP.md) |
 | Get a quick answer about graphs, voices or costs | [Frequently asked questions](FAQ.md) |
 
 ## Choose your writing workflow
@@ -36,7 +37,7 @@ These guides cover **GraphPaper 0.7.1**: the System One decision studio, ink-blu
 | [System One](SYSTEM-ONE.md) | Decision receipts, source selection, fidelity repair, research triage, feedback, local preference learning and approved routing |
 | [Reusable voice graphs](VOICE-GRAPHS.md) | Save a voice once, train separately, edit its graph, reuse it and inspect overlays |
 | [Author voice and prose tools](VOICE-AND-PROSE.md) | Style direction, Humanize, Deslop, comparison and explicit acceptance |
-| [Exports and APA](EXPORTS-AND-APA.md) | Word, Markdown, HTML, project backups and scientific export packages |
+| [Exports and APA](EXPORTS-AND-APA.md) | Cited PDF and Word manuscripts, Markdown, HTML, backups and scientific export packages |
 
 ## Try it without model calls
 

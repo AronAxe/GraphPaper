@@ -52,6 +52,7 @@ def wait(page,action):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--out',type=Path,default=ROOT/'test-results/polemic-ui')
+    parser.add_argument('--chromium', help='Optional path to a Chromium-compatible browser executable')
     args=parser.parse_args();out=args.out.resolve();out.mkdir(parents=True,exist_ok=True)
     report={'real_http_browser':True,'live_model':False,'synthetic_material':True,'checks':[],'page_errors':[],'ok':False}
     def check(label):report['checks'].append(label);print('PASS',label,flush=True)
@@ -66,7 +67,7 @@ def main():
         server=uvicorn.Server(uvicorn.Config(app,log_level='error'));thread=threading.Thread(target=lambda:server.run(sockets=[sock]),daemon=True);thread.start()
         while not server.started:time.sleep(.05)
         with sync_playwright() as pw:
-            browser=pw.chromium.launch(headless=True)
+            browser=pw.chromium.launch(headless=True, executable_path=args.chromium)
             page=browser.new_page(viewport={'width':1440,'height':1040});page.set_default_timeout(12000)
             page.on('pageerror',lambda e:report['page_errors'].append(str(e)))
             try:
@@ -89,9 +90,25 @@ def main():
                 page.get_by_role('button',name='Creative brief',exact=True).click()
                 page.locator('#b-thesis').fill('The enthusiasm is the indictment. Make that case, not a neutral inquiry.')
                 page.locator('#b-rhetorical_force').evaluate("el => {el.value=95;el.dispatchEvent(new Event('input',{bubbles:true}));}")
+                # Hold one status response until the following autosave advances the version.
+                page.evaluate("""() => {
+                    const original = window.fetch;
+                    const held = new Promise(resolve => { window.releaseEditorial = resolve; });
+                    window.fetch = async (...args) => {
+                        const response = await original(...args);
+                        if (String(args[0]).endsWith('/editorial/status')) {
+                            window.fetch = original;
+                            window.heldEditorial = true;
+                            await held;
+                        }
+                        return response;
+                    };
+                }""")
                 page.get_by_role('button',name='Save brief',exact=True).click()
                 expect(page.locator('.modal')).to_have_count(0)
+                page.wait_for_function('() => window.heldEditorial')
                 page.locator('#rigor').evaluate("el => {el.value=10;el.dispatchEvent(new Event('input',{bubbles:true}));}");page.evaluate('() => flush()')
+                page.evaluate('() => window.releaseEditorial()')
                 brief=client.get('/api/projects/'+pid).json()['brief']
                 assert brief['rhetorical_force']==95 and brief['rigor']==10
                 assert brief['thesis'].startswith('The enthusiasm is the indictment')

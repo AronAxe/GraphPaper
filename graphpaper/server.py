@@ -29,7 +29,7 @@ def asset_directory():
     return candidate if candidate.is_dir() else Path(sys.prefix) / "share" / "graphpaper" / "ui"
 
 
-def create_app(root=None):
+def create_app(root=None, *, agent_token=None):
     store = Store(Path(root) if root else data_directory())
     vault = Vault(store.root)
     token = secrets.token_urlsafe(32)
@@ -83,7 +83,15 @@ def create_app(root=None):
         return JSONResponse({"detail": str(exc)}, status_code=502)
 
     @app.get("/")
-    def index():
+    def index(request: Request):
+        if agent_token is not None:
+            desktop_access = request.query_params.get("open", "") == token
+            cookie_access = request.cookies.get("gp_session") == token
+            agent_access = secrets.compare_digest(
+                request.headers.get("x-graphpaper-connect", "").encode(), agent_token.encode()
+            )
+            if not (desktop_access or cookie_access or agent_access):
+                raise HTTPException(403, "GraphPaper requires the desktop connection token. Check the workspace path.")
         res = FileResponse(asset_directory() / "index.html")
         res.set_cookie("gp_session", token, httponly=True, samesite="strict")
         res.headers["Cache-Control"] = "no-store"
@@ -284,7 +292,8 @@ def create_app(root=None):
     @app.post("/api/projects/{pid}/jobs")
     async def start_job(pid: str, request: Request):
         raw = await request.json()
-        return runner.start(pid, raw.get("action", ""), str(raw.get("instruction", ""))[:8000]).public()
+        return runner.start(pid, raw.get("action", ""), str(raw.get("instruction", ""))[:8000],
+                            expected_version=raw.get("version")).public()
 
     @app.get("/api/jobs/{jid}")
     def get_job(jid: str):

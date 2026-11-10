@@ -14,7 +14,7 @@ from .graph import merge_graphs, mine_motifs, normalize_extraction
 from .ingest import chunks, digest
 from .models import Angle, Graph, Project, Review, Section, Source, now, uid
 from .providers import Cancelled, Clients, ProviderError
-from .storage import Store
+from .storage import Conflict, Store
 from .support import audit_claims
 from .editorial import FACTUAL_BOUNDARY, system as editorial_system, context as editorial_context, fingerprint as editorial_fingerprint, review_stamp
 
@@ -310,10 +310,12 @@ def make_outline(p: Project, clients: Clients, job: Job):
 
 
 def citation_audit(p: Project, text: str):
+    from .references import citation_ids
+
     if p.mode == "fiction":
         return {"mode": "fiction", "note": "Fiction is checked against canon by the editor; narrative claims are not forced to carry citations."}
     allowed = {s.id for s in p.sources if s.enabled and s.role == "evidence"}
-    refs = set(re.findall(r"\[(S\d+)\]", text))
+    refs = set(citation_ids(text)) if p.mode in {"nonfiction", "polemic"} else set(re.findall(r"\[(S\d+)\]", text))
     used = sorted(refs & allowed)
     return {"valid_references": used, "unknown_or_ineligible_references": sorted(refs - allowed), "missing_all_citations": not refs and bool(allowed), "note": "Deterministic reference integrity only. Valid IDs do not prove that the source supports the claim. Read the editorial issues and source excerpts."}
 
@@ -431,13 +433,15 @@ class Runner:
     def active(self, project_id):
         return next((j for j in self.jobs.values() if j.project_id == project_id and j.state in {"queued", "running"}), None)
 
-    def start(self, project_id, action, instruction=""):
+    def start(self, project_id, action, instruction="", *, expected_version=None):
         if action not in {"graph", "angles", "outline", "draft", "review", "revise", "voice", "humanize", "deslop", "both", "science-plan", "science-search", "science-fulltext", "science-appraise", "science-outline", "science-draft", "science-review", "science-screen", "system-one-audit"}:
             raise ValueError("Unknown action")
         with self.lock:
             if self.active(project_id):
                 raise ValueError("This project already has an active job. Wait or cancel it before starting another.")
             p = self.store.get(project_id)
+            if expected_version is not None and p.version != expected_version:
+                raise Conflict("The project changed. Read the latest version before starting this job.")
             settings = self.settings_factory()
             job = Job(project_id, action)
             self.jobs[job.id] = job
