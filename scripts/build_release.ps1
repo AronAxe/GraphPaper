@@ -10,11 +10,14 @@ python scripts/prepare_graphify.py
 if ($LASTEXITCODE -ne 0) { throw 'Public Graphify runtime verification failed.' }
 python scripts/runtime_manifest.py
 if ($LASTEXITCODE -ne 0) { throw 'Runtime manifest generation failed.' }
-python -m PyInstaller --noconfirm --clean --noupx --windowed --onedir --name GraphPaper --paths . --additional-hooks-dir scripts/hooks --icon ui/graphpaper.ico --add-data 'ui;ui' --add-data 'vendor;vendor' --collect-all webview --collect-all pythonnet --collect-all clr_loader scripts/desktop_entry.py
+python -m PyInstaller --noconfirm --clean --noupx --windowed --onedir --name GraphPaper --paths . --additional-hooks-dir scripts/hooks --icon ui/graphpaper.ico --add-data 'ui;ui' --add-data 'vendor;vendor' --collect-data reportlab --collect-all webview --collect-all pythonnet --collect-all clr_loader scripts/desktop_entry.py
 if ($LASTEXITCODE -ne 0) { throw 'Windows desktop build failed.' }
 python scripts/runtime_manifest.py --verify dist/GraphPaper/_internal
 if ($LASTEXITCODE -ne 0) { throw 'Frozen runtime checksum verification failed.' }
 Copy-Item README.md, LICENSE -Destination dist/GraphPaper/
+New-Item -ItemType Directory -Force -Path dist/GraphPaper/agent, dist/GraphPaper/docs | Out-Null
+Copy-Item skills/graphpaper/scripts/gp.py, skills/graphpaper/scripts/graphpaper_mcp.py, skills/graphpaper/scripts/requirements-mcp.txt -Destination dist/GraphPaper/agent/
+Copy-Item docs/AGENT-MCP.md -Destination dist/GraphPaper/docs/
 Copy-Item ui/assets/CREDITS.md -Destination dist/GraphPaper/ASSET-CREDITS.md
 Copy-Item docs/RELEASE-0.7.1.md -Destination dist/GraphPaper/WHATS-NEW.md
 python scripts/check_package.py dist/GraphPaper

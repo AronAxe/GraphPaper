@@ -5,6 +5,7 @@ import difflib
 import hashlib
 import json
 import re
+from .references import GROUP
 from .voice import metrics, voice_context
 
 # Independent editorial heuristics informed by the projects credited in docs/UPDATE-0.2.md.
@@ -20,7 +21,11 @@ RULES = [
  ('corporate-language', r'\b(?:leverage synergies|unlock (?:the )?(?:full )?potential|seamless integration|holistic approach|ever[- ]evolving landscape|rich tapestry)\b', 'Prefer the exact action, relationship or image.'),
  ('chat-wrapper', r"(?m)^\s*(?:Certainly!|Absolutely!|Here is (?:the|your) (?:revised|rewritten)|I hope this helps)", 'Remove chat scaffolding from the manuscript.'),
 ]
-PROTECTED = re.compile(r'(?ms)```.*?```|~~~.*?~~~|^---\n.*?\n---(?=\n|$)|^>[^\n]*(?:\n>[^\n]*)*|`[^`\n]+`|\[[^\]\n]*\]\([^\)\n]+\)|\[S\d+\]|https?://[^\s<>]+|“[^”]+”|"[^"\n]+"|(?<!\w)[+-]?\d+(?:[.,:/-]\d+)*(?:\s?%|\b)')
+PROTECTED = re.compile(
+    r'(?ms)```.*?```|~~~.*?~~~|^---\n.*?\n---(?=\n|$)|^>[^\n]*(?:\n>[^\n]*)*|`[^`\n]+`|\[[^\]\n]*\]\([^\)\n]+\)|'
+    + GROUP.pattern
+    + r'|https?://[^\s<>]+|“[^”]+”|"[^"\n]+"|(?<!\w)[+-]?\d+(?:[.,:/-]\d+)*(?:\s?%|\b)'
+)
 
 
 def mask(text):

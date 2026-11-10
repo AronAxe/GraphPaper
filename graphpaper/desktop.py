@@ -4,8 +4,10 @@ from __future__ import annotations
 import argparse
 import logging
 import re
+import secrets
 import socket
 import sys
+import tempfile
 import threading
 import time
 from pathlib import Path
@@ -86,7 +88,7 @@ class DesktopBridge:
     def save_export(self, project_id: str, kind: str):
         try:
             import webview
-            if kind not in {"md", "docx", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission", "voice", "system-one"}:
+            if kind not in {"md", "docx", "pdf", "html", "json", "graph", "bib", "ris", "evidence", "search-log", "research-package", "submission", "voice", "system-one"}:
                 return {"error": "Unknown export type"}
             if kind == 'voice':
                 from .voice_library import VoiceLibrary
@@ -119,12 +121,27 @@ class DesktopBridge:
                 path = path.with_suffix(ext)
             path.write_bytes(data)
             return {"saved": True}
+        except ValueError as error:
+            return {"error": str(error)}
         except Exception:
             logging.exception("Export failed")
             return {"error": "Could not save the export. Check the destination and whether the file is open in another application."}
 
 
-def run(browser: bool = False):
+def write_agent_token(root, port):
+    """Publish a fresh token inside this user's workspace, with a private file mode."""
+    token = secrets.token_urlsafe(32)
+    with tempfile.NamedTemporaryFile(mode="w", encoding="ascii", dir=root, delete=False) as temp:
+        temporary_path = Path(temp.name)
+        temp.write(token)
+    try:
+        temporary_path.replace(root / f".agent-{port}.token")
+    finally:
+        temporary_path.unlink(missing_ok=True)
+    return token
+
+
+def run(browser: bool = False, agent_port: int = 0):
     import uvicorn
     root = data_directory()
     root.mkdir(parents=True, exist_ok=True)
@@ -132,11 +149,20 @@ def run(browser: bool = False):
     if not browser:
         from .windows_runtime import prepare
         prepare()
-    app = create_app(root)
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # Keep the ephemeral listener open until handed to uvicorn (no port-selection race).
-    sock.bind(("127.0.0.1", 0))
+    # Keep the listener open until handed to uvicorn (no port-selection race).
+    try:
+        sock.bind(("127.0.0.1", agent_port))
+    except OSError as error:
+        sock.close()
+        raise RuntimeError(f"Could not start GraphPaper on local port {agent_port}. Choose a free port.") from error
     port = sock.getsockname()[1]
+    try:
+        agent_token = write_agent_token(root, port) if agent_port else None
+        app = create_app(root, agent_token=agent_token)
+    except BaseException:
+        sock.close()
+        raise
     config = server_config(app, host="127.0.0.1", port=port, log_level="warning", access_log=False)
     server = uvicorn.Server(config)
     thread = threading.Thread(target=lambda: server.run(sockets=[sock]), daemon=True)
@@ -147,6 +173,8 @@ def run(browser: bool = False):
     if not server.started:
         raise RuntimeError("GraphPaper's local application service could not start.")
     url = f"http://127.0.0.1:{port}/"
+    if agent_token:
+        url += "?open=" + app.state.token
 
     def cleanup():
         for job in list(app.state.runner.jobs.values()):
@@ -190,10 +218,13 @@ def run(browser: bool = False):
 
 def self_test(output):
     """Check the frozen backend and bundled UI without claiming to test WebView2."""
+    from io import BytesIO
     import json
     import tempfile
     import urllib.request
+    from pypdf import PdfReader
     import uvicorn
+    from .models import Project, Source
     with tempfile.TemporaryDirectory(prefix="graphpaper-package-test-") as temp:
         app = create_app(Path(temp))
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -212,7 +243,15 @@ def self_test(output):
                 with urllib.request.urlopen(f"http://127.0.0.1:{port}{path}", timeout=10) as r:
                     body = r.read()
                     checks[path] = {"status": r.status, "bytes": len(body)}
-            Path(output).write_text(json.dumps({"ok": all(v["status"] == 200 and v["bytes"] > 0 for v in checks.values()), "checks": checks}), encoding="utf-8")
+            sample = Project(
+                draft="A packaging fixture. [S1]",
+                sources=[Source(id="S1", title="Reference fixture", text="A local passage.")],
+            )
+            pdf, _, _ = export(sample, "pdf")
+            rendered = PdfReader(BytesIO(pdf)).pages[0].extract_text()
+            pdf_ok = "[1] Reference fixture" in rendered
+            http_ok = all(v["status"] == 200 and v["bytes"] > 0 for v in checks.values())
+            Path(output).write_text(json.dumps({"ok": http_ok and pdf_ok, "checks": checks, "pdf": pdf_ok}), encoding="utf-8")
         finally:
             server.should_exit = True
             t.join(timeout=4)
@@ -223,14 +262,18 @@ def self_test(output):
 def main():
     parser = argparse.ArgumentParser(description="GraphPaper desktop studio")
     parser.add_argument("--browser", action="store_true", help="Developer fallback: open the local studio in a browser")
+    parser.add_argument("--agent-port", type=int, default=0, metavar="PORT",
+                        help="Use a fixed loopback port for a trusted local agent")
     parser.add_argument("--self-test", metavar="OUTPUT_JSON", help="Packaging check: backend/assets only; no AI calls")
     args = parser.parse_args()
+    if not 0 <= args.agent_port <= 65535:
+        parser.error("--agent-port must be between 1 and 65535 (0 chooses a port automatically)")
     if args.self_test:
         self_test(args.self_test)
         return
     from .windows_runtime import RepairDeclined, startup_advice
     try:
-        run(args.browser)
+        run(args.browser, args.agent_port)
     except RepairDeclined:
         return
     except Exception as e:

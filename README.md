@@ -52,6 +52,10 @@ Sources become a navigable graph, then an angle you choose, an outline you can e
 
 Science adds a **Research** desk for scholarly search, screening and evidence appraisal. **System One** makes the decision layer visible across the workflow. [Explore the workflows →](docs/README.md)
 
+In **Write**, preview numbered references and use **Export draft** to save a PDF or Word document with the bibliography. [Export guide →](docs/EXPORTS-AND-APA.md)
+
+Local AI agents can use your GraphPaper workspace through the stdio MCP adapter. [Connect an agent →](docs/AGENT-MCP.md)
+
 ## Open the studio
 
 1. Download the **Windows x64 ZIP** from [Releases](https://github.com/AronAxe/GraphPaper/releases/latest)—not GitHub’s “Source code” archive.

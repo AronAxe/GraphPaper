@@ -112,15 +112,35 @@ def main():
                 page.locator('.nav-link[data-tab="write"]').click();page.wait_for_selector('#manuscript')
                 before=page.locator('#manuscript').input_value();page.locator('#manuscript').fill(before+'\n\nA manually edited ending.');page.wait_for_timeout(950)
                 assert client.get('/api/projects/'+sample_id).json()['draft'].endswith('A manually edited ending.')
-                assert page.locator('#draft-preview').inner_text().endswith('A manually edited ending.')
+                assert 'A manually edited ending.' in page.locator('#draft-preview').inner_text()
+                assert page.locator('#draft-preview .draft-references li').count() > 0
                 page.screenshot(path=str(out/'writing.png'),full_page=True);check('Manuscript autosave and safe live preview')
                 page.locator('.citation').first.click();page.wait_for_selector('.source-text');page.get_by_role('button',name='Close dialog',exact=True).click();check('Clickable source references')
                 page.get_by_role('button',name='Version history',exact=True).click();page.wait_for_selector('.version-item');page.get_by_role('button',name='Read',exact=True).first.click();page.get_by_role('button',name='Restore this version',exact=True).click();page.wait_for_selector('#manuscript');check('Read and restore earlier version')
-                page.get_by_role('button',name='Export',exact=True).click();page.wait_for_selector('.export-options')
+                page.get_by_role('button',name='Export draft',exact=True).click();page.wait_for_selector('.export-options')
                 assert page.get_by_role('button',name='Word document',exact=False).count()==1
                 # Verify resulting bytes through backend; OS save dialog is a native-shell concern.
                 r=client.get('/api/projects/'+sample_id+'/export/docx');assert r.content[:2]==b'PK'
-                page.get_by_role('button',name='Close dialog',exact=True).click();check('Export options and valid Word output')
+                with page.expect_download() as downloaded:
+                    page.get_by_role('button', name='PDF document', exact=False).click()
+                assert downloaded.value.suggested_filename.endswith('.pdf')
+                assert downloaded.value.path().read_bytes().startswith(b'%PDF')
+                page.get_by_role('button',name='Close dialog',exact=True).click();check('Export options and working Word and PDF output')
+                project_path='/api/projects/'+sample_id
+                current=client.get(project_path).json()
+                saved_draft=current['draft']+'\n\nAn agent edit.'
+                assert client.patch(project_path,json={'version':current['version'],'draft':saved_draft}).status_code==200
+                local_draft=current['draft']+'\n\nA local edit.'
+                page.locator('#manuscript').fill(local_draft)
+                page.get_by_role('button',name='Resolve save conflict',exact=True).click()
+                assert page.locator('#conflict-unsaved').input_value()==local_draft
+                assert page.locator('#conflict-merge').input_value()==saved_draft
+                merged=saved_draft+'\n\nA local edit.'
+                page.locator('#conflict-merge').fill(merged)
+                page.get_by_role('button',name='Save merged draft',exact=True).click()
+                page.wait_for_selector('.modal',state='detached')
+                assert client.get(project_path).json()['draft']==merged
+                check('Reconcile an agent edit with unsaved desktop work')
                 page.locator('[data-action="settings"]').click();page.locator('#s-model').fill('deterministic/test-model');page.locator('#s-allow_cloud').check();page.locator('#s-remember_keys').uncheck();page.locator('#s-refine').uncheck();page.get_by_role('button',name='Save connections',exact=True).click();page.wait_for_selector('.workspace-head');check('Configure provider through UI (mock transport only)')
                 page.get_by_role('button',name='New project',exact=True).click();page.locator('#project-title').fill('UI integration essay');page.locator('#project-premise').fill('Explore choices and public space.');page.get_by_role('button',name='Create project',exact=True).click();page.wait_for_selector('#dropzone')
                 with page.expect_file_chooser() as chooser:page.locator('#dropzone').click()
