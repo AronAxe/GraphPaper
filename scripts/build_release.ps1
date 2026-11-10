@@ -1,5 +1,9 @@
 $ErrorActionPreference = 'Stop'
 Set-Location (Join-Path $PSScriptRoot '..')
+$version = python -c "from graphpaper import __version__; print(__version__)"
+if ($LASTEXITCODE -ne 0 -or $version -notmatch '^\d+\.\d+\.\d+$') { throw 'Could not read the application version.' }
+$releaseNotes = "docs/RELEASE-$version.md"
+if (-not (Test-Path -LiteralPath $releaseNotes -PathType Leaf)) { throw "Missing $releaseNotes." }
 python -m pip install -q -r requirements-desktop.txt 'pyinstaller>=6.16,<7'
 if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
 python scripts/bundle_codex.py
@@ -17,14 +21,13 @@ if ($LASTEXITCODE -ne 0) { throw 'Frozen runtime checksum verification failed.' 
 Copy-Item README.md, LICENSE -Destination dist/GraphPaper/
 New-Item -ItemType Directory -Force -Path dist/GraphPaper/agent, dist/GraphPaper/docs | Out-Null
 Copy-Item skills/graphpaper/scripts/gp.py, skills/graphpaper/scripts/graphpaper_mcp.py, skills/graphpaper/scripts/requirements-mcp.txt -Destination dist/GraphPaper/agent/
-Copy-Item docs/AGENT-MCP.md -Destination dist/GraphPaper/docs/
+Copy-Item docs/AGENT-MCP.md, docs/EXPORTS-AND-APA.md -Destination dist/GraphPaper/docs/
 Copy-Item ui/assets/CREDITS.md -Destination dist/GraphPaper/ASSET-CREDITS.md
-Copy-Item docs/RELEASE-0.7.1.md -Destination dist/GraphPaper/WHATS-NEW.md
+Copy-Item $releaseNotes -Destination dist/GraphPaper/WHATS-NEW.md
 python scripts/check_package.py dist/GraphPaper
 if ($LASTEXITCODE -ne 0) { throw 'Compiled application self-test failed.' }
 python scripts/check_graphify.py --executable dist/GraphPaper/GraphPaper.exe --out test-results/graphify-package.json
 if ($LASTEXITCODE -ne 0) { throw 'Bundled public Graphify extraction check failed; do not publish.' }
-$version = python -c "from graphpaper import __version__; print(__version__)"
 $zip = "dist/GraphPaper-v$version-Windows-x64.zip"
 python scripts/package_windows.py dist/GraphPaper $zip
 if ($LASTEXITCODE -ne 0) { throw 'Streaming release packaging or verification failed.' }

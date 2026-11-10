@@ -4,7 +4,10 @@ on:
   push:
     tags: ['v*']
 permissions:
-  contents: write
+  contents: read
+concurrency:
+  group: graphpaper-release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -13,6 +16,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Verify release metadata
+        run: |
+          set -eu
+          version=$(python -c 'from graphpaper import __version__; print(__version__)')
+          test -f "docs/RELEASE-$version.md"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then test "$GITHUB_REF_NAME" = "v$version"; fi
+          python -m unittest discover -s docs/tests
+          python scripts/docs_tool.py check
       - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q
       - run: python -m playwright install --with-deps chromium
@@ -22,6 +33,8 @@ jobs:
       - run: python scripts/ui_graphify_smoke.py
       - run: python scripts/ui_polemic_smoke.py
       - run: python scripts/ui_voices_smoke.py
+      - run: python scripts/ui_graph_studio_smoke.py
+      - run: python scripts/ui_system_one_smoke.py
   windows:
     needs: quality
     runs-on: windows-latest
@@ -33,39 +46,75 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -q -r requirements-dev.txt
       - run: python -m pytest -q --junitxml=test-results/windows.xml
+      - name: Verify hosted WebView2 prerequisite
+        shell: pwsh
+        run: ./scripts/prepare_ci_webview.ps1
       - name: Build verified Windows package with official Codex runtime
         shell: pwsh
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: ./scripts/build_release.ps1
       - name: Exercise the actual Windows window, voices, native dialogs and save-on-close
-        run: python scripts/native_smoke.py --science --graphify --polemic --voices --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
-      - uses: actions/upload-artifact@v4
-        with:
-          name: GraphPaper-Windows-x64
-          path: |
-            dist/GraphPaper-v*-Windows-x64.zip
-            dist/SHA256SUMS.txt
-      - name: Publish a versioned release when built from a tag
-        if: startsWith(github.ref, 'refs/tags/v')
-        env:
-          GH_TOKEN: ${{ github.token }}
+        run: python scripts/native_smoke.py --science --graphify --graph-studio --polemic --voices --system-one --executable dist/GraphPaper/GraphPaper.exe --out test-results/native-package
+      - name: Test fresh ZIP extraction with download marks and native consent
         shell: pwsh
         run: |
           $version = python -c "from graphpaper import __version__; print(__version__)"
-          if ($env:GITHUB_REF_NAME -ne "v$version") { throw 'Tag does not match application version.' }
-          gh release view $env:GITHUB_REF_NAME *> $null
-          if ($LASTEXITCODE -ne 0) { gh release create $env:GITHUB_REF_NAME --verify-tag --title "GraphPaper $env:GITHUB_REF_NAME" --notes-file "docs/RELEASE-$version.md" }
-          $packageName = "GraphPaper-v$version-Windows-x64.zip"
-          $release = gh release view $env:GITHUB_REF_NAME --json assets | ConvertFrom-Json
-          if ($release.assets.name -contains $packageName) {
-            Write-Host 'A verified release package already exists; keeping it unchanged. This rebuild remains available as an Actions artifact.'
-          } else {
-            gh release upload $env:GITHUB_REF_NAME "dist/$packageName" dist/SHA256SUMS.txt
-            if ($LASTEXITCODE -ne 0) { throw 'Release upload did not complete.' }
-          }
+          python scripts/check_downloaded_release.py "dist/GraphPaper-v$version-Windows-x64.zip" --out test-results/downloaded-package
+      - uses: actions/upload-artifact@v4
+        with:
+          name: GraphPaper-Windows-x64
+          if-no-files-found: error
+          path: |
+            dist/GraphPaper-v*-Windows-x64.zip
+            dist/SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: Windows-validation
           path: test-results/
+  publish:
+    needs: windows
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: GraphPaper-Windows-x64
+          path: release-package
+      - name: Publish the verified Windows archive and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          tag="$GITHUB_REF_NAME"
+          package="GraphPaper-$tag-Windows-x64.zip"
+          sums=SHA256SUMS.txt
+          (cd release-package && sha256sum --check --strict "$sums")
+          archive_digest=$(sha256sum "release-package/$package" | cut -d' ' -f1)
+          sums_digest=$(sha256sum "release-package/$sums" | cut -d' ' -f1)
+          release_id=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+            --jq ".[] | select(.tag_name == \"$tag\") | .id")
+          if [ -n "$release_id" ]; then
+            draft=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id" --jq '.draft')
+            if [ "$draft" != true ]; then
+              echo 'This release is already public. Leaving its assets in place.'
+              exit 0
+            fi
+          else
+            cp "docs/RELEASE-${tag#v}.md" release-package/notes.md
+            printf '\n\n[Windows build and validation](https://github.com/%s/actions/runs/%s) · Source commit `%s` · Archive SHA-256 `%s`\n' \
+              "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$GITHUB_SHA" "$archive_digest" >> release-package/notes.md
+            gh release create "$tag" "release-package/$package" "release-package/$sums" \
+              --draft --verify-tag --title "GraphPaper $tag" --notes-file release-package/notes.md
+            release_id=$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" \
+              --jq ".[] | select(.tag_name == \"$tag\") | .id")
+          fi
+          assets=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id/assets")
+          test "$(jq -r --arg name "$package" '.[] | select(.name == $name) | .digest' <<< "$assets")" = "sha256:$archive_digest"
+          test "$(jq -r --arg name "$sums" '.[] | select(.name == $name) | .digest' <<< "$assets")" = "sha256:$sums_digest"
+          gh release edit "$tag" --draft=false --latest

@@ -1,12 +1,13 @@
 {
   "repository": "AronAxe/GraphPaper",
-  "docs_version": "0.7.1",
+  "docs_version": "0.8.0",
   "pages": [
     {"title":"Home","source":"docs/README.md","section":"Start here"},
     {"title":"Visual-Tour","source":"docs/VISUAL-TOUR.md","section":"Start here"},
     {"title":"Getting-Started","source":"docs/GETTING-STARTED.md","section":"Start here"},
     {"title":"Windows-Installation","source":"docs/WINDOWS.md","section":"Start here"},
     {"title":"Models-and-Reasoning","source":"docs/CONNECTIONS.md","section":"Start here"},
+    {"title":"Connect-an-AI-Agent","source":"docs/AGENT-MCP.md","section":"Start here"},
     {"title":"Frequently-Asked-Questions","source":"docs/FAQ.md","section":"Start here"},
     {"title":"Nonfiction-Workflow","source":"docs/NONFICTION.md","section":"Writing workflows"},
     {"title":"Polemic-and-Authorial-Intent","source":"docs/POLEMIC.md","section":"Writing workflows"},

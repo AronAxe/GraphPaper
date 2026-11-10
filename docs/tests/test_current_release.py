@@ -1,5 +1,5 @@
 """Published guides align with the app; explicitly versioned captures retain provenance."""
-import hashlib,json,re,unittest
+import hashlib,json,re,tomllib,unittest
 from pathlib import Path
 from graphpaper import __version__
 from scripts.docs_tool import configuration,render
@@ -7,9 +7,12 @@ ROOT=Path(__file__).resolve().parents[2]
 class CurrentDocumentationTests(unittest.TestCase):
     def test_wiki_version_matches_application(self):
         self.assertEqual(configuration(ROOT)['docs_version'],__version__)
+        with (ROOT/'pyproject.toml').open('rb') as source:
+            self.assertEqual(tomllib.load(source)['project']['version'],__version__)
+        self.assertTrue((ROOT/f'docs/RELEASE-{__version__}.md').is_file())
     def test_core_guides_are_published(self):
         paths={p['source'] for p in configuration(ROOT)['pages']}
-        self.assertTrue({'docs/GRAPH-STUDIO.md','docs/VOICE-GRAPHS.md','docs/SYSTEM-ONE.md'}<=paths)
+        self.assertTrue({'docs/GRAPH-STUDIO.md','docs/VOICE-GRAPHS.md','docs/SYSTEM-ONE.md','docs/AGENT-MCP.md'}<=paths)
     def test_sidebar_sections_are_contiguous(self):
         sections=[p['section'] for p in configuration(ROOT)['pages']]
         runs=[s for i,s in enumerate(sections) if i==0 or s!=sections[i-1]]
@@ -30,4 +33,5 @@ class CurrentDocumentationTests(unittest.TestCase):
         _,pages=render(ROOT)
         self.assertIn('/wiki/Spatial-Graph-Studio',pages['Home.md'])
         self.assertIn('/wiki/Reusable-Voice-Graphs',pages['Home.md'])
+        self.assertIn('/wiki/Connect-an-AI-Agent',pages['Home.md'])
 if __name__=='__main__':unittest.main()
