@@ -75,6 +75,7 @@ async function flush(){
    Object.assign(state.p,queued);
    syncSummary();
    updateSaved(Object.keys(pending).length?'Unsaved changes':'Saved locally');
+   document.dispatchEvent(new Event('graphpaper-project-saved'));
   }catch(e){
    pending={...patch,...pending};
    state.saveConflict=e.status===409;
